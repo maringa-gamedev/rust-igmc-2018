@@ -1,0 +1,86 @@
+(
+  axes: {
+    "player_one_horizontal_controller": Controller(
+      controller_id: 0,
+      axis: LeftX,
+      invert: false,
+      dead_zone: 0.2,
+    ),
+    "player_one_vertical_controller": Controller(
+      controller_id: 0,
+      axis: LeftY,
+      invert: false,
+      dead_zone: 0.2,
+    ),
+    "player_one_horizontal_keyboard": Emulated(
+      pos: Key(L),
+      neg: Key(H),
+    ),
+    "player_one_vertical_keyboard": Emulated(
+      pos: Key(K),
+      neg: Key(J),
+    ),
+    "player_one_horizontal_aim_controller": Controller(
+      controller_id: 0,
+      axis: RightX,
+      invert: false,
+      dead_zone: 0.2,
+    ),
+    "player_one_vertical_aim_controller": Controller(
+      controller_id: 0,
+      axis: RightY,
+      invert: false,
+      dead_zone: 0.2,
+    ),
+    "player_one_horizontal_aim_keyboard": Emulated(
+      pos: Key(V),
+      neg: Key(Z),
+    ),
+    "player_one_vertical_aim_keyboard": Emulated(
+      pos: Key(X),
+      neg: Key(C),
+    ),
+
+    "player_two_horizontal_controller": Controller(
+      controller_id: 1,
+      axis: LeftX,
+      invert: false,
+      dead_zone: 0.2,
+    ),
+    "player_two_vertical_controller": Controller(
+      controller_id: 1,
+      axis: LeftY,
+      invert: false,
+      dead_zone: 0.2,
+    ),
+    "player_two_horizontal_keyboard": Emulated(
+      pos: Key(Right),
+      neg: Key(Left),
+    ),
+    "player_two_vertical_keyboard": Emulated(
+      pos: Key(Up),
+      neg: Key(Down),
+    ),
+    "player_two_horizontal_aim_controller": Controller(
+      controller_id: 1,
+      axis: RightX,
+      invert: false,
+      dead_zone: 0.2,
+    ),
+    "player_two_vertical_aim_controller": Controller(
+      controller_id: 1,
+      axis: RightY,
+      invert: false,
+      dead_zone: 0.2,
+    ),
+    "player_two_horizontal_aim_keyboard": Emulated(
+      pos: Key(D),
+      neg: Key(A),
+    ),
+    "player_two_vertical_aim_keyboard": Emulated(
+      pos: Key(W),
+      neg: Key(S),
+    ),
+  },
+  actions: {},
+)

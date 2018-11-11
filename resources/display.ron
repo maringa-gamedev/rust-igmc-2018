@@ -1,0 +1,10 @@
+(
+  dimensions: Some((1920, 1080)),
+  max_dimensions: None,
+  min_dimensions: None,
+  fullscreen: false,
+  multisampling: 0,
+  title: "Minesweeper",
+  visibility: true,
+  vsync: true,
+)
