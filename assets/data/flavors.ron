@@ -1,0 +1,167 @@
+[
+  // Classics
+  FlavorDefinition(
+    points: 100,
+    key: "vanilla",
+    class: "classic",
+  ),
+  FlavorDefinition (
+    points: 125,
+    key: "chocolate",
+    class: "classic",
+  ),
+  FlavorDefinition (
+    points: 75,
+    key: "strawberry",
+    class: "classic",
+  ),
+  FlavorDefinition (
+    points: 300,
+    key: "neapolitan",
+    class: "classic",
+  ),
+  FlavorDefinition (
+    points: 50,
+    key: "cookie_dough",
+    class: "classic",
+  ),
+  FlavorDefinition (
+    points: 150,
+    key: "cookies_cream",
+    class: "classic",
+  ),
+  FlavorDefinition (
+    points: 160,
+    key: "rocky_road",
+    class: "classic",
+  ),
+  FlavorDefinition (
+    points: 40,
+    key: "coffee",
+    class: "classic",
+  ),
+  FlavorDefinition (
+    points: 90,
+    key: "mint_chocolate",
+    class: "classic",
+  ),
+  FlavorDefinition (
+    points: 999,
+    key: "pistachio",
+    class: "classic",
+  ),
+
+  // Sherberts
+  FlavorDefinition (
+    points: 90,
+    key: "orange",
+    class: "sherbert",
+  ),
+  FlavorDefinition (
+    points: 80,
+    key: "cherry",
+    class: "sherbert",
+  ),
+  FlavorDefinition (
+    points: 120,
+    key: "blue_raspberry",
+    class: "sherbert",
+  ),
+  FlavorDefinition (
+    points: 60,
+    key: "blackberry",
+    class: "sherbert",
+  ),
+  FlavorDefinition (
+    points: 360,
+    key: "rainbow",
+    class: "sherbert",
+  ),
+  FlavorDefinition (
+    points: 999,
+    key: "lemon",
+    class: "sherbert",
+  ),
+
+  // Specials
+  FlavorDefinition (
+    points: 125,
+    key: "dark_matter",
+    class: "special",
+  ),
+  FlavorDefinition (
+    points: 150,
+    key: "jalapeno",
+    class: "special",
+  ),
+  FlavorDefinition (
+    points: 50,
+    key: "snowball",
+    class: "special",
+  ),
+  FlavorDefinition (
+    points: 75,
+    key: "ectoplasm",
+    class: "special",
+  ),
+  FlavorDefinition (
+    points: 130,
+    key: "bubblegum",
+    class: "special",
+  ),
+  FlavorDefinition (
+    points: 110,
+    key: "balloon",
+    class: "special",
+  ),
+  FlavorDefinition (
+    points: 100,
+    key: "god",
+    class: "special",
+  ),
+  FlavorDefinition (
+    points: 0,
+    key: "spumoni",
+    class: "special",
+  ),
+  FlavorDefinition (
+    points: 300,
+    key: "licensed",
+    class: "special",
+  ),
+  FlavorDefinition (
+    points: 200,
+    key: "alaska",
+    class: "special",
+  ),
+  FlavorDefinition (
+    points: 80,
+    key: "green_tea",
+    class: "special",
+  ),
+  FlavorDefinition (
+    points: 125,
+    key: "tiger_tail",
+    class: "special",
+  ),
+  FlavorDefinition (
+    points: 150,
+    key: "tutti_frutti",
+    class: "special",
+  ),
+  FlavorDefinition (
+    points: 150,
+    key: "rum_raisin",
+    class: "special",
+  ),
+  FlavorDefinition (
+    points: 500,
+    key: "creamsicle",
+    class: "special",
+  ),
+  FlavorDefinition (
+    points: 999,
+    key: "anti_scoop",
+    class: "special",
+  ),
+]

@@ -1,0 +1,97 @@
+{
+    "vanilla_title": "Vanilla",
+    "vanilla_desc": "Wildcard: Can combo with any other Classic flavor for a minor score bonus (1.2x).",
+
+    "chocolate_title": "Chocolate",
+    "chocolate_desc": "Slightly increases order melt time.",
+
+    "strawberry_title": "Strawberry",
+    "strawberry_desc": "Slightly decreases order melt time.",
+
+    "neapolitan_title": "Neapolitan",
+    "neapolitan_desc": "Cannot be brought in the loadout, only appears through the combination of Vanilla, Chocolate and Strawberry.",
+
+    "cookie_dough_title": "Cookie Dough",
+    "cookie_dough_desc": "Decreases order melt time",
+
+    "cookies_cream_title": "Cookies and Cream",
+    "cookies_cream_desc": "Increases order melt time",
+
+    "rocky_road_title": "Rocky Road",
+    "rocky_road_desc": "Decreases player movement speed",
+
+    "coffee_title": "Coffee",
+    "coffee_desc": "Increases Player movement speed",
+
+    "mint_chocolate_title": "Mint Chocolate Chip",
+    "mint_chocolate_desc": "Grants a small bonus to special meter",
+
+    "pistachio_title": "Pistachio",
+    "pistachio_desc": "Grants a random classic effect.",
+
+    "orange_title": "Orange Sherbert",
+    "orange_desc": "Increases scoop score when ordered with toppings (1.2x)",
+
+    "cherry_title": "Cherry Sherbert",
+    "cherry_desc": "Leaves a red trail that speeds up allies",
+
+    "blue_raspberry_title": "Blue Raspberry Sherbert",
+    "blue_raspberry_desc": "Leaves a blue trail that slows down allies",
+
+    "blackberry_title": "Blackberry Sherbet",
+    "blackberry_desc": "Negates the effect of other scoops it’s mixed with",
+
+    "rainbow_title": "Rainbow Sherbert",
+    "rainbow_desc": "Cannot be brought in the loadout, only appears through the combination of Lemon, Blue Raspberry, and Cherry Sherbert Scoops.",
+
+    "lemon_title": "Lemon Sorbet",
+    "lemon_desc": " Grants a random sherbet effect.",
+
+    "dark_matter_title": "Dark Chocolate Matter",
+    "dark_matter_desc": "Creates a gravitational pull around the player",
+
+    "jalapeno_title": "Jalapeño Gelato",
+    "jalapeno_desc": "Player continuously walks forward even when not pressing any movement keys",
+
+    "snowball_title": "Snowball Daiquiri Ice",
+    "snowball_desc": "Greatly reduces melt time",
+
+    "ectoplasm_title": "Ectoplasm Swirl",
+    "ectoplasm_desc": "Players becomes intangible",
+
+    "bubblegum_title": "Bubblegum",
+    "bubblegum_desc": "When team members collide, they stick to each other for a short period of time.",
+
+    "balloon_title": "Balloon",
+    "balloon_desc": "Adds knockback to teammates that bump into each other",
+
+    "god_title": "God’s Scoop",
+    "god_desc": "Negates the effect of other scoops it’s mixed with",
+
+    "spumoni_title": "Spumoni",
+    "spumoni_desc": "Cannot be brought in the loadout, only appears through the combination of Cherry, Vanilla, and Pistachio. Instantly fills the special meter to max for the Player.",
+
+    "licensed_title": "Licensed Character",
+    "licensed_desc": "If touched by another player, explodes destroying itself and the order it’s in. Can only be ordered in a single Scoop without toppings. Massive Special Meter Bonus when served.",
+
+    "alaska_title": "Baked Alaska Crunch",
+    "alaska_desc": "Increases melt timer for all orders until served",
+
+    "green_tea_title": "Green Tea",
+    "green_tea_desc": "Increases “Green Tea” scoop order frequency",
+
+    "tiger_tail_title": "Tiger Tail Stripe",
+    "tiger_tail_desc": "Makes the player invisible (not the order)",
+
+    "tutti_frutti_title": "Tutti-Frutti",
+    "tutti_frutti_desc": "Super bright, making it harder to see",
+
+    "rum_raisin_title": "Rum Raisin",
+    "rum_raisin_desc": "Inverted colors, making it harder to see",
+
+    "creamsicle_title": "Creamsicle",
+    "creamsicle_desc": "Can only be ordered in a single Scoop without toppings.",
+
+    "anti_scoop_title": "Anti Scoop",
+    "anti_scoop_desc": "Grants a random special effect.",
+}

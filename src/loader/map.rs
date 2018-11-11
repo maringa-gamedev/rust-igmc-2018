@@ -5,14 +5,13 @@ use amethyst::{
         MaterialTextureSet, PngFormat, Sprite, SpriteSheet, SpriteSheetHandle, SpriteSheetSet,
         Texture, TextureCoordinates, TextureMetadata,
     },
+    utils::application_root_dir,
 };
 use crate::constants::*;
 use log::*;
+use ron::de::from_reader;
 use serde_derive::*;
-
-const HALF: f32 = 0.5;
-const QUARTER: f32 = 0.25;
-const HALF_QUARTER: f32 = 0.125;
+use std::{collections::HashMap, fs::*};
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct SpriteCollection {
@@ -28,52 +27,55 @@ pub struct SpriteCollection {
 #[derive(Debug)]
 pub struct MapSprites {
     pub handle: SpriteSheetHandle,
-    pub top: SpriteCollection,
-    pub side: SpriteCollection,
+    pub sprites: HashMap<String, usize>,
+}
+
+#[derive(Debug, Default, Serialize, Deserialize)]
+pub struct TextureDefinition {
+    path: String,
+    width: f32,
+    height: f32,
+    sprites: Vec<(String, f32, f32, f32, f32)>,
 }
 
 pub fn load_map_texture(world: &mut World) -> MapSprites {
-    info!("Creating map sprites.");
-    let map_handle = {
-        let texture = {
-            let loader = world.read_resource::<Loader>();
-            loader.load(
-                "texture/map_tiles.png",
-                PngFormat,
-                TextureMetadata::srgb_scale(),
-                (),
-                &world.read_resource::<AssetStorage<Texture>>(),
-            )
-        };
-        world
-            .write_resource::<MaterialTextureSet>()
-            .insert(MAP_INDEX, texture);
+    info!("Loading Map Textures.");
 
-        let (sw, sh) = (BASE * 4.0, BASE * 4.0);
-        let defs = vec![
-            (0.0, 0.0, HALF, QUARTER),                                   // Topping
-            (HALF, 0.0, HALF, QUARTER),                                  // Delivery
-            (0.0, QUARTER, HALF, QUARTER),                               // FlavorA
-            (HALF, QUARTER, HALF, QUARTER),                              // FlavorB
-            (0.0, HALF, QUARTER, QUARTER),                               // Empty
-            (QUARTER, HALF, QUARTER, QUARTER),                           // Ground
-            (HALF, HALF, HALF, QUARTER),                                 // Preparation
-            (0.0, HALF + QUARTER, QUARTER, HALF_QUARTER),                // Topping
-            (QUARTER, HALF + QUARTER, QUARTER, HALF_QUARTER),            // Delivery
-            (HALF, HALF + QUARTER, QUARTER, HALF_QUARTER),               // FlavorA
-            (HALF + QUARTER, HALF + QUARTER, QUARTER, HALF_QUARTER),     // FlavorB
-            (0.0, HALF + QUARTER + HALF_QUARTER, QUARTER, HALF_QUARTER), // Empty
-            (
-                QUARTER,
-                HALF + QUARTER + HALF_QUARTER,
-                QUARTER,
-                HALF_QUARTER,
-            ), // Ground
-            (HALF, HALF + QUARTER + HALF_QUARTER, QUARTER, HALF_QUARTER), // Preparation
-        ];
-        let sprites = defs
-            .iter()
-            .map(|(x, y, w, h)| Sprite {
+    let app_root = application_root_dir();
+    let path = format!("{}/assets/texture/map_tiles.ron", app_root);
+    let f = File::open(&path).expect("Failed opening file");
+    let tex_def: TextureDefinition = match from_reader(f) {
+        Ok(x) => x,
+        Err(e) => {
+            error!("Error parsing texture definition: {}", e);
+            panic!("Invalid texture definition <{}>!", path);
+        }
+    };
+
+    let texture = {
+        let loader = world.read_resource::<Loader>();
+        loader.load(
+            tex_def.path,
+            PngFormat,
+            TextureMetadata::srgb_scale(),
+            (),
+            &world.read_resource::<AssetStorage<Texture>>(),
+        )
+    };
+    world
+        .write_resource::<MaterialTextureSet>()
+        .insert(MAP_INDEX, texture);
+
+    let (sw, sh) = (tex_def.width, tex_def.height);
+    let mut sprites_hash = HashMap::new();
+    let mut index: usize = 0;
+    let sprites = tex_def
+        .sprites
+        .iter()
+        .map(|(name, x, y, w, h)| {
+            sprites_hash.insert(name.clone(), index);
+            index += 1;
+            Sprite {
                 width: sw * w,
                 height: sh * h,
                 offsets: [0.0, 0.0],
@@ -83,42 +85,26 @@ pub fn load_map_texture(world: &mut World) -> MapSprites {
                     top: y + h,
                     bottom: *y,
                 },
-            })
-            .collect();
-        let sprites = SpriteSheet {
-            texture_id: MAP_INDEX,
-            sprites,
-        };
-        let loader = world.read_resource::<Loader>();
-        loader.load_from_data(
-            sprites,
-            (),
-            &world.read_resource::<AssetStorage<SpriteSheet>>(),
-        )
+            }
+        })
+        .collect();
+
+    let sprites = SpriteSheet {
+        texture_id: MAP_INDEX,
+        sprites,
     };
+    let loader = world.read_resource::<Loader>();
+    let handle = loader.load_from_data(
+        sprites,
+        (),
+        &world.read_resource::<AssetStorage<SpriteSheet>>(),
+    );
     world
         .write_resource::<SpriteSheetSet>()
-        .insert(MAP_INDEX, map_handle.clone());
+        .insert(MAP_INDEX, handle.clone());
 
     MapSprites {
-        handle: map_handle,
-        top: SpriteCollection {
-            topping: 0,
-            delivery: 1,
-            flavor_a: 2,
-            flavor_b: 3,
-            empty: 4,
-            ground: 5,
-            preparation: 6,
-        },
-        side: SpriteCollection {
-            topping: 7,
-            delivery: 8,
-            flavor_a: 9,
-            flavor_b: 10,
-            empty: 11,
-            ground: 12,
-            preparation: 13,
-        },
+        handle,
+        sprites: sprites_hash,
     }
 }

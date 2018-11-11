@@ -11,11 +11,10 @@ use amethyst::{
     },
     utils::application_root_dir,
 };
+use crate::{constants::*, ecs::*, util::*, WorldBounds};
 use log::*;
 use nalgebra::Vector2 as NAVector2;
 use ncollide2d::shape::*;
-
-use crate::{constants::*, ecs::*, util::*, WorldBounds};
 
 #[derive(Debug, Default)]
 pub struct Game {

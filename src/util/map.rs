@@ -119,7 +119,10 @@ pub fn map_loader(world: &mut World, sprite_def: &MapSprites, path: &str) -> Vec
                         .create_entity()
                         .with(SpriteRender {
                             sprite_sheet: sprite_def.handle.clone(),
-                            sprite_number: sprite_def.top.ground,
+                            sprite_number: *sprite_def
+                                .sprites
+                                .get("floor_top")
+                                .expect("Texture definition must contain a key 'floor_top'"),
                             flip_horizontal: false,
                             flip_vertical: false,
                         })
@@ -201,7 +204,6 @@ pub fn create_table(
                 })
                 .with(Solid)
                 .with(hitbox)
-                .with(Interaction { margin: 4.0 })
                 //.with(table_entity)
                 .with(Layered)
                 .with(side)
@@ -235,8 +237,14 @@ pub fn create_table(
             hitbox,
             side,
             top,
-            sprite_def.side.empty,
-            sprite_def.top.empty,
+            *sprite_def
+                .sprites
+                .get("empty_side")
+                .expect("Texture definition must contain a key 'empty_side'"),
+            *sprite_def
+                .sprites
+                .get("empty_top")
+                .expect("Texture definition must contain a key 'empty_top'"),
             0,
         )
     } else {
@@ -247,45 +255,131 @@ pub fn create_table(
         let top = top(x, y, half_w, half_h);
         let side = side(x, y, half_w, half_h);
 
+        let mut create_both =
+            |hitbox, side, top, sprite_side, sprite_top, sprite_hl, _table_entity| {
+                let top = world
+                    .create_entity()
+                    .with(SpriteRender {
+                        sprite_sheet: sprite_def.handle.clone(),
+                        sprite_number: sprite_top,
+                        flip_horizontal: false,
+                        flip_vertical: o.flip_vertical(),
+                    })
+                    .with(Layered)
+                    .with(top)
+                    .with(GlobalTransform::default())
+                    .build();
+                let side = world
+                    .create_entity()
+                    .with(SpriteRender {
+                        sprite_sheet: sprite_def.handle.clone(),
+                        sprite_number: sprite_side,
+                        flip_horizontal: false,
+                        flip_vertical: o.flip_vertical(),
+                    })
+                    .with(Solid)
+                    .with(hitbox)
+                    .with(Interact {
+                        top,
+                        highlight: sprite_hl,
+                        original: sprite_top,
+                    })
+                    .with(Layered)
+                    .with(side)
+                    .with(GlobalTransform::default())
+                    .build();
+                (side, top)
+            };
+
         match t {
             Table::FlavorA => create_both(
                 hitbox,
                 side,
                 top,
-                sprite_def.side.flavor_a,
-                sprite_def.top.flavor_a,
+                *sprite_def
+                    .sprites
+                    .get("flavor_a_side")
+                    .expect("Texture definition must contain a key 'flavor_a_side'"),
+                *sprite_def
+                    .sprites
+                    .get("flavor_a_top")
+                    .expect("Texture definition must contain a key 'flavor_a_top'"),
+                *sprite_def
+                    .sprites
+                    .get("flavor_a_top_hl")
+                    .expect("Texture definition must contain a key 'flavor_a_top_hl'"),
                 0,
             ),
             Table::FlavorB => create_both(
                 hitbox,
                 side,
                 top,
-                sprite_def.side.flavor_b,
-                sprite_def.top.flavor_b,
+                *sprite_def
+                    .sprites
+                    .get("flavor_b_side")
+                    .expect("Texture definition must contain a key 'flavor_b_side'"),
+                *sprite_def
+                    .sprites
+                    .get("flavor_b_top")
+                    .expect("Texture definition must contain a key 'flavor_b_top'"),
+                *sprite_def
+                    .sprites
+                    .get("flavor_b_top_hl")
+                    .expect("Texture definition must contain a key 'flavor_b_top_hl'"),
                 0,
             ),
             Table::Preparation => create_both(
                 hitbox,
                 side,
                 top,
-                sprite_def.side.preparation,
-                sprite_def.top.preparation,
+                *sprite_def
+                    .sprites
+                    .get("preparation_side")
+                    .expect("Texture definition must contain a key 'preparation_side'"),
+                *sprite_def
+                    .sprites
+                    .get("preparation_top")
+                    .expect("Texture definition must contain a key 'preparation_top'"),
+                *sprite_def
+                    .sprites
+                    .get("preparation_top_hl")
+                    .expect("Texture definition must contain a key 'preparation_top_hl'"),
                 0,
             ),
             Table::Topping => create_both(
                 hitbox,
                 side,
                 top,
-                sprite_def.side.topping,
-                sprite_def.top.topping,
+                *sprite_def
+                    .sprites
+                    .get("topping_side")
+                    .expect("Texture definition must contain a key 'topping_side'"),
+                *sprite_def
+                    .sprites
+                    .get("topping_top")
+                    .expect("Texture definition must contain a key 'topping_top'"),
+                *sprite_def
+                    .sprites
+                    .get("topping_top_hl")
+                    .expect("Texture definition must contain a key 'topping_top_hl'"),
                 0,
             ),
             Table::Delivery => create_both(
                 hitbox,
                 side,
                 top,
-                sprite_def.side.delivery,
-                sprite_def.top.delivery,
+                *sprite_def
+                    .sprites
+                    .get("delivery_side")
+                    .expect("Texture definition must contain a key 'delivery_side'"),
+                *sprite_def
+                    .sprites
+                    .get("delivery_top")
+                    .expect("Texture definition must contain a key 'delivery_top'"),
+                *sprite_def
+                    .sprites
+                    .get("delivery_top_hl")
+                    .expect("Texture definition must contain a key 'delivery_top_hl'"),
                 0,
             ),
 

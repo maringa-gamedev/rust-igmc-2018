@@ -94,6 +94,7 @@ fn main() -> amethyst::Result<()> {
         .with(ecs::MovementSystem, "xto_movement", &["xto_input"])
         .with(ecs::CollisionSystem, "xto_collision", &["xto_movement"])
         .with(ecs::LayerSystem, "xto_layer", &["xto_collision"])
+        .with(ecs::InteractSystem, "xto_interact", &["xto_collision"])
         .with_bundle(TransformBundle::new().with_dep(&["xto_movement"]))?
         .with_bundle(UiBundle::<String, String>::new())?
         .with(Processor::<Source>::new(), "source_processor", &[])
