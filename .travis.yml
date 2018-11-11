@@ -1,0 +1,81 @@
+# Based on the "trust" template v0.1.2
+# https://github.com/japaric/trust/tree/v0.1.2
+
+dist: trusty
+language: rust
+services: docker
+sudo: required
+
+env:
+  global:
+    - CRATE_NAME=rust-igmc-2018
+
+matrix:
+  include:
+    # Linux
+    - env: TARGET=aarch64-unknown-linux-gnu
+      rust: nightly
+    - env: TARGET=arm-unknown-linux-gnueabi
+      rust: nightly
+    - env: TARGET=armv7-unknown-linux-gnueabihf
+      rust: nightly
+    - env: TARGET=i686-unknown-linux-gnu
+      rust: nightly
+    - env: TARGET=i686-unknown-linux-musl
+      rust: nightly
+    - env: TARGET=x86_64-unknown-linux-gnu
+      rust: nightly
+    - env: TARGET=x86_64-unknown-linux-musl
+      rust: nightly
+
+    # Windows
+    - env: TARGET=i686-pc-windows-msvc
+      rust: nightly
+    - env: TARGET=x86_64-pc-windows-msvc
+      rust: nightly
+    - env: TARGET=i686-pc-windows-gnu
+      rust: nightly
+    - env: TARGET=x86_64-pc-windows-gnu
+      rust: nightly
+
+before_install:
+  - set -e
+  - rustup self update
+
+install:
+  - sh ci/install.sh
+  - source ~/.cargo/env || true
+
+script:
+  - bash ci/script.sh
+
+after_script: set +e
+
+before_deploy:
+  - sh ci/before_deploy.sh
+
+deploy:
+  api_key:
+    secure: "Vt4wqZ8n0cQqYXmxE+2FKEN6ZXdw9FZ/D+MYnJii17mF1G0lBGlw8Gl0C3Wf77arNIbQ9YYP6dxn/DyCAOMUCTT5y3sbdwJX3mBwLAFHtezM8VRMrIrTOaDBZ7h6mLuOeAc0rJ4SlFUtMzEl2zwaIoLctSrq9UV5ev7R43q6XaC1kLH/0cny2dG4xu+IgdlWpigxcK/ZuffjK+ZV/jy4Ly5KRiiwYNBY09vyhZfodMPCu9ekuaFGPHuRyeACwvLTusXHJjHUt4i2VJPO9tfsZ8tzzvxJDBsnNQfM+E48nRE+6jGIWq3BBMuZ4Pp7tN4aKUvWqgW0Sy9bPon8du6BbZX+j5LKFeOGhwuY5fsf+VMxpVkgLQla4jp/EUvx+/58aSBgcF6A5ng0gaunM8YbCq5DGs96T2qY8U3mRB1Sl3b9SgUk+M/OI688xZ5yzUIhgeFTQ3Ad8Jwnx40ZDBhBLCe1HqosBKxSLQ7oUGC9r1JsqfiieTNTD/ljP5oTt5GXLtRQ8OrMDKHsdHA0EJLaLr5VbKpy/odb4X/QxCUSNs0Ahs6hKLBAYRKLfbfFrjkCaewQu7UhKaB7dYs8s2r8YpmR2glzTWdoRXzlxPYS5YOqaTOvWP9JZhCi7wTlZKOcWkOL1Qs1J87IJm0EVC2KPu/UtwAT248LKTbTTCZyS3s="
+  file_glob: true
+  file: $CRATE_NAME-$TRAVIS_TAG-$TARGET.*
+  on:
+    condition: $TRAVIS_RUST_VERSION = nightly
+    tags: true
+  provider: releases
+  skip_cleanup: true
+
+cache: cargo
+before_cache:
+  # Travis can't cache files that are not readable by "others"
+  - chmod -R a+r $HOME/.cargo
+
+branches:
+  only:
+    # release tags
+    - /^v\d+\.\d+\.\d+.*$/
+    - master
+
+notifications:
+  email:
+    on_success: never
