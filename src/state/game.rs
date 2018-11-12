@@ -7,14 +7,17 @@ use amethyst::{
     input::{is_close_requested, is_key_down},
     prelude::*,
     renderer::{
-        Camera, Projection, ScreenDimensions, SpriteRender, SpriteSheetHandle, VirtualKeyCode,
+        Camera, Projection, ScreenDimensions, SpriteRender, SpriteSheetHandle, Transparent,
+        VirtualKeyCode,
     },
     utils::application_root_dir,
 };
 use crate::{constants::*, ecs::*, util::*, WorldBounds};
+use either::*;
 use log::*;
 use nalgebra::Vector2 as NAVector2;
 use ncollide2d::shape::*;
+use std::collections::HashMap;
 
 #[derive(Debug, Default)]
 pub struct Game {
@@ -27,6 +30,18 @@ pub struct Game {
 
 const V_W: f32 = 240.0;
 const V_H: f32 = 136.0;
+
+pub struct Animations {
+    pub animations: HashMap<String, Animation>,
+}
+
+impl Default for Animations {
+    fn default() -> Self {
+        Animations {
+            animations: HashMap::new(),
+        }
+    }
+}
 
 impl<'a, 'b> SimpleState<'a, 'b> for Game {
     fn on_start(&mut self, data: StateData<GameData>) {
@@ -59,16 +74,21 @@ impl<'a, 'b> SimpleState<'a, 'b> for Game {
         self.camera = Some(camera_ui);
 
         let ui_texture_handle = crate::loader::load_ui_texture(&mut world);
-        let players_texture_handle = crate::loader::load_players_texture(&mut world);
+        let (player_handle, animations) = crate::loader::load_players_texture(&mut world);
         let map_sprites = crate::loader::load_map_texture(&mut world);
+        info!("Animations: {:#?}", animations);
+        world.add_resource(Animations { animations });
 
-        let width_count = ((V_W * 2.0) / 16.0) as isize;
-        let height_count = ((V_H * 2.0) / 16.0) as isize;
+        let width_count = ((V_W * 2.0) / 16.0) as isize + 2;
+        let height_count = ((V_H * 2.0) / 16.0) as isize + 2;
         for i in 0..width_count {
             for j in 0..height_count {
                 let mut transform = Transform::default();
-                transform.translation =
-                    Vector3::new(8.0 + (i as f32 * 16.0), 8.0 + (j as f32 * 16.0), -1020.0);
+                transform.translation = Vector3::new(
+                    8.0 + (i - 1) as f32 * 16.0,
+                    8.0 + (j - 1) as f32 * 16.0,
+                    -1020.0,
+                );
 
                 let entity = world
                     .create_entity()
@@ -77,6 +97,14 @@ impl<'a, 'b> SimpleState<'a, 'b> for Game {
                         sprite_number: 0,
                         flip_horizontal: false,
                         flip_vertical: false,
+                    })
+                    .with(Background {
+                        from: Vector2::new(
+                            8.0 + (i - 1) as f32 * 16.0,
+                            8.0 + (j - 1) as f32 * 16.0,
+                        ),
+                        to: Vector2::new(8.0 + i as f32 * 16.0, 8.0 + j as f32 * 16.0),
+                        timer: 0.0,
                     })
                     .with(transform)
                     .with(GlobalTransform::default())
@@ -88,17 +116,44 @@ impl<'a, 'b> SimpleState<'a, 'b> for Game {
         //let center = (V_W, V_H);
         self.create_player(
             &mut world,
-            177.0,
+            186.0,
             144.0,
             0,
-            players_texture_handle.clone(),
+            player_handle.clone(),
             0,
+            Deg(0.0),
+        );
+        self.create_player(
+            &mut world,
+            186.0,
+            192.0,
+            1,
+            player_handle.clone(),
+            1,
+            Deg(0.0),
+        );
+        self.create_player(
+            &mut world,
+            88.0,
+            144.0,
+            2,
+            player_handle.clone(),
+            2,
+            Deg(0.0),
+        );
+        self.create_player(
+            &mut world,
+            88.0,
+            192.0,
+            3,
+            player_handle.clone(),
+            3,
             Deg(0.0),
         );
         self.create_bounds(&mut world, V_W * 2.0, V_H * 2.0);
 
         let app_root = application_root_dir();
-        let map_path = format!("{}/assets/map/0001.ron", app_root);
+        let map_path = format!("{}/assets/map/0003.ron", app_root);
         let mut map_entities = map_loader(&mut world, &map_sprites, &map_path);
         self.entities.append(&mut map_entities);
     }
@@ -151,36 +206,27 @@ impl Game {
         let entity = world
             .create_entity()
             .with(Direction {
-                current: Cardinal::North,
+                current: Cardinal::South,
                 previous: None,
-                north: 0,
-                north_east: 1,
-                east: 2,
-                south_east: 3,
-                south: 4,
-                south_west: 5,
-                west: 6,
-                north_west: 7,
-            })
-            .with(PixelPerfect {
-                position: Vector2::new(x, y),
+                current_anim: "idle".to_string(),
             })
             .with(SpriteRender {
                 sprite_sheet: handle,
                 sprite_number: index,
                 flip_horizontal: false,
-                flip_vertical: true,
+                flip_vertical: false,
             })
             .with(Player::new(gamepad_index, 0.0))
             .with(Input::new(Vector2::new(angle.cos(), angle.sin())))
-            .with(Velocity::new(20.0))
+            .with(Velocity::new(40.0))
             .with(Hitbox {
-                shape: Cuboid::new(NAVector2::new(
+                shape: Either::Left(Cuboid::new(NAVector2::new(
                     PLAYER_HITBOX_WIDTH / 2.0,
                     PLAYER_HITBOX_HEIGHT / 2.0,
-                )),
+                ))),
                 offset: NAVector2::new(0.0, 0.0),
             })
+            .with(Transparent)
             .with(Layered)
             .with(transform)
             .with(GlobalTransform::default())
@@ -219,7 +265,7 @@ impl Game {
                 .create_entity()
                 .with(Solid)
                 .with(Hitbox {
-                    shape: Cuboid::new(NAVector2::new(w / 2.0, h / 2.0)),
+                    shape: Either::Left(Cuboid::new(NAVector2::new(w / 2.0, h / 2.0))),
                     offset: NAVector2::new(0.0, 0.0),
                 })
                 .with(transform)

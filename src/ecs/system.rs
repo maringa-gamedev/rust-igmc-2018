@@ -1,3 +1,4 @@
+mod background_animation;
 mod collision;
 mod control;
 mod direction;
@@ -7,5 +8,6 @@ mod layer;
 mod movement;
 
 pub use self::{
-    collision::*, control::*, direction::*, input::*, interact::*, layer::*, movement::*,
+    background_animation::*, collision::*, control::*, direction::*, input::*, interact::*,
+    layer::*, movement::*,
 };

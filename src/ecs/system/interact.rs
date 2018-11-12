@@ -4,6 +4,7 @@ use amethyst::{
     renderer::SpriteRender,
 };
 use crate::{constants::*, ecs::*};
+use either::*;
 use itertools::Itertools;
 use log::*;
 use nalgebra::{Isometry2, Vector2};
@@ -44,10 +45,15 @@ impl<'s> System<'s> for InteractSystem {
                 ),
                 nalgebra::zero(),
             );
-            let check_shape = Cuboid::new(Vector2::new(
-                hitbox.shape.half_extents().x * 0.9,
-                hitbox.shape.half_extents().y * 0.9,
-            ));
+            let check_shape = match &hitbox.shape {
+                Either::Left(cuboid) => Cuboid::new(Vector2::new(
+                    cuboid.half_extents().x * 0.9,
+                    cuboid.half_extents().y * 0.9,
+                )),
+                Either::Right(ball) => {
+                    Cuboid::new(Vector2::new(ball.radius() * 0.9, ball.radius() * 0.9))
+                }
+            };
             let dir = direction.current;
 
             for (transform, hitbox, interact) in (&transforms, &hitboxes, &interacts)
@@ -76,7 +82,10 @@ impl<'s> System<'s> for InteractSystem {
                     ),
                     nalgebra::zero(),
                 );
-                let interact_shape = &hitbox.shape;
+                let interact_shape = match &hitbox.shape {
+                    Either::Left(cuboid) => cuboid,
+                    Either::Right(_) => panic!("DO NOT USE BALLS FOR INTERACTION COLLISION"),
+                };
                 let top = sprites.get_mut(interact.top).unwrap();
 
                 if let Proximity::Intersecting =

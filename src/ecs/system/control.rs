@@ -1,5 +1,5 @@
 use amethyst::{core::cgmath::*, ecs::prelude::*};
-use crate::{ecs::*, util::*};
+use crate::{ecs::*, state::Animations, util::*};
 use log::info;
 use std::{collections::HashMap, sync::*};
 
@@ -12,11 +12,12 @@ impl<'s> System<'s> for ControlSystem {
         ReadStorage<'s, Player>,
         WriteStorage<'s, Input>,
         WriteStorage<'s, Direction>,
+        Write<'s, Animations>,
     );
 
     fn run(
         &mut self,
-        (entities, controllers, players, mut inputs, mut directions): Self::SystemData,
+        (entities, controllers, players, mut inputs, mut directions, mut animations): Self::SystemData,
     ) {
         for (e, player, input) in (&*entities, &players, &mut inputs).join() {
             let mut controllers = controllers.lock().unwrap();
@@ -59,6 +60,10 @@ impl<'s> System<'s> for ControlSystem {
                 };
                 if Some(new_angle) != input.wants_to_move {
                     input.last_moved_direction = input.wants_to_move;
+
+                    //for (_, anim) in &mut animations.animations {
+                    //anim.reset();
+                    //}
                 }
                 input.wants_to_move = Some(new_angle);
 

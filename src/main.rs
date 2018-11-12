@@ -87,10 +87,11 @@ fn main() -> amethyst::Result<()> {
         .with_bundle(
             InputBundle::<String, String>::new().with_bindings_from_file(&key_bindings_path)?,
         )?
+        .with(ecs::BackgroundAnimationSystem, "xto_bg_anim", &[])
         .with(ecs::ControllerSystem::new(), "xto_controller", &[])
         .with(ecs::ControlSystem, "xto_control", &["xto_controller"])
         .with(ecs::InputSystem, "xto_input", &["xto_control"])
-        .with(ecs::DirectionSystem, "xto_direction", &["xto_control"])
+        .with(ecs::AnimationSystem, "xto_direction", &["xto_control"])
         .with(ecs::MovementSystem, "xto_movement", &["xto_input"])
         .with(ecs::CollisionSystem, "xto_collision", &["xto_movement"])
         .with(ecs::LayerSystem, "xto_layer", &["xto_collision"])

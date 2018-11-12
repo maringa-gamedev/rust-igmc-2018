@@ -7,38 +7,12 @@ use amethyst::{
     },
     utils::application_root_dir,
 };
-use crate::constants::*;
+use crate::{constants::*, util::*};
 use log::*;
 use ron::de::from_reader;
-use serde_derive::*;
 use std::{collections::HashMap, fs::*};
 
-#[derive(Debug, Default, Serialize, Deserialize)]
-pub struct SpriteCollection {
-    pub topping: usize,
-    pub delivery: usize,
-    pub flavor_a: usize,
-    pub flavor_b: usize,
-    pub empty: usize,
-    pub ground: usize,
-    pub preparation: usize,
-}
-
-#[derive(Debug)]
-pub struct MapSprites {
-    pub handle: SpriteSheetHandle,
-    pub sprites: HashMap<String, usize>,
-}
-
-#[derive(Debug, Default, Serialize, Deserialize)]
-pub struct TextureDefinition {
-    path: String,
-    width: f32,
-    height: f32,
-    sprites: Vec<(String, f32, f32, f32, f32)>,
-}
-
-pub fn load_map_texture(world: &mut World) -> MapSprites {
+pub fn load_map_texture(world: &mut World) -> SpriteDefinition {
     info!("Loading Map Textures.");
 
     let app_root = application_root_dir();
@@ -103,7 +77,7 @@ pub fn load_map_texture(world: &mut World) -> MapSprites {
         .write_resource::<SpriteSheetSet>()
         .insert(MAP_INDEX, handle.clone());
 
-    MapSprites {
+    SpriteDefinition {
         handle,
         sprites: sprites_hash,
     }

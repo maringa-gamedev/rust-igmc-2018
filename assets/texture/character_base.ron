@@ -1,0 +1,66 @@
+(
+  TextureDefinition (
+    path: "texture/character_base.png",
+    width: 192.0,
+    height: 192.0,
+    sprites: [
+      ("char_east_idle",   0.0,  0.0, 0.25, 0.25),
+      ("char_east_step_1", 0.25, 0.0, 0.25, 0.25),
+      ("char_east_step_2", 0.50, 0.0, 0.25, 0.25),
+      ("char_east_step_3", 0.75, 0.0, 0.25, 0.25),
+
+      ("char_north_idle",   0.0,  0.25, 0.25, 0.25),
+      ("char_north_step_1", 0.25, 0.25, 0.25, 0.25),
+      ("char_north_step_2", 0.50, 0.25, 0.25, 0.25),
+      ("char_north_step_3", 0.75, 0.25, 0.25, 0.25),
+
+      ("char_west_idle",   0.0,  0.5, 0.25, 0.25),
+      ("char_west_step_1", 0.25, 0.5, 0.25, 0.25),
+      ("char_west_step_2", 0.50, 0.5, 0.25, 0.25),
+      ("char_west_step_3", 0.75, 0.5, 0.25, 0.25),
+
+      ("char_south_idle",   0.0,  0.75, 0.25, 0.25),
+      ("char_south_step_1", 0.25, 0.75, 0.25, 0.25),
+      ("char_south_step_2", 0.50, 0.75, 0.25, 0.25),
+      ("char_south_step_3", 0.75, 0.75, 0.25, 0.25),
+    ],
+  ),
+  {
+    "char_east_idle": ([
+      ("char_east_idle", 0.25),
+    ], Once),
+      
+    "char_east_walk": ([
+      ("char_east_step_1", 0.150),
+      ("char_east_step_2", 0.150),
+      ("char_east_step_3", 0.150),
+    ], Bounce),
+
+    "char_north_idle": ([
+      ("char_north_idle", 0.25),
+    ], Once),
+    "char_north_walk": ([
+      ("char_north_step_1", 0.150),
+      ("char_north_step_2", 0.150),
+      ("char_north_step_3", 0.150),
+    ], Bounce),
+
+    "char_west_idle": ([
+      ("char_west_idle", 0.25),
+    ], Once),
+    "char_west_walk": ([
+      ("char_west_step_1", 0.150),
+      ("char_west_step_2", 0.150),
+      ("char_west_step_3", 0.150),
+    ], Bounce),
+
+    "char_south_idle": ([
+      ("char_south_idle", 0.25),
+    ], Once),
+    "char_south_walk": ([
+      ("char_south_step_1", 0.150),
+      ("char_south_step_2", 0.150),
+      ("char_south_step_3", 0.150),
+    ], Bounce),
+  },
+)

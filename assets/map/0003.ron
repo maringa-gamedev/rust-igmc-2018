@@ -1,0 +1,59 @@
+#![enable(implicit_some)]
+
+MapDefinition (
+  tables: [
+    (0.0, 1.0, FlavorA, VerticalRight),
+    (0.0, 3.0, FlavorA, VerticalRight),
+    (3.0, 1.0, FlavorA, VerticalLeft),
+    (3.0, 3.0, FlavorA, VerticalLeft),
+
+    (6.0, 1.0, FlavorB, VerticalRight),
+    (6.0, 3.0, FlavorB, VerticalRight),
+    (9.0, 1.0, FlavorB, VerticalLeft),
+    (9.0, 3.0, FlavorB, VerticalLeft),
+
+    (0.0, 8.0, Preparation, VerticalLeft),
+    (9.0, 8.0, Preparation, VerticalRight),
+    (1.0, 10.0, Preparation, HorizontalBottom),
+    (7.0, 10.0, Preparation, HorizontalBottom),
+
+    (3.0, 8.0, Topping, VerticalRight),
+    (6.0, 8.0, Topping, VerticalLeft),
+    (0.0, 6.0, Topping, VerticalLeft),
+    (9.0, 6.0, Topping, VerticalRight),
+
+    (1.0, 0.0, Delivery, HorizontalTop),
+    (7.0, 0.0, Delivery, HorizontalTop),
+
+    (0.0, 0.0, Empty, HorizontalBottom),
+    (3.0, 0.0, Empty, HorizontalBottom),
+    (6.0, 0.0, Empty, HorizontalBottom),
+    (9.0, 0.0, Empty, HorizontalBottom),
+
+    (0.0, 10.0, Empty, HorizontalBottom),
+    (3.0, 10.0, Empty, HorizontalBottom),
+    (6.0, 10.0, Empty, HorizontalBottom),
+    (9.0, 10.0, Empty, HorizontalBottom),
+
+    (4.0, 0.0, Empty, HorizontalBottom),
+    (4.0, 1.0, Empty, HorizontalBottom),
+    (4.0, 2.0, Empty, HorizontalBottom),
+    (4.0, 3.0, Empty, HorizontalBottom),
+    (4.0, 4.0, Empty, HorizontalBottom),
+    (4.0, 8.0, Empty, HorizontalBottom),
+    (4.0, 9.0, Empty, HorizontalBottom),
+    (4.0, 10.0, Empty, HorizontalBottom),
+
+    (5.0, 0.0, Empty, HorizontalBottom),
+    (5.0, 1.0, Empty, HorizontalBottom),
+    (5.0, 2.0, Empty, HorizontalBottom),
+    (5.0, 3.0, Empty, HorizontalBottom),
+    (5.0, 4.0, Empty, HorizontalBottom),
+    (5.0, 8.0, Empty, HorizontalBottom),
+    (5.0, 9.0, Empty, HorizontalBottom),
+    (5.0, 10.0, Empty, HorizontalBottom),
+
+    (0.0, 5.0, Empty, HorizontalBottom),
+    (9.0, 5.0, Empty, HorizontalBottom),
+  ],
+)

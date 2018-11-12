@@ -5,18 +5,34 @@ use amethyst::{
         MaterialTextureSet, PngFormat, Sprite, SpriteSheet, SpriteSheetHandle, SpriteSheetSet,
         Texture, TextureCoordinates, TextureMetadata,
     },
+    utils::application_root_dir,
 };
+use crate::{constants::*, ecs::*, util::*};
 use log::*;
+use ron::de::from_reader;
+use std::{collections::HashMap, fs::File};
 
-use crate::constants::*;
+pub fn load_players_texture(world: &mut World) -> (SpriteSheetHandle, HashMap<String, Animation>) {
+    let app_root = application_root_dir();
+    let path = format!("{}/assets/texture/character_base.ron", app_root);
+    let f = File::open(&path).expect("Failed opening file");
+    let (tex_def, anim_def): (
+        TextureDefinition,
+        HashMap<String, (Vec<(String, f32)>, AnimationLoop)>,
+    ) = match from_reader(f) {
+        Ok(x) => x,
+        Err(e) => {
+            error!("Error parsing texture definition: {}", e);
+            panic!("Invalid texture definition <{}>!", path);
+        }
+    };
 
-pub fn load_players_texture(world: &mut World) -> SpriteSheetHandle {
     info!("Loading game texture.");
     // Load Textures
     let texture = {
         let loader = world.read_resource::<Loader>();
         loader.load(
-            "texture/players.png",
+            tex_def.path,
             PngFormat,
             TextureMetadata::srgb_scale(),
             (),
@@ -27,28 +43,33 @@ pub fn load_players_texture(world: &mut World) -> SpriteSheetHandle {
         .write_resource::<MaterialTextureSet>()
         .insert(PLAYERS_TEXTURE_INDEX, texture);
 
-    info!("Creating game sprites.");
-    let mut sprites = Vec::with_capacity(32);
-    let count_w = 8;
-    let count_h = 1;
-    let step_w = 1.0 / count_w as f32;
-    let step_h = 1.0 / count_h as f32;
-    for i in 0..count_h {
-        for j in 0..count_w {
-            sprites.push(Sprite {
-                width: SPRITE_WIDTH,
-                height: SPRITE_HEIGHT,
+    let (sw, sh) = (tex_def.width, tex_def.height);
+    let mut sprites_hash = HashMap::new();
+    let mut index: usize = 0;
+    let sprites = tex_def
+        .sprites
+        .iter()
+        .map(|(name, x, y, w, h)| {
+            sprites_hash.insert(name.clone(), index);
+            index += 1;
+            Sprite {
+                width: sw * w,
+                height: sh * h,
                 //offsets: [-SPRITE_SIZE / 2.0, -SPRITE_SIZE / 2.0],
-                offsets: [0.0, -((SPRITE_HEIGHT / 2.0) - (PLAYER_HITBOX_HEIGHT / 2.0))],
+                offsets: [
+                    0.0,
+                    -((SPRITE_HEIGHT / 2.0) - ((PLAYER_HITBOX_HEIGHT / 2.0) + 4.0)),
+                ],
                 tex_coords: TextureCoordinates {
-                    left: j as f32 * step_w,
-                    right: (j + 1) as f32 * step_w,
-                    top: 1.0 - (i + 1) as f32 * step_h,
-                    bottom: 1.0 - (i as f32 * step_h),
+                    left: *x,
+                    right: x + w,
+                    top: y + h,
+                    bottom: *y,
                 },
-            });
-        }
-    }
+            }
+        })
+        .collect();
+
     let sprites = SpriteSheet {
         texture_id: PLAYERS_TEXTURE_INDEX,
         sprites,
@@ -67,5 +88,20 @@ pub fn load_players_texture(world: &mut World) -> SpriteSheetHandle {
         .write_resource::<SpriteSheetSet>()
         .insert(PLAYERS_TEXTURE_INDEX, handle.clone());
 
-    handle
+    let anim_def = anim_def
+        .iter()
+        .map(|(k, v)| {
+            (
+                k.to_owned(),
+                Animation::new(
+                    v.0.iter()
+                        .map(|(name, duration)| (*sprites_hash.get(name).unwrap(), *duration))
+                        .collect(),
+                    v.1.clone(),
+                ),
+            )
+        })
+        .into_iter()
+        .collect();
+    (handle, anim_def)
 }

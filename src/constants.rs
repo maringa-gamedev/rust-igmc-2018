@@ -1,5 +1,5 @@
-pub const SPRITE_WIDTH: f32 = 24.0;
-pub const SPRITE_HEIGHT: f32 = 32.0;
+pub const SPRITE_WIDTH: f32 = 48.0;
+pub const SPRITE_HEIGHT: f32 = 48.0;
 pub const PLAYER_HITBOX_WIDTH: f32 = 16.0;
 pub const PLAYER_HITBOX_HEIGHT: f32 = 16.0;
 
@@ -11,7 +11,7 @@ pub const BASE: f32 = 16.0;
 pub const MAP_INDEX: u64 = 1;
 //pub const MAP_WIDTH: f32 = 480.0;
 //pub const MAP_HEIGHT: f32 = 272.0;
-pub const MAP_OFFSET_X: f32 = 4.0 * BASE;
+pub const MAP_OFFSET_X: f32 = 3.5 * BASE;
 pub const MAP_OFFSET_Y: f32 = 3.0 * BASE;
 
 //pub const ENEMY_RADIUS: f32 = 0.8125;

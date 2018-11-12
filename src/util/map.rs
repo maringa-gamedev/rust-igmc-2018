@@ -6,7 +6,8 @@ use amethyst::{
     ecs::prelude::*,
     renderer::SpriteRender,
 };
-use crate::{constants::*, ecs::*, loader::*};
+use crate::{constants::*, ecs::*, loader::*, util::*};
+use either::*;
 use log::*;
 use nalgebra::Vector2 as NAVector2;
 use ncollide2d::shape::*;
@@ -96,7 +97,7 @@ pub struct MapDefinition {
     tables: Vec<(f32, f32, Table, TableOrientation)>,
 }
 
-pub fn map_loader(world: &mut World, sprite_def: &MapSprites, path: &str) -> Vec<Entity> {
+pub fn map_loader(world: &mut World, sprite_def: &SpriteDefinition, path: &str) -> Vec<Entity> {
     let f = File::open(&path).expect("Failed opening file");
     let map_def: MapDefinition = match from_reader(f) {
         Ok(x) => x,
@@ -105,7 +106,7 @@ pub fn map_loader(world: &mut World, sprite_def: &MapSprites, path: &str) -> Vec
             panic!("Invalid map file <{}>!", path);
         }
     };
-    let mut tiles: Vec<Entity> = (0..9)
+    let mut tiles: Vec<Entity> = (0..10)
         .map(|i| {
             (0..11)
                 .map(|j| {
@@ -133,7 +134,7 @@ pub fn map_loader(world: &mut World, sprite_def: &MapSprites, path: &str) -> Vec
                 })
                 .collect()
         })
-        .fold(Vec::with_capacity(9 * 11), |mut acc, v: Vec<Entity>| {
+        .fold(Vec::with_capacity(10 * 11), |mut acc, v: Vec<Entity>| {
             acc.extend(v);
             acc
         });
@@ -164,17 +165,17 @@ pub fn map_loader(world: &mut World, sprite_def: &MapSprites, path: &str) -> Vec
 
 pub fn create_table(
     world: &mut World,
-    sprite_def: &MapSprites,
+    sprite_def: &SpriteDefinition,
     t: &Table,
     o: &TableOrientation,
     x: f32,
     y: f32,
 ) -> (Entity, Entity) {
     let hitbox = |half_w, half_h| Hitbox {
-        shape: Cuboid::new(NAVector2::new(
+        shape: Either::Left(Cuboid::new(NAVector2::new(
             half_w,
             half_h * o.hitbox_height_multiplier(),
-        )),
+        ))),
         offset: NAVector2::new(0.0, half_h),
     };
 

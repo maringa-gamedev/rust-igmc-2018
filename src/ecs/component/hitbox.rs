@@ -1,9 +1,10 @@
 use amethyst::ecs::prelude::*;
+use either::*;
 use nalgebra::*;
 use ncollide2d::shape::*;
 
 pub struct Hitbox {
-    pub shape: Cuboid<f32>,
+    pub shape: Either<Cuboid<f32>, Ball<f32>>,
     pub offset: Vector2<f32>,
 }
 

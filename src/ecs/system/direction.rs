@@ -1,29 +1,55 @@
-use amethyst::{core::cgmath::*, ecs::prelude::*, renderer::SpriteRender};
-use crate::{ecs::*, util::*};
+use amethyst::{
+    core::{cgmath::*, timing::Time},
+    ecs::prelude::*,
+    renderer::SpriteRender,
+};
+use crate::{ecs::*, state::Animations, util::*};
 use log::*;
 
-pub struct DirectionSystem;
+pub struct AnimationSystem;
 
-impl<'s> System<'s> for DirectionSystem {
+impl<'s> System<'s> for AnimationSystem {
     type SystemData = (
-        ReadStorage<'s, Input>,
         WriteStorage<'s, Direction>,
         WriteStorage<'s, SpriteRender>,
+        Read<'s, Time>,
+        Write<'s, Animations>,
     );
 
-    fn run(&mut self, (inputs, mut directions, mut sprites): Self::SystemData) {
-        for (input, direction, sprite) in (&inputs, &mut directions, &mut sprites).join() {
+    fn run(&mut self, (mut directions, mut sprites, time, mut animations): Self::SystemData) {
+        let ds = time.delta_seconds();
+        for (_, anim) in &mut animations.animations {
+            anim.update_timer(ds);
+        }
+        let animations = &animations.animations;
+        for (direction, sprite) in (&mut directions, &mut sprites).join() {
             sprite.sprite_number = match direction.current {
-                Cardinal::North => direction.north,
-                Cardinal::NorthWest => direction.north_west,
-                Cardinal::NorthEast => direction.north_east,
+                Cardinal::North => {
+                    animations[&format!("char_north_{}", &direction.current_anim)].get_frame()
+                }
+                Cardinal::NorthWest => {
+                    animations[&format!("char_north_{}", &direction.current_anim)].get_frame()
+                }
+                Cardinal::NorthEast => {
+                    animations[&format!("char_north_{}", &direction.current_anim)].get_frame()
+                }
 
-                Cardinal::South => direction.south,
-                Cardinal::SouthWest => direction.south_west,
-                Cardinal::SouthEast => direction.south_east,
+                Cardinal::South => {
+                    animations[&format!("char_south_{}", &direction.current_anim)].get_frame()
+                }
+                Cardinal::SouthWest => {
+                    animations[&format!("char_south_{}", &direction.current_anim)].get_frame()
+                }
+                Cardinal::SouthEast => {
+                    animations[&format!("char_south_{}", &direction.current_anim)].get_frame()
+                }
 
-                Cardinal::West => direction.west,
-                Cardinal::East => direction.east,
+                Cardinal::West => {
+                    animations[&format!("char_west_{}", &direction.current_anim)].get_frame()
+                }
+                Cardinal::East => {
+                    animations[&format!("char_east_{}", &direction.current_anim)].get_frame()
+                }
             };
         }
     }

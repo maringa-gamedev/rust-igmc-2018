@@ -4,7 +4,9 @@ use amethyst::{
 };
 use crate::ecs::*;
 use log::*;
+use either::*;
 use nalgebra::{Isometry2, Vector2};
+use ncollide2d::shape::*;
 use ncollide2d::query::{self, *};
 
 pub struct CollisionSystem;
@@ -35,7 +37,6 @@ impl<'s> System<'s> for CollisionSystem {
                             nalgebra::zero(),
                         )
                     };
-                    let o_shape = &o_hitbox.shape;
                     let e_pos = {
                         let e_transform = transforms.get(e).unwrap();
                         Isometry2::new(
@@ -44,8 +45,13 @@ impl<'s> System<'s> for CollisionSystem {
                             nalgebra::zero(),
                         )
                     };
-                    let e_shape = &e_hitbox.shape;
-                    if let Some(result) = query::contact(&o_pos, o_shape, &e_pos, e_shape, 1.0) {
+                    if let Some(result) = match (&o_hitbox.shape, &e_hitbox.shape)  {
+                            (Either::Left(o), Either::Left(e)) => query::contact(&o_pos, o, &e_pos, e, 1.0),
+                            (Either::Left(o), Either::Right(e)) => query::contact(&o_pos, o, &e_pos, e, 1.0),
+                            (Either::Right(o), Either::Left(e)) => query::contact(&o_pos, o, &e_pos, e, 1.0),
+                            (Either::Right(o), Either::Right(e)) => query::contact(&o_pos, o, &e_pos, e, 1.0),
+                        }
+                     {
                         let depth = result.depth;
                         if depth > 0.0 {
                             let t = transforms.get_mut(e).unwrap();

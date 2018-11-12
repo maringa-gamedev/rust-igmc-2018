@@ -1,3 +1,4 @@
+mod background;
 mod direction;
 mod effect;
 mod hitbox;
@@ -11,6 +12,6 @@ mod solid;
 mod velocity;
 
 pub use self::{
-    direction::*, effect::*, hitbox::*, input::*, interact::*, interaction::*, layered::*,
-    pixel_perfect::*, player::*, solid::*, velocity::*,
+    background::*, direction::*, effect::*, hitbox::*, input::*, interact::*, interaction::*,
+    layered::*, pixel_perfect::*, player::*, solid::*, velocity::*,
 };
