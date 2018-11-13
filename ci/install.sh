@@ -42,8 +42,6 @@ main() {
            --git japaric/cross \
            --tag $tag \
            --target $target
-
-    sudo apt install libasound2-dev libx11-xcb-dev libssl-dev cmake libfreetype6-dev libexpat1-dev libxcb1-dev
 }
 
 main
