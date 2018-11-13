@@ -79,39 +79,49 @@ impl<'a, 'b> SimpleState<'a, 'b> for Game {
         info!("Animations: {:#?}", animations);
         world.add_resource(Animations { animations });
 
-        let width_count = ((V_W * 2.0) / 16.0) as isize + 2;
-        let height_count = ((V_H * 2.0) / 16.0) as isize + 2;
-        for i in 0..width_count {
-            for j in 0..height_count {
-                let mut transform = Transform::default();
-                transform.translation = Vector3::new(
-                    8.0 + (i - 1) as f32 * 16.0,
-                    8.0 + (j - 1) as f32 * 16.0,
-                    -1020.0,
-                );
-
-                let entity = world
-                    .create_entity()
-                    .with(SpriteRender {
-                        sprite_sheet: ui_texture_handle.clone(),
-                        sprite_number: 0,
-                        flip_horizontal: false,
-                        flip_vertical: false,
-                    })
-                    .with(Background {
-                        from: Vector2::new(
-                            8.0 + (i - 1) as f32 * 16.0,
-                            8.0 + (j - 1) as f32 * 16.0,
-                        ),
-                        to: Vector2::new(8.0 + i as f32 * 16.0, 8.0 + j as f32 * 16.0),
-                        timer: 0.0,
-                    })
-                    .with(transform)
-                    .with(GlobalTransform::default())
-                    .build();
-                self.entities.push(entity);
-            }
-        }
+        let width_count = ((V_W * 2.0) / 16.0) as usize + 2;
+        let height_count = ((V_H * 2.0) / 16.0) as usize + 2;
+        self.entities.append(
+            &mut (0..width_count)
+                .map(|i| {
+                    (0..height_count)
+                        .map(|j| {
+                            let mut transform = Transform::default();
+                            transform.translation = Vector3::new(
+                                8.0 + (i as isize - 1) as f32 * 16.0,
+                                8.0 + (j as isize - 1) as f32 * 16.0,
+                                -1020.0,
+                            );
+                            world
+                                .create_entity()
+                                .with(SpriteRender {
+                                    sprite_sheet: ui_texture_handle.clone(),
+                                    sprite_number: 0,
+                                    flip_horizontal: false,
+                                    flip_vertical: false,
+                                })
+                                .with(Background {
+                                    from: Vector2::new(
+                                        8.0 + (i as isize - 1) as f32 * 16.0,
+                                        8.0 + (j as isize - 1) as f32 * 16.0,
+                                    ),
+                                    to: Vector2::new(8.0 + i as f32 * 16.0, 8.0 + j as f32 * 16.0),
+                                    timer: 0.0,
+                                })
+                                .with(transform)
+                                .with(GlobalTransform::default())
+                                .build()
+                        })
+                        .collect()
+                })
+                .fold(
+                    Vec::with_capacity(width_count * height_count),
+                    |mut acc, v: Vec<Entity>| {
+                        acc.extend(v);
+                        acc
+                    },
+                ),
+        );
 
         //let center = (V_W, V_H);
         self.create_player(
@@ -152,10 +162,11 @@ impl<'a, 'b> SimpleState<'a, 'b> for Game {
         );
         self.create_bounds(&mut world, V_W * 2.0, V_H * 2.0);
 
-        let app_root = application_root_dir();
-        let map_path = format!("{}/assets/map/0003.ron", app_root);
-        let mut map_entities = map_loader(&mut world, &map_sprites, &map_path);
-        self.entities.append(&mut map_entities);
+        self.entities.append(&mut map_loader(
+            &mut world,
+            &map_sprites,
+            &format!("{}/assets/map/0003.ron", application_root_dir()),
+        ));
     }
 
     fn handle_event(

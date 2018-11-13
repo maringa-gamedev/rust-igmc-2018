@@ -22,6 +22,7 @@ use log::*;
 use std::{collections::HashMap, sync::*};
 
 mod constants;
+mod data;
 mod ecs;
 mod loader;
 mod state;
