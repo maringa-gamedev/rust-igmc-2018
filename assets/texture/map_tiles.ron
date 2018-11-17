@@ -1,34 +1,110 @@
-TextureDefinition (
-  path: "texture/map_tiles.png",
-  width: 256.0,
-  height: 64.0,
-  sprites: [
-    ("flavor_a_top",    0.0,  0.0,  0.125,  0.25),
-    ("flavor_a_top_hl", 0.0, 0.25,  0.125,  0.25),
-    ("flavor_a_side",   0.0,  0.5, 0.0625, 0.125),
+(
+  TextureDefinition (
+    path: "texture/map_tiles.png",
+    width: 256.0,
+    height: 64.0,
+    sprites: [
+      ("flavor_top_closed", 0.0,  0.0,  0.125,  0.25),
+      ("flavor_top_open_1", 0.0, 0.25,  0.125,  0.25),
+      ("flavor_top_open_2", 0.0,  0.5,  0.125,  0.25),
+      ("flavor_side",       0.0, 0.75, 0.0625, 0.125),
 
-    ("flavor_b_top",    0.125,  0.0,  0.125,  0.25),
-    ("flavor_b_top_hl", 0.125, 0.25,  0.125,  0.25),
-    ("flavor_b_side",   0.125,  0.5, 0.0625, 0.125),
+      ("preparation_top",    0.25,  0.0,  0.125,  0.25),
+      ("preparation_top_hl", 0.25, 0.25,  0.125,  0.25),
+      ("preparation_side",   0.25,  0.5, 0.0625, 0.125),
 
-    ("preparation_top",    0.25,  0.0,  0.125,  0.25),
-    ("preparation_top_hl", 0.25, 0.25,  0.125,  0.25),
-    ("preparation_side",   0.25,  0.5, 0.0625, 0.125),
+      ("topping_top",    0.375,  0.0,  0.125,  0.25),
+      ("topping_top_hl", 0.375, 0.25,  0.125,  0.25),
+      ("topping_side",   0.375,  0.5, 0.0625, 0.125),
 
-    ("topping_top",    0.375,  0.0,  0.125,  0.25),
-    ("topping_top_hl", 0.375, 0.25,  0.125,  0.25),
-    ("topping_side",   0.375,  0.5, 0.0625, 0.125),
+      ("delivery_top",    0.5,  0.0,  0.125,  0.25),
+      ("delivery_top_hl", 0.5, 0.25,  0.125,  0.25),
+      ("delivery_side",   0.5,  0.5, 0.0625, 0.125),
 
-    ("delivery_top",    0.5,  0.0,  0.125,  0.25),
-    ("delivery_top_hl", 0.5, 0.25,  0.125,  0.25),
-    ("delivery_side",   0.5,  0.5, 0.0625, 0.125),
+      ("empty_top",    0.625,  0.0, 0.0625,  0.25),
+      ("empty_top_hl", 0.625, 0.25, 0.0625,  0.25),
+      ("empty_side",   0.625,  0.5, 0.0625, 0.125),
 
-    ("empty_top",    0.625,  0.0, 0.0625,  0.25),
-    ("empty_top_hl", 0.625, 0.25, 0.0625,  0.25),
-    ("empty_side",   0.625,  0.5, 0.0625, 0.125),
+      ("floor_top",    0.6875,  0.0, 0.0625,  0.25),
+      ("floor_top_hl", 0.6875, 0.25, 0.0625,  0.25),
+      ("floor_side",   0.6875,  0.5, 0.0625, 0.125),
+    ],
+  ),
+  {
+    "flavor_top_close": ([
+      ("flavor_top_open_2", 0.25),
+      ("flavor_top_open_1", 0.25),
+      ("flavor_top_closed", 0.25),
+    ], Once),
+    "flavor_top_open": ([
+      ("flavor_top_closed", 0.25),
+      ("flavor_top_open_1", 0.25),
+      ("flavor_top_open_2", 0.25),
+    ], Once),
+    "flavor_side_close": ([
+      ("flavor_side", 0.25),
+    ], Once),
+    "flavor_side_open": ([
+      ("flavor_side", 0.25),
+    ], Once),
 
-    ("floor_top",    0.6875,  0.0, 0.0625,  0.25),
-    ("floor_top_hl", 0.6875, 0.25, 0.0625,  0.25),
-    ("floor_side",   0.6875,  0.5, 0.0625, 0.125),
-  ],
+    "preparation_top_close": ([
+      ("preparation_top", 0.25),
+    ], Once),
+    "preparation_top_open": ([
+      ("preparation_top_hl", 0.25),
+    ], Once),
+    "preparation_side_close": ([
+      ("preparation_side", 0.25),
+    ], Once),
+    "preparation_side_open": ([
+      ("preparation_side", 0.25),
+    ], Once),
+
+    "topping_top_close": ([
+      ("topping_top", 0.25),
+    ], Once),
+    "topping_top_open": ([
+      ("topping_top_hl", 0.25),
+    ], Once),
+    "topping_side_close": ([
+      ("topping_side", 0.25),
+    ], Once),
+    "topping_side_open": ([
+      ("topping_side", 0.25),
+    ], Once),
+
+    "delivery_top_close": ([
+      ("delivery_top", 0.25),
+    ], Once),
+    "delivery_top_open": ([
+      ("delivery_top_hl", 0.25),
+    ], Once),
+    "delivery_side_close": ([
+      ("delivery_side", 0.25),
+    ], Once),
+    "delivery_side_open": ([
+      ("delivery_side", 0.25),
+    ], Once),
+
+    "empty_top_close": ([
+      ("empty_top", 0.25),
+    ], Once),
+    "empty_top_open": ([
+      ("empty_top_hl", 0.25),
+    ], Once),
+    "empty_side_close": ([
+      ("empty_side", 0.25),
+    ], Once),
+    "empty_side_open": ([
+      ("empty_side", 0.25),
+    ], Once),
+
+    "floor_top": ([
+      ("floor_top", 0.25),
+    ], Once),
+    "floor_side": ([
+      ("floor_side", 0.25),
+    ], Once),
+  },
 )

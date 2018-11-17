@@ -103,5 +103,6 @@ pub fn load_players_texture(world: &mut World) -> (SpriteSheetHandle, HashMap<St
         })
         .into_iter()
         .collect();
+
     (handle, anim_def)
 }

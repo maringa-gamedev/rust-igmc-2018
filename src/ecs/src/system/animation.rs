@@ -11,13 +11,31 @@ pub struct AnimationSystem;
 
 impl<'s> System<'s> for AnimationSystem {
     type SystemData = (
+        Entities<'s>,
+        ReadStorage<'s, AnimatedFloor>,
+        ReadStorage<'s, AnimatedTable>,
+        ReadStorage<'s, Interact>,
+        ReadStorage<'s, Table>,
         WriteStorage<'s, Direction>,
         WriteStorage<'s, SpriteRender>,
         Read<'s, Time>,
         Write<'s, Animations>,
     );
 
-    fn run(&mut self, (mut directions, mut sprites, time, mut animations): Self::SystemData) {
+    fn run(
+        &mut self,
+        (
+            entities,
+            floors,
+            a_tables,
+            interacts,
+            tables,
+            mut directions,
+            mut sprites,
+            time,
+            mut animations,
+        ): Self::SystemData,
+    ) {
         let ds = time.delta_seconds();
         for (_, anim) in &mut animations.animations {
             anim.update_timer(ds);
@@ -52,6 +70,26 @@ impl<'s> System<'s> for AnimationSystem {
                     animations[&format!("char_east_{}", &direction.current_anim)].get_frame()
                 }
             };
+        }
+
+        for (floor, sprite) in (&floors, &mut sprites).join() {
+            sprite.sprite_number = animations[&format!("{}_top", floor.0)].get_frame();
+        }
+
+        for (e, interact, a_table) in (&*entities, &interacts, &a_tables).join() {
+            if let Some(_) = interact.highlighted_by {
+                let s = sprites.get_mut(e).unwrap();
+                s.sprite_number = animations[&format!("{}_side_open", a_table.0)].get_frame();
+
+                let s = sprites.get_mut(interact.top).unwrap();
+                s.sprite_number = animations[&format!("{}_top_open", a_table.0)].get_frame();
+            } else {
+                let s = sprites.get_mut(e).unwrap();
+                s.sprite_number = animations[&format!("{}_side_close", a_table.0)].get_frame();
+
+                let s = sprites.get_mut(interact.top).unwrap();
+                s.sprite_number = animations[&format!("{}_top_close", a_table.0)].get_frame();
+            }
         }
     }
 }

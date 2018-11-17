@@ -12,13 +12,16 @@ use nk_data::*;
 use ron::de::from_reader;
 use std::{collections::HashMap, fs::*};
 
-pub fn load_map_texture(world: &mut World) -> SpriteDefinition {
+pub fn load_map_texture(world: &mut World) -> (SpriteSheetHandle, HashMap<String, Animation>) {
     info!("Loading Map Textures.");
 
     let app_root = application_root_dir();
     let path = format!("{}/assets/texture/map_tiles.ron", app_root);
     let f = File::open(&path).expect("Failed opening file");
-    let tex_def: TextureDefinition = match from_reader(f) {
+    let (tex_def, anim_def): (
+        TextureDefinition,
+        HashMap<String, (Vec<(String, f32)>, AnimationLoop)>,
+    ) = match from_reader(f) {
         Ok(x) => x,
         Err(e) => {
             error!("Error parsing texture definition: {}", e);
@@ -67,18 +70,35 @@ pub fn load_map_texture(world: &mut World) -> SpriteDefinition {
         texture_id: MAP_INDEX,
         sprites,
     };
-    let loader = world.read_resource::<Loader>();
-    let handle = loader.load_from_data(
-        sprites,
-        (),
-        &world.read_resource::<AssetStorage<SpriteSheet>>(),
-    );
+
+    let handle = {
+        let loader = world.read_resource::<Loader>();
+        loader.load_from_data(
+            sprites,
+            (),
+            &world.read_resource::<AssetStorage<SpriteSheet>>(),
+        )
+    };
+
     world
         .write_resource::<SpriteSheetSet>()
         .insert(MAP_INDEX, handle.clone());
 
-    SpriteDefinition {
-        handle,
-        sprites: sprites_hash,
-    }
+    let anim_def = anim_def
+        .iter()
+        .map(|(k, v)| {
+            (
+                k.to_owned(),
+                Animation::new(
+                    v.0.iter()
+                        .map(|(name, duration)| (*sprites_hash.get(name).unwrap(), *duration))
+                        .collect(),
+                    v.1.clone(),
+                ),
+            )
+        })
+        .into_iter()
+        .collect();
+
+    (handle, anim_def)
 }

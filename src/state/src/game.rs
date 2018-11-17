@@ -78,9 +78,10 @@ impl<'a, 'b> SimpleState<'a, 'b> for Game {
         let ui_texture_handle = load_ui_texture(&mut world);
         let (player_handle, mut animations) = load_players_texture(&mut world);
         let (items_handle, items_anims) = load_items_texture(&mut world);
-        let map_sprites = load_map_texture(&mut world);
+        let (map_handle, map_anims) = load_map_texture(&mut world);
 
         animations.extend(items_anims);
+        animations.extend(map_anims);
         info!("Animations: {:#?}", animations);
         world.add_resource(Animations { animations });
 
@@ -133,7 +134,7 @@ impl<'a, 'b> SimpleState<'a, 'b> for Game {
         let map_loadout = vec![FlavorIndex(0), FlavorIndex(1), FlavorIndex(2)];
         let (mut map_entities, spawn_points) = create_map_from_file(
             &mut world,
-            &map_sprites,
+            map_handle,
             &self.map_file,
             &map_loadout[..],
             &game_defs,

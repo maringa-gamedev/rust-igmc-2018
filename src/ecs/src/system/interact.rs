@@ -23,7 +23,7 @@ impl<'s> System<'s> for InteractSystem {
         ReadStorage<'s, Transform>,
         ReadStorage<'s, Hitbox>,
         ReadStorage<'s, Direction>,
-        ReadStorage<'s, Interact>,
+        WriteStorage<'s, Interact>,
         WriteStorage<'s, Table>,
         WriteStorage<'s, SpriteRender>,
     );
@@ -36,15 +36,16 @@ impl<'s> System<'s> for InteractSystem {
             transforms,
             hitboxes,
             directions,
-            interacts,
+            mut interacts,
             mut tables,
             mut sprites,
         ): Self::SystemData,
     ) {
         // Reset interaction highlight
-        for interact in (&interacts).join() {
-            let top = sprites.get_mut(interact.top).unwrap();
-            top.sprite_number = interact.original;
+        for interact in (&mut interacts).join() {
+            interact.highlighted_by = None;
+            //let top = sprites.get_mut(interact.top).unwrap();
+            //top.sprite_number = interact.original;
         }
 
         for (mut player, mut input, transform, hitbox, direction) in (
@@ -74,7 +75,7 @@ impl<'s> System<'s> for InteractSystem {
             };
             let dir = direction.current;
 
-            for (transform, hitbox, interact) in (&transforms, &hitboxes, &interacts)
+            for (transform, hitbox, interact) in (&transforms, &hitboxes, &mut interacts)
                 .join()
                 .sorted_by(|(at, _, _), (bt, _, _)| {
                     // TODO: Could be improved by also looking at previous direction to determine
@@ -104,12 +105,13 @@ impl<'s> System<'s> for InteractSystem {
                     Either::Left(cuboid) => cuboid,
                     Either::Right(_) => panic!("DO NOT USE BALLS FOR INTERACTION COLLISION"),
                 };
-                let top = sprites.get_mut(interact.top).unwrap();
+                //let top = sprites.get_mut(interact.top).unwrap();
 
                 if let Proximity::Intersecting =
                     query::proximity(&check_pos, &check_shape, &interact_pos, interact_shape, 1.0)
                 {
-                    top.sprite_number = interact.highlight;
+                    interact.highlighted_by = Some(player.gamepad_index);
+                    //top.sprite_number = interact.highlight;
                     info!("CAN INTERACT!");
                     if input.wants_to_interact {
                         if let Some(table) = tables.get_mut(interact.top) {

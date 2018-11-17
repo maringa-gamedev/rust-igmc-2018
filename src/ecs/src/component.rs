@@ -1,3 +1,4 @@
+mod animation;
 mod background;
 mod direction;
 mod effect;
@@ -14,6 +15,7 @@ mod table;
 mod velocity;
 
 pub use self::{
-    background::*, direction::*, effect::*, hitbox::*, input::*, interact::*, interaction::*,
-    inventory_item::*, layered::*, pixel_perfect::*, player::*, solid::*, table::*, velocity::*,
+    animation::*, background::*, direction::*, effect::*, hitbox::*, input::*, interact::*,
+    interaction::*, inventory_item::*, layered::*, pixel_perfect::*, player::*, solid::*, table::*,
+    velocity::*,
 };

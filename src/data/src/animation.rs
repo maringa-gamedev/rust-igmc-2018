@@ -92,10 +92,10 @@ impl Animation {
                 }
             }
             AnimationLoop::Once => {
-                if self.count > 1 {
-                    self.vec.iter().find(|&&a| self.timer < a.2).unwrap().0
-                } else {
+                if self.count > 0 {
                     self.vec.iter().last().unwrap().0
+                } else {
+                    self.vec.iter().find(|&&a| self.timer < a.2).unwrap().0
                 }
             }
         }

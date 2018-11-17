@@ -1,9 +1,8 @@
 use amethyst::ecs::prelude::*;
 
 pub struct Interact {
+    pub highlighted_by: Option<usize>,
     pub top: Entity,
-    pub highlight: usize,
-    pub original: usize,
 }
 
 impl Component for Interact {
