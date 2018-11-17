@@ -60,8 +60,6 @@ before_install:
       fi
   - set -e
   - rustup self update
-
-install:
   - if [ -z "$NO_ADD" ]; then rustup target add $TARGET; fi
 
 script:
