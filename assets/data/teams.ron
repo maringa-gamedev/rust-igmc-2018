@@ -1,0 +1,16 @@
+#![enable(implicit_some)]
+#![enable(unwrap_newtypes)]
+[
+  TeamDef (
+    index: 0,
+    key: "rockys_road_to_victory",
+  ),
+  TeamDef (
+    index: 1,
+    key: "absorbet",
+  ),
+  TeamDef (
+    index: 2,
+    key: "pappys_frozen_treats_and_sweets",
+  ),
+]

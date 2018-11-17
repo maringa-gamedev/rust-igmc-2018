@@ -1,0 +1,84 @@
+#![enable(implicit_some)]
+#![enable(unwrap_newtypes)]
+[
+  HissatsuDef (
+    index: 0,
+    key: "of_ice_and_men",
+  ),
+  HissatsuDef (
+    index: 1,
+    key: "jimmy_jam",
+  ),
+  HissatsuDef (
+    index: 2,
+    key: "scoop_dreams",
+  ),
+  HissatsuDef (
+    index: 3,
+    key: "the_inside_scoop",
+  ),
+  HissatsuDef (
+    index: 4,
+    key: "ice_cream_of_the_crop",
+  ),
+  HissatsuDef (
+    index: 5,
+    key: "cherry_on_top",
+  ),
+  HissatsuDef (
+    index: 6,
+    key: "brain_freeze",
+  ),
+  HissatsuDef (
+    index: 7,
+    key: "scoop_there_it_is",
+  ),
+  HissatsuDef (
+    index: 8,
+    key: "the_banana_split",
+  ),
+  HissatsuDef (
+    index: 9,
+    key: "sorbet_shuffle",
+  ),
+  HissatsuDef (
+    index: 10,
+    key: "hokuto_no_scoop",
+  ),
+  HissatsuDef (
+    index: 11,
+    key: "kanpa_ice",
+  ),
+  HissatsuDef (
+    index: 12,
+    key: "ay_crumble",
+  ),
+  HissatsuDef (
+    index: 13,
+    key: "all_ten_thousand_tastebuds",
+  ),
+  HissatsuDef (
+    index: 14,
+    key: "chaos_conetrol",
+  ),
+  HissatsuDef (
+    index: 15,
+    key: "untoppable",
+  ),
+  HissatsuDef (
+    index: 16,
+    key: "i_walk_a_rocky_road",
+  ),
+  HissatsuDef (
+    index: 17,
+    key: "the_final_strawberries",
+  ),
+  HissatsuDef (
+    index: 18,
+    key: "carry_a_big_stick",
+  ),
+  HissatsuDef (
+    index: 19,
+    key: "whip_it",
+  ),
+]

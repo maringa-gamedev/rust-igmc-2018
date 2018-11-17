@@ -17,10 +17,11 @@ main() {
 
     test -f Cargo.lock || cargo generate-lockfile
 
-    # TODO Update this to build the artifacts that matter to you
-    cross rustc --bin rust-igmc-2018 --target $TARGET --release -- -C lto
+    cross rustc --bin nk_tool --target $TARGET --release -- -C lto
+    cross rustc --bin nk_game --target $TARGET --release -- -C lto
 
-    cp target/$TARGET/release/rust-igmc-2018 $stage/
+    cp target/$TARGET/release/nk_tool $stage/
+    cp target/$TARGET/release/nk_game $stage/
     cp -r assets/ $stage/
 
     cd $stage

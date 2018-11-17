@@ -1,167 +1,277 @@
+#![enable(implicit_some)]
+#![enable(unwrap_newtypes)]
 [
   // Classics
-  FlavorDefinition(
-    points: 100,
+  FlavorDef (
+    index: 0,
     key: "vanilla",
-    class: "classic",
+    class: Classic,
+    base_worth: 100.0,
+    effect: [
+      OrderTotalScore(Fixed(1.2)),
+    ],
+    condition: [
+      CombinedWithClass([Classic]),
+    ],
   ),
-  FlavorDefinition (
-    points: 125,
+  FlavorDef (
+    index: 1,
     key: "chocolate",
-    class: "classic",
+    class: Classic,
+    base_worth: 125.0,
+    effect: [
+      OrderMeltTimer(Fixed(1.125)),
+    ],
+    condition: [],
   ),
-  FlavorDefinition (
-    points: 75,
+  FlavorDef (
+    index: 2,
     key: "strawberry",
-    class: "classic",
+    class: Classic,
+    base_worth: 75.0,
+    effect: [
+      OrderMeltTimer(Fixed(0.875)),
+    ],
+    condition: [],
   ),
-  FlavorDefinition (
-    points: 300,
+  FlavorDef (
+    index: 3,
     key: "neapolitan",
-    class: "classic",
+    class: Classic,
+    base_worth: 300.0,
+    effect: [],
+    condition: [],
   ),
-  FlavorDefinition (
-    points: 50,
+  FlavorDef (
+    index: 4,
     key: "cookie_dough",
-    class: "classic",
+    class: Classic,
+    base_worth: 50.0,
+    effect: [],
+    condition: [],
   ),
-  FlavorDefinition (
-    points: 150,
+  FlavorDef (
+    index: 5,
     key: "cookies_cream",
-    class: "classic",
+    class: Classic,
+    base_worth: 150.0,
+    effect: [],
+    condition: [],
   ),
-  FlavorDefinition (
-    points: 160,
+  FlavorDef (
+    index: 6,
     key: "rocky_road",
-    class: "classic",
+    class: Classic,
+    base_worth: 160.0,
+    effect: [
+      Speed(Carrier, Fixed(0.75), Indeterminate),
+    ],
+    condition: [],
   ),
-  FlavorDefinition (
-    points: 40,
+  FlavorDef (
+    index: 7,
     key: "coffee",
-    class: "classic",
+    class: Classic,
+    base_worth: 40.0,
+    effect: [
+      Speed(Carrier, Fixed(1.25), Indeterminate),
+    ],
+    condition: [],
   ),
-  FlavorDefinition (
-    points: 90,
+  FlavorDef (
+    index: 8,
     key: "mint_chocolate",
-    class: "classic",
+    class: Classic,
+    base_worth: 90.0,
+    effect: [],
+    condition: [],
   ),
-  FlavorDefinition (
-    points: 999,
+  FlavorDef (
+    index: 9,
     key: "pistachio",
-    class: "classic",
+    class: Classic,
+    base_worth: 999.0,
+    effect: [],
+    condition: [],
   ),
 
   // Sherberts
-  FlavorDefinition (
-    points: 90,
+  FlavorDef (
+    index: 10,
     key: "orange",
-    class: "sherbert",
+    class: Sherbert,
+    base_worth: 90.0,
+    effect: [],
+    condition: [],
   ),
-  FlavorDefinition (
-    points: 80,
+  FlavorDef (
+    index: 11,
     key: "cherry",
-    class: "sherbert",
+    class: Sherbert,
+    base_worth: 80.0,
+    effect: [],
+    condition: [],
   ),
-  FlavorDefinition (
-    points: 120,
+  FlavorDef (
+    index: 12,
     key: "blue_raspberry",
-    class: "sherbert",
+    class: Sherbert,
+    base_worth: 120.0,
+    effect: [],
+    condition: [],
   ),
-  FlavorDefinition (
-    points: 60,
+  FlavorDef (
+    index: 13,
     key: "blackberry",
-    class: "sherbert",
+    class: Sherbert,
+    base_worth: 60.0,
+    effect: [],
+    condition: [],
   ),
-  FlavorDefinition (
-    points: 360,
+  FlavorDef (
+    index: 14,
     key: "rainbow",
-    class: "sherbert",
+    class: Sherbert,
+    base_worth: 360.0,
+    effect: [],
+    condition: [],
   ),
-  FlavorDefinition (
-    points: 999,
+  FlavorDef (
+    index: 15,
     key: "lemon",
-    class: "sherbert",
+    class: Sherbert,
+    base_worth: 999.0,
+    effect: [],
+    condition: [],
   ),
 
   // Specials
-  FlavorDefinition (
-    points: 125,
+  FlavorDef (
+    index: 16,
     key: "dark_matter",
-    class: "special",
+    class: Special,
+    base_worth: 125.0,
+    effect: [],
+    condition: [],
   ),
-  FlavorDefinition (
-    points: 150,
+  FlavorDef (
+    index: 17,
     key: "jalapeno",
-    class: "special",
+    class: Special,
+    base_worth: 150.0,
+    effect: [],
+    condition: [],
   ),
-  FlavorDefinition (
-    points: 50,
+  FlavorDef (
+    index: 18,
     key: "snowball",
-    class: "special",
+    class: Special,
+    base_worth: 50.0,
+    effect: [],
+    condition: [],
   ),
-  FlavorDefinition (
-    points: 75,
+  FlavorDef (
+    index: 19,
     key: "ectoplasm",
-    class: "special",
+    class: Special,
+    base_worth: 75.0,
+    effect: [],
+    condition: [],
   ),
-  FlavorDefinition (
-    points: 130,
+  FlavorDef (
+    index: 20,
     key: "bubblegum",
-    class: "special",
+    class: Special,
+    base_worth: 130.0,
+    effect: [],
+    condition: [],
   ),
-  FlavorDefinition (
-    points: 110,
+  FlavorDef (
+    index: 21,
     key: "balloon",
-    class: "special",
+    class: Special,
+    base_worth: 110.0,
+    effect: [],
+    condition: [],
   ),
-  FlavorDefinition (
-    points: 100,
+  FlavorDef (
+    index: 22,
     key: "god",
-    class: "special",
+    class: Special,
+    base_worth: 100.0,
+    effect: [],
+    condition: [],
   ),
-  FlavorDefinition (
-    points: 0,
+  FlavorDef (
+    index: 23,
     key: "spumoni",
-    class: "special",
+    class: Special,
+    base_worth: 0.0,
+    effect: [],
+    condition: [],
   ),
-  FlavorDefinition (
-    points: 300,
+  FlavorDef (
+    index: 24,
     key: "licensed",
-    class: "special",
+    class: Special,
+    base_worth: 300.0,
+    effect: [],
+    condition: [],
   ),
-  FlavorDefinition (
-    points: 200,
+  FlavorDef (
+    index: 25,
     key: "alaska",
-    class: "special",
+    class: Special,
+    base_worth: 200.0,
+    effect: [],
+    condition: [],
   ),
-  FlavorDefinition (
-    points: 80,
+  FlavorDef (
+    index: 26,
     key: "green_tea",
-    class: "special",
+    class: Special,
+    base_worth: 80.0,
+    effect: [],
+    condition: [],
   ),
-  FlavorDefinition (
-    points: 125,
+  FlavorDef (
+    index: 27,
     key: "tiger_tail",
-    class: "special",
+    class: Special,
+    base_worth: 125.0,
+    effect: [],
+    condition: [],
   ),
-  FlavorDefinition (
-    points: 150,
+  FlavorDef (
+    index: 28,
     key: "tutti_frutti",
-    class: "special",
+    class: Special,
+    base_worth: 150.0,
+    effect: [],
+    condition: [],
   ),
-  FlavorDefinition (
-    points: 150,
+  FlavorDef (
+    index: 29,
     key: "rum_raisin",
-    class: "special",
+    class: Special,
+    base_worth: 150.0,
+    effect: [],
+    condition: [],
   ),
-  FlavorDefinition (
-    points: 500,
+  FlavorDef (
+    index: 30,
     key: "creamsicle",
-    class: "special",
+    class: Special,
+    base_worth: 500.0,
+    effect: [],
+    condition: [],
   ),
-  FlavorDefinition (
-    points: 999,
+  FlavorDef (
+    index: 31,
     key: "anti_scoop",
-    class: "special",
+    class: Special,
+    base_worth: 999.0,
+    effect: [],
+    condition: [],
   ),
 ]

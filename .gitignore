@@ -1,2 +1,7 @@
-/target
+target
+nk_ecs/target
+nk_data/target
+nk_loader/target
+nk_state/target
+nk_util/target
 **/*.rs.bk

@@ -1,0 +1,114 @@
+#![enable(implicit_some)]
+#![enable(unwrap_newtypes)]
+[
+  ToppingDef (
+    index: 0,
+    key: "sprinkles",
+    worth: 5.0,
+    effect: [
+      BlockSpecial(Random(0.5, 0.75)),
+    ],
+  ),
+  ToppingDef (
+    index: 1,
+    key: "chocolate_sprinkles",
+    worth: 0.0,
+    effect: [
+      Speed(Team(Adversary, WholeTeam), Fixed(0.0), Fixed(2.5)),
+    ],
+  ),
+  ToppingDef (
+    index: 2,
+    key: "wafer_sticks",
+    worth: 5.0,
+    effect: [
+      PowerMeterFlatBonus(Partner, Fixed(0.10)),
+      PowerMeterFlatBonus(Adversary, Fixed(-0.10)),
+    ],
+  ),
+  ToppingDef (
+    index: 3,
+    key: "nuts",
+    worth: 5.0,
+    effect: [
+      Speed(Team(Adversary, WholeTeam), Fixed(0.9), Fixed(2.5)),
+    ],
+  ),
+  ToppingDef (
+    index: 4,
+    key: "chocolate_syrup",
+    worth: 10.0,
+    effect: [
+      PowerMeterFlatBonus(Adversary, Fixed(-0.5)),
+    ],
+  ),
+  ToppingDef (
+    index: 5,
+    key: "caramel_syrup",
+    worth: 10.0,
+    effect: [
+      PowerMeterFlatBonus(Partner, Fixed(0.5)),
+    ],
+  ),
+  ToppingDef (
+    index: 6,
+    key: "strawberry_syrup",
+    worth: 10.0,
+    effect: [
+      GlobalMeltSpeed(Partner, Fixed(0.9)),
+      GlobalMeltSpeed(Adversary, Fixed(0.9)),
+    ],
+  ),
+  ToppingDef (
+    index: 7,
+    key: "whipped_cream",
+    worth: 5.0,
+    effect: [
+      Screen(CreamClouds, Adversary, Fixed(5.0)),
+    ],
+  ),
+  ToppingDef (
+    index: 8,
+    key: "gummy_candy",
+    worth: 5.0,
+    effect: [
+      Screen(Dizzy, Adversary, Fixed(5.0)),
+    ],
+  ),
+  ToppingDef (
+    index: 9,
+    key: "cherries",
+    worth: 15.0,
+    effect: [],
+  ),
+  ToppingDef (
+    index: 10,
+    key: "strawberries",
+    worth: 10.0,
+    effect: [
+      Screen(Pulse(Red), Adversary, Fixed(5.0)),
+    ],
+  ),
+  ToppingDef (
+    index: 11,
+    key: "kiwi",
+    worth: 10.0,
+    effect: [
+      Screen(Pulse(Green), Adversary, Fixed(5.0)),
+    ],
+  ),
+  ToppingDef (
+    index: 12,
+    key: "bananas",
+    worth: 10.0,
+    effect: [
+      Screen(Pulse(Yellow), Adversary, Fixed(5.0)),
+    ],
+  ),
+  ToppingDef (
+    index: 13,
+    key: "cookie_crumbles",
+    worth: 0.0,
+    effect: [],
+  ),
+]

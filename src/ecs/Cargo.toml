@@ -1,12 +1,12 @@
 [package]
-name = "rust-igmc-2018"
+name = "nk_ecs"
 description = "Game made for IGMC 2018 by MGDA"
-version = "0.3.0"
+version = "0.1.0"
 authors = ["Tiago Nascimento <tiago@theosirian.com>"]
 edition = "2018"
 
 homepage = "https://gamedev.maringa.br/igmc-2018"
-documentation = "https://gamedev.maringa.br/igmc-2018/docs"
+documentation = "https://gamedev.maringa.br/igmc-2018/docs/nk_ecs"
 repository = "https://github.com/maringa-gamedev/rust-igmc-2018"
 
 readme = "README.md"
@@ -16,29 +16,15 @@ license = "AGPLv3"
 nightly = ["amethyst/nightly"]
 
 [dependencies]
-nk_ecs = { path = "src/ecs/", version = "0.1.0" }
-nk_data = { path = "src/data/", version = "0.1.0" }
-nk_loader = { path = "src/loader/", version = "0.1.0" }
-nk_state = { path = "src/state/", version = "0.1.0" }
-nk_util = { path = "src/util/", version = "0.1.0" }
+nk_data = { path = "../data/", version="0.1.0" }
 amethyst = { git = "https://github.com/amethyst/amethyst.git" }
 serde = "1.0"
 serde_derive = "1.0"
-ron = "0.4"
 log = "0.4"
+either = "1.5"
 rand = "0.5"
 font-kit = "0.1"
 gilrs = "0.6"
 nalgebra = "0.16"
 ncollide2d = "0.17"
 itertools = "0.7"
-either = "1.5"
-clap = "~2.32"
-
-[[bin]]
-name = "nk_game"
-path = "src/bin/game.rs"
-
-[[bin]]
-name = "nk_tool"
-path = "src/bin/tool.rs"

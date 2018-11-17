@@ -1,0 +1,16 @@
+#![enable(implicit_some)]
+#![enable(unwrap_newtypes)]
+[
+  HouseDef (
+    index: 0,
+    key: "vanilla",
+  ),
+  HouseDef (
+    index: 1,
+    key: "chocolate",
+  ),
+  HouseDef (
+    index: 2,
+    key: "strawberry",
+  ),
+]

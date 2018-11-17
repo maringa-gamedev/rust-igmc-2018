@@ -2,15 +2,15 @@
 
 MapDefinition (
   tables: [
-    (0.0, 1.0, FlavorA, VerticalRight),
-    (0.0, 3.0, FlavorA, VerticalRight),
-    (3.0, 1.0, FlavorA, VerticalLeft),
-    (3.0, 3.0, FlavorA, VerticalLeft),
+    (0.0, 1.0, Flavor(Priority(0)), VerticalRight),
+    (0.0, 3.0, Flavor(Priority(1)), VerticalRight),
+    (3.0, 1.0, Flavor(Priority(2)), VerticalLeft),
+    (3.0, 3.0, Flavor(Priority(3)), VerticalLeft),
 
-    (6.0, 1.0, FlavorB, VerticalRight),
-    (6.0, 3.0, FlavorB, VerticalRight),
-    (9.0, 1.0, FlavorB, VerticalLeft),
-    (9.0, 3.0, FlavorB, VerticalLeft),
+    (6.0, 1.0, Flavor(Priority(5)), VerticalRight),
+    (6.0, 3.0, Flavor(Priority(6)), VerticalRight),
+    (9.0, 1.0, Flavor(Priority(7)), VerticalLeft),
+    (9.0, 3.0, Flavor(Priority(8)), VerticalLeft),
 
     (0.0, 8.0, Preparation, VerticalLeft),
     (9.0, 8.0, Preparation, VerticalRight),
@@ -55,5 +55,11 @@ MapDefinition (
 
     (0.0, 5.0, Empty, HorizontalBottom),
     (9.0, 5.0, Empty, HorizontalBottom),
+  ],
+  spawns: [
+    (2.0, 1.0),
+    (2.0, 8.0),
+    (8.0, 8.0),
+    (8.0, 1.0),
   ],
 )

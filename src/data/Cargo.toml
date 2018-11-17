@@ -1,0 +1,23 @@
+[package]
+name = "nk_data"
+description = "Game made for IGMC 2018 by MGDA"
+version = "0.1.0"
+authors = ["Tiago Nascimento <tiago@theosirian.com>"]
+edition = "2018"
+
+homepage = "https://gamedev.maringa.br/igmc-2018"
+documentation = "https://gamedev.maringa.br/igmc-2018/docs/nk_data"
+repository = "https://github.com/maringa-gamedev/rust-igmc-2018"
+
+readme = "README.md"
+license = "AGPLv3"
+
+[features]
+nightly = ["amethyst/nightly"]
+
+[dependencies]
+amethyst = { git = "https://github.com/amethyst/amethyst.git" }
+serde = "1.0"
+serde_derive = "1.0"
+log = "0.4"
+either = "1.5"
