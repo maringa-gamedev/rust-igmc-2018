@@ -33,7 +33,7 @@ before_install:
   - set -e
   - rustup self update
   - sudo apt update
-  - sudo apt install pkg-config build-essentials libasound2-dev libx11-xcb-dev libssl-dev cmake libfreetype6-dev libexpat1-dev libxcb1-dev
+  - sudo apt install pkg-config build-essential libasound2-dev libx11-xcb-dev libssl-dev cmake libfreetype6-dev libexpat1-dev libxcb1-dev
 
 install:
   - sh ci/install.sh
