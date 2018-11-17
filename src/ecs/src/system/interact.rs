@@ -19,7 +19,7 @@ pub struct InteractSystem;
 impl<'s> System<'s> for InteractSystem {
     type SystemData = (
         WriteStorage<'s, Player>,
-        ReadStorage<'s, Input>,
+        WriteStorage<'s, Input>,
         ReadStorage<'s, Transform>,
         ReadStorage<'s, Hitbox>,
         ReadStorage<'s, Direction>,
@@ -30,7 +30,16 @@ impl<'s> System<'s> for InteractSystem {
 
     fn run(
         &mut self,
-        (mut players, inputs, transforms, hitboxes, directions, interacts, mut tables, mut sprites): Self::SystemData,
+        (
+            mut players,
+            mut inputs,
+            transforms,
+            hitboxes,
+            directions,
+            interacts,
+            mut tables,
+            mut sprites,
+        ): Self::SystemData,
     ) {
         // Reset interaction highlight
         for interact in (&interacts).join() {
@@ -38,8 +47,14 @@ impl<'s> System<'s> for InteractSystem {
             top.sprite_number = interact.original;
         }
 
-        for (mut player, input, transform, hitbox, direction) in
-            (&mut players, &inputs, &transforms, &hitboxes, &directions).join()
+        for (mut player, mut input, transform, hitbox, direction) in (
+            &mut players,
+            &mut inputs,
+            &transforms,
+            &hitboxes,
+            &directions,
+        )
+            .join()
         {
             let check_pos = Isometry2::new(
                 Vector2::new(
@@ -172,6 +187,7 @@ impl<'s> System<'s> for InteractSystem {
                     break;
                 }
             }
+            input.wants_to_interact = false;
         }
     }
 }

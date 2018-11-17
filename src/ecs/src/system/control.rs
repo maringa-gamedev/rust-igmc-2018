@@ -26,15 +26,15 @@ impl<'s> System<'s> for ControlSystem {
                 .entry(player.gamepad_index)
                 .or_insert(Controller::new(player.gamepad_index));
 
-            info!(
-                "<{}> Movement Direction: {:?}",
-                player.gamepad_index, entry.left_axis
-            );
-            info!(
-                "<{}> Aim Direction: {:?}",
-                player.gamepad_index, entry.right_axis
-            );
-            info!("<{}> Actions: {:?}", player.gamepad_index, entry.actions);
+            //info!(
+            //"<{}> Movement Direction: {:?}",
+            //player.gamepad_index, entry.left_axis
+            //);
+            //info!(
+            //"<{}> Aim Direction: {:?}",
+            //player.gamepad_index, entry.right_axis
+            //);
+            //info!("<{}> Actions: {:?}", player.gamepad_index, entry.actions);
             info!(
                 "<{}> Player Inventory: {:?}",
                 player.gamepad_index, player.inventory
@@ -80,7 +80,7 @@ impl<'s> System<'s> for ControlSystem {
                 input.wants_to_move = None;
             }
 
-            input.wants_to_interact = entry.actions[0];
+            //input.wants_to_interact = entry.actions[0];
             //input.wants_to_shoot = entry.triggers[1];
             //input.wants_to_shield = entry.shoulders[0] || entry.shoulders[1];
         }

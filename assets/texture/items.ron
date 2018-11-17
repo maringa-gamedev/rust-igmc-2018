@@ -49,5 +49,9 @@
     "cone_neapolitan": ([
       ("cone_neapolitan", 0.25),
     ], Once),
+
+    "order_neapolitan": ([
+      ("cone_neapolitan", 0.25),
+    ], Once),
   },
 )

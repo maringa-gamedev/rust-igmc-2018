@@ -3,6 +3,7 @@ use amethyst::{
     ecs::prelude::*,
     shrev::{EventChannel, ReaderId},
 };
+use crate::component::*;
 use gilrs::*;
 use std::{collections::HashMap, sync::*};
 
@@ -52,6 +53,8 @@ impl<'s> System<'s> for ControllerSystem {
     type SystemData = (
         Read<'s, Arc<Mutex<EventChannel<ev::Event>>>>,
         Read<'s, Arc<Mutex<HashMap<usize, Controller>>>>,
+        ReadStorage<'s, Player>,
+        WriteStorage<'s, Input>,
     );
 
     fn setup(&mut self, mut res: &mut Resources) {
@@ -64,7 +67,7 @@ impl<'s> System<'s> for ControllerSystem {
         );
     }
 
-    fn run(&mut self, (events, controllers): Self::SystemData) {
+    fn run(&mut self, (events, controllers, players, mut inputs): Self::SystemData) {
         if let Some(ref mut reader) = &mut self.reader {
             for Event {
                 id,
@@ -77,7 +80,15 @@ impl<'s> System<'s> for ControllerSystem {
                     ev::EventType::ButtonPressed(b, _) => {
                         if let Some(controller) = controllers.get_mut(id) {
                             match b {
-                                ev::Button::South => controller.actions[0] = true,
+                                ev::Button::South => {
+                                    controller.actions[0] = true;
+                                    if let Some((input, _)) = (&mut inputs, &players)
+                                        .join()
+                                        .find(|(_, p)| p.gamepad_index == *id)
+                                    {
+                                        input.wants_to_interact = true;
+                                    }
+                                }
                                 ev::Button::East => controller.actions[1] = true,
                                 ev::Button::North => controller.actions[2] = true,
                                 ev::Button::West => controller.actions[3] = true,
@@ -100,7 +111,15 @@ impl<'s> System<'s> for ControllerSystem {
                     ev::EventType::ButtonReleased(b, _) => {
                         if let Some(controller) = controllers.get_mut(id) {
                             match b {
-                                ev::Button::South => controller.actions[0] = false,
+                                ev::Button::South => {
+                                    controller.actions[0] = false;
+                                    if let Some((input, _)) = (&mut inputs, &players)
+                                        .join()
+                                        .find(|(_, p)| p.gamepad_index == *id)
+                                    {
+                                        input.wants_to_interact = false;
+                                    }
+                                }
                                 ev::Button::East => controller.actions[1] = false,
                                 ev::Button::North => controller.actions[2] = false,
                                 ev::Button::West => controller.actions[3] = false,
