@@ -18,7 +18,7 @@ env:
     - CRATE_NAME=rust-igmc-2018
   matrix:
     - TARGET=i686-unknown-linux-gnu
-    - TARGET=x86_64-unknown-linux-gnu
+    - TARGET=x86_64-unknown-linux-gnu NO_ADD=1
     - TARGET=i686-pc-windows-gnu
     - TARGET=x86_64-pc-windows-gnu
 
@@ -39,6 +39,7 @@ addons:
       - pkg-config
       - build-essential
       - cmake
+      - gcc-multilib
       - libasound2-dev
       - libsdl2-dev
       - libx11-xcb-dev
@@ -59,6 +60,9 @@ before_install:
       fi
   - set -e
   - rustup self update
+
+install:
+  - if [ -z "$NO_ADD" ]; then rustup target add $TARGET; fi
 
 script:
   - cargo build --verbose --all --target $TARGET
