@@ -6,6 +6,26 @@ language: rust
 services: docker
 sudo: required
 
+os:
+  - linux
+  - windows
+
+addons:
+  apt:
+    update: true
+    packages:
+      - pkg-config
+      - build-essential
+      - cmake
+      - libasound2-dev
+      - libsdl2-dev
+      - libx11-xcb-dev
+      - libssl-dev
+      - libfreetype6-dev
+      - libexpat1-dev
+      - libxcb1-dev
+
+
 env:
   global:
     - PKG_CONFIG_ALLOW_CROSS=1
@@ -30,10 +50,17 @@ matrix:
       rust: nightly
 
 before_install:
+  - |
+      if [ ${TRAVIS_OS_NAME} == "windows" ]
+      then
+        wget --no-check-certificate https://www.libsdl.org/release/SDL2-devel-2.0.8-VC.zip
+        7z x SDL2-devel-2.0.8-VC.zip
+        cp SDL2-2.0.8/lib/x64/*.lib ${HOME}/.rustup/toolchains/${TRAVIS_RUST_VERSION}-x86_64-pc-windows-msvc/lib/rustlib/x86_64-pc-windows-msvc/lib
+        cp SDL2-2.0.8/lib/x64/*.dll .
+        rm SDL2-devel-2.0.8-VC.zip
+      fi
   - set -e
   - rustup self update
-  - sudo apt update
-  - sudo apt install pkg-config build-essential libasound2-dev libx11-xcb-dev libssl-dev cmake libfreetype6-dev libexpat1-dev libxcb1-dev
 
 install:
   - sh ci/install.sh
