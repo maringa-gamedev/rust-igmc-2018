@@ -12,6 +12,14 @@ rust:
   - beta
   - nightly
 
+env:
+  - PKG_CONFIG_ALLOW_CROSS=1
+  - CRATE_NAME=rust-igmc-2018
+  - TARGET=i686-unknown-linux-gnu
+  - TARGET=x86_64-unknown-linux-gnu
+  - TARGET=i686-pc-windows-gnu
+  - TARGET=x86_64-pc-windows-gnu
+
 matrix:
   allow_failures:
     - rust: stable
@@ -36,25 +44,6 @@ addons:
       - libfreetype6-dev
       - libexpat1-dev
       - libxcb1-dev
-
-env:
-  global:
-    - PKG_CONFIG_ALLOW_CROSS=1
-    - CRATE_NAME=rust-igmc-2018
-
-matrix:
-  include:
-    # Linux
-    - env: TARGET=i686-unknown-linux-gnu
-      rust: nightly
-    - env: TARGET=x86_64-unknown-linux-gnu
-      rust: nightly
-
-    # Windows
-    - env: TARGET=i686-pc-windows-gnu
-      rust: nightly
-    - env: TARGET=x86_64-pc-windows-gnu
-      rust: nightly
 
 before_install:
   - |
