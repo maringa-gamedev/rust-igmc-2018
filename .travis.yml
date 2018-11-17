@@ -2,9 +2,25 @@
 # https://github.com/japaric/trust/tree/v0.1.2
 
 dist: trusty
-language: rust
 services: docker
 sudo: required
+
+language: rust
+
+rust:
+  - stable
+  - beta
+  - nightly
+
+matrix:
+  allow_failures:
+    - rust: stable
+    - rust: beta
+  fast_finish: true
+
+before_cache:
+  - chmod -R a+r $HOME/.cargo
+cache: cargo
 
 addons:
   apt:
@@ -53,14 +69,13 @@ before_install:
   - set -e
   - rustup self update
 
-install:
-  - sh ci/install.sh
-  - source ~/.cargo/env || true
-
 script:
-  - bash ci/script.sh
-
-after_script: set +e
+  - cargo build --verbose --all --target $TARGET
+  - cargo build --verbose --all --target $TARGET --release
+  - cargo test --verbose --all --target $TARGET
+  - cargo test --verbose --all --target $TARGET --release
+  - cargo run --verbose --bin nk_tool --target $TARGET
+  - cargo run --verbose --bin nk_tool --target $TARGET --release
 
 before_deploy:
   - sh ci/before_deploy.sh
@@ -76,14 +91,8 @@ deploy:
   provider: releases
   skip_cleanup: true
 
-cache: cargo
-before_cache:
-  # Travis can't cache files that are not readable by "others"
-  - chmod -R a+r $HOME/.cargo
-
 branches:
   only:
-    # release tags
     - /^v\d+\.\d+\.\d+.*$/
     - master
 
