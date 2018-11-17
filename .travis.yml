@@ -47,6 +47,7 @@ addons:
       - libfreetype6-dev
       - libexpat1-dev
       - libxcb1-dev
+      - mingw-w64
 
 before_install:
   - |
