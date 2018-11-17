@@ -3,6 +3,8 @@
 set -ex
 
 main() {
+    export PKG_CONFIG_ALLOW_CROSS=1
+
     cross build --bin nk_tool --target $TARGET
     cross build --bin nk_tool --target $TARGET --release
 

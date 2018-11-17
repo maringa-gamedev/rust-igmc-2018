@@ -17,6 +17,7 @@ main() {
 
     test -f Cargo.lock || cargo generate-lockfile
 
+    export PKG_CONFIG_ALLOW_CROSS=1
     cross rustc --bin nk_tool --target $TARGET --release -- -C lto
     cross rustc --bin nk_game --target $TARGET --release -- -C lto
 
