@@ -3,24 +3,24 @@
 set -ex
 
 main() {
-    cross build --bin tool --target $TARGET
-    cross build --bin tool --target $TARGET --release
+    cross build --bin nk_tool --target $TARGET
+    cross build --bin nk_tool --target $TARGET --release
 
-    cross build --bin game --target $TARGET
-    cross build --bin game --target $TARGET --release
+    cross build --bin nk_game --target $TARGET
+    cross build --bin nk_game --target $TARGET --release
 
     if [ ! -z $DISABLE_TESTS ]; then
         return
     fi
 
-    cross test --bin tool --target $TARGET
-    cross test --bin tool --target $TARGET --release
+    cross test --bin nk_tool --target $TARGET
+    cross test --bin nk_tool --target $TARGET --release
 
-    cross test --bin game --target $TARGET
-    cross test --bin game --target $TARGET --release
+    cross test --bin nk_game --target $TARGET
+    cross test --bin nk_game --target $TARGET --release
 
-    cross run --bin tool --target $TARGET
-    cross run --bin tool --target $TARGET --release
+    cross run --bin nk_tool --target $TARGET
+    cross run --bin nk_tool --target $TARGET --release
 }
 
 # we don't run the "test phase" when doing deploys
