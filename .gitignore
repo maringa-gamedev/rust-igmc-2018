@@ -5,3 +5,4 @@ nk_loader/target
 nk_state/target
 nk_util/target
 **/*.rs.bk
+assets/texture/old

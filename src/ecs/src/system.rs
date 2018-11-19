@@ -1,4 +1,5 @@
 mod animation;
+mod autotile;
 mod background_animation;
 mod collision;
 mod control;
@@ -9,6 +10,6 @@ mod layer;
 mod movement;
 
 pub use self::{
-    animation::*, background_animation::*, collision::*, control::*, input::*, interact::*,
-    inventory_render::*, layer::*, movement::*,
+    animation::*, autotile::*, background_animation::*, collision::*, control::*, input::*,
+    interact::*, inventory_render::*, layer::*, movement::*,
 };

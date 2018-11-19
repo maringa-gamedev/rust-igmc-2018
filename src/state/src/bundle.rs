@@ -13,7 +13,8 @@ impl<'a, 'b> SystemBundle<'a, 'b> for GameBundle {
         builder.add(ControllerSystem::new(), "xto_controller", &[]);
         builder.add(ControlSystem, "xto_control", &["xto_controller"]);
         builder.add(InputSystem, "xto_input", &["xto_control"]);
-        builder.add(AnimationSystem, "xto_direction", &["xto_control"]);
+        builder.add(AnimationSystem, "xto_animation", &["xto_control"]);
+        builder.add(AutotileSystem::default(), "xto_autotile", &["xto_control"]);
         builder.add(MovementSystem, "xto_movement", &["xto_input"]);
         builder.add(CollisionSystem, "xto_collision", &["xto_movement"]);
         builder.add(LayerSystem, "xto_layer", &["xto_collision"]);

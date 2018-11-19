@@ -14,7 +14,7 @@ use std::{collections::HashMap, fs::File};
 
 pub fn load_items_texture(world: &mut World) -> (SpriteSheetHandle, HashMap<String, Animation>) {
     let app_root = application_root_dir();
-    let path = format!("{}/assets/texture/items.ron", app_root);
+    let path = format!("{}/assets/texture/item/index.ron", app_root);
     let f = File::open(&path).expect("Failed opening file");
     let (tex_def, anim_def): (
         TextureDefinition,
@@ -94,6 +94,7 @@ pub fn load_items_texture(world: &mut World) -> (SpriteSheetHandle, HashMap<Stri
             (
                 k.to_owned(),
                 Animation::new(
+                    handle.clone(),
                     v.0.iter()
                         .map(|(name, duration)| (*sprites_hash.get(name).unwrap(), *duration))
                         .collect(),

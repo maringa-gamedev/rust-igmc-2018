@@ -1,6 +1,8 @@
+#![enable(implicit_some)]
+#![enable(unwrap_newtypes)]
 (
   TextureDefinition (
-    path: "texture/character_base.png",
+    path: "texture/player/base.png",
     width: 192.0,
     height: 192.0,
     sprites: [

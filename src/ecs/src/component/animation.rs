@@ -6,7 +6,7 @@ impl Component for AnimatedFloor {
     type Storage = DenseVecStorage<Self>;
 }
 
-pub struct AnimatedTable(pub String);
+pub struct AnimatedTable(pub String, pub String);
 
 impl Component for AnimatedTable {
     type Storage = DenseVecStorage<Self>;

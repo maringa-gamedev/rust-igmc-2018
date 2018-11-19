@@ -60,6 +60,15 @@ impl TableOrientation {
             TableOrientation::HorizontalBottom => 0.5,
         }
     }
+
+    pub fn make_orientation_string(&self) -> String {
+        match self {
+            TableOrientation::VerticalLeft => String::from("v"),
+            TableOrientation::VerticalRight => String::from("v"),
+            TableOrientation::HorizontalTop => String::from("h"),
+            TableOrientation::HorizontalBottom => String::from("h"),
+        }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -68,8 +77,8 @@ pub struct Priority(pub usize);
 #[derive(Debug, Serialize, Deserialize)]
 pub enum TableType {
     Flavor(Priority),
-    Preparation,
-    Topping,
+    Preparation(Priority),
+    Topping(Priority),
     Delivery,
     Empty,
 }
@@ -84,4 +93,45 @@ impl Default for TableType {
 pub struct MapDefinition {
     pub tables: Vec<(f32, f32, TableType, TableOrientation)>,
     pub spawns: Vec<(f32, f32)>,
+}
+
+impl MapDefinition {
+    pub fn count_flavor_tables(&self) -> usize {
+        self.tables
+            .iter()
+            .filter(|t| {
+                if let TableType::Flavor(_) = t.2 {
+                    true
+                } else {
+                    false
+                }
+            })
+            .count()
+    }
+
+    pub fn count_preparation_tables(&self) -> usize {
+        self.tables
+            .iter()
+            .filter(|t| {
+                if let TableType::Preparation(_) = t.2 {
+                    true
+                } else {
+                    false
+                }
+            })
+            .count()
+    }
+
+    pub fn count_topping_tables(&self) -> usize {
+        self.tables
+            .iter()
+            .filter(|t| {
+                if let TableType::Topping(_) = t.2 {
+                    true
+                } else {
+                    false
+                }
+            })
+            .count()
+    }
 }

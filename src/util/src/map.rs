@@ -13,15 +13,14 @@ use ncollide2d::shape::*;
 use nk_data::*;
 use nk_ecs::*;
 use ron::de::from_reader;
-use serde_derive::*;
 use std::fs::File;
 
 pub fn create_map_from_file(
     world: &mut World,
-    map_handle: SpriteSheetHandle,
     path: &str,
-    loadout: &[FlavorIndex],
-    definitions: &Definitions,
+    flavors: &[FlavorIndex],
+    preparations: &[PreparationIndex],
+    toppings: &[ToppingIndex],
 ) -> (Vec<Entity>, Vec<(f32, f32)>) {
     let f = File::open(&path).expect("Failed opening file");
     let map_def: MapDefinition = match from_reader(f) {
@@ -32,21 +31,20 @@ pub fn create_map_from_file(
         }
     };
 
-    let count_flavor_tables = map_def
-        .tables
-        .iter()
-        .filter(|t| {
-            if let TableType::Flavor(_) = t.2 {
-                true
-            } else {
-                false
-            }
-        })
-        .count();
-
-    if loadout.len() > count_flavor_tables {
+    if flavors.len() > map_def.count_flavor_tables() {
         warn!("More flavors than the map has tables!");
     }
+    if preparations.len() > map_def.count_preparation_tables() {
+        warn!("More preparations than the map has tables!");
+    }
+    if toppings.len() > map_def.count_topping_tables() {
+        warn!("More toppings than the map has tables!");
+    }
+
+    let map_handle = {
+        let handles = world.read_resource::<Handles>();
+        handles.map_handle.clone()
+    };
 
     let mut tiles: Vec<Entity> = (0..10)
         .map(|i| {
@@ -85,9 +83,9 @@ pub fn create_map_from_file(
         .map(|(x, y, t, o)| {
             create_table(
                 world,
-                &map_handle,
-                loadout,
-                definitions,
+                flavors,
+                preparations,
+                toppings,
                 t,
                 o,
                 *x * BASE + MAP_OFFSET_X,
@@ -102,6 +100,7 @@ pub fn create_map_from_file(
 
     tiles.append(&mut tops);
     tiles.append(&mut sides);
+
     (
         tiles,
         map_def
@@ -112,11 +111,11 @@ pub fn create_map_from_file(
     )
 }
 
-pub fn create_table(
+fn create_table(
     world: &mut World,
-    map_handle: &SpriteSheetHandle,
-    loadout: &[FlavorIndex],
-    _definitions: &Definitions,
+    flavors: &[FlavorIndex],
+    preparations: &[PreparationIndex],
+    toppings: &[ToppingIndex],
     t: &TableType,
     o: &TableOrientation,
     x: f32,
@@ -133,55 +132,15 @@ pub fn create_table(
     let top = |x, y, half_w, half_h| {
         let mut t = Transform::default();
         t.translation = Vector3::new(x + half_w, y + half_h, 0.0);
-        t.set_rotation(Deg(0.0), Deg(0.0), o.make_rot());
+        //t.set_rotation(Deg(0.0), Deg(0.0), o.make_rot());
         t
     };
 
     let side = |x, y, half_w, _half_h| {
         let mut t = Transform::default();
         t.translation = Vector3::new(x + half_w, y - (BASE / 4.0), 0.0);
-        t.scale = Vector3::new(o.make_scale(), 1.0, 1.0);
+        //t.scale = Vector3::new(1.0, 1.0, 1.0);
         t
-    };
-
-    let mut create_both = |hitbox, side, top, key, table| {
-        let top = world
-            .create_entity()
-            .with(SpriteRender {
-                sprite_sheet: map_handle.clone(),
-                sprite_number: 0,
-                flip_horizontal: false,
-                flip_vertical: o.flip_vertical(),
-            })
-            //.with(AnimatedTopTable(key))
-            .with(Layered)
-            .with(top)
-            .with(GlobalTransform::default());
-        let top = if let Some(c) = table {
-            top.with(c).build()
-        } else {
-            top.build()
-        };
-        let side = world
-            .create_entity()
-            .with(SpriteRender {
-                sprite_sheet: map_handle.clone(),
-                sprite_number: 0,
-                flip_horizontal: false,
-                flip_vertical: o.flip_vertical(),
-            })
-            .with(Solid)
-            .with(hitbox)
-            .with(Interact {
-                highlighted_by: None,
-                top,
-            })
-            .with(AnimatedTable(key))
-            .with(Layered)
-            .with(side)
-            .with(GlobalTransform::default())
-            .build();
-        (side, top)
     };
 
     if let TableType::Empty = t {
@@ -193,12 +152,14 @@ pub fn create_table(
         let mut side = side(x, y, half_w, half_h);
         side.scale = Vector3::new(1.0, 1.0, 1.0);
 
-        create_both(
+        create_entities(
+            world,
             hitbox,
             side,
             top,
-            String::from("empty"),
+            (String::from("empty"), o.make_orientation_string()),
             Some(Table::new_empty_table()),
+            false,
         )
     } else {
         let (w, h) = o.make_dim(BASE * 2.0, BASE);
@@ -210,36 +171,154 @@ pub fn create_table(
 
         match t {
             TableType::Flavor(f) => {
-                let table = if let Some(my_flavor) = loadout.get(f.0) {
-                    Some(Table::new_flavor_table(my_flavor.clone()))
+                let (key, table) = if let Some(my_flavor) = flavors.get(f.0) {
+                    (
+                        world
+                            .read_resource::<Definitions>()
+                            .flavors()
+                            .find(|x| x.index == *my_flavor)
+                            .unwrap()
+                            .key
+                            .clone(),
+                        Some(Table::new_flavor_table(my_flavor.clone())),
+                    )
                 } else {
-                    None
+                    ("vanilla".to_owned(), None)
                 };
-                create_both(hitbox, side, top, String::from("flavor"), table)
+                create_entities(
+                    world,
+                    hitbox,
+                    side,
+                    top,
+                    (format!("flavor_{}", key), o.make_orientation_string()),
+                    table,
+                    true,
+                )
             }
-            TableType::Preparation => create_both(
+            TableType::Preparation(p) => {
+                let (key, table) = if let Some(my_preparation) = preparations.get(p.0) {
+                    (
+                        world
+                            .read_resource::<Definitions>()
+                            .preparations()
+                            .find(|x| x.index == *my_preparation)
+                            .unwrap()
+                            .key
+                            .clone(),
+                        Some(Table::new_preparation_table(my_preparation.clone())),
+                    )
+                } else {
+                    ("cake_cone".to_owned(), None)
+                };
+                create_entities(
+                    world,
+                    hitbox,
+                    side,
+                    top,
+                    (format!("preparation_{}", key), o.make_orientation_string()),
+                    table,
+                    true,
+                )
+            }
+            TableType::Topping(t) => {
+                let (key, table) = if let Some(my_topping) = toppings.get(t.0) {
+                    (
+                        world
+                            .read_resource::<Definitions>()
+                            .toppings()
+                            .find(|x| x.index == *my_topping)
+                            .unwrap()
+                            .key
+                            .clone(),
+                        Some(Table::new_topping_table(my_topping.clone())),
+                    )
+                } else {
+                    ("sprinkles".to_owned(), None)
+                };
+                create_entities(
+                    world,
+                    hitbox,
+                    side,
+                    top,
+                    (format!("topping_{}", key), o.make_orientation_string()),
+                    table,
+                    true,
+                )
+            }
+            TableType::Delivery => create_entities(
+                world,
                 hitbox,
                 side,
                 top,
-                String::from("preparation"),
-                Some(Table::new_preparation_table(PreparationIndex(0))),
-            ),
-            TableType::Topping => create_both(
-                hitbox,
-                side,
-                top,
-                String::from("topping"),
-                Some(Table::new_topping_table(ToppingIndex(0))),
-            ),
-            TableType::Delivery => create_both(
-                hitbox,
-                side,
-                top,
-                String::from("delivery"),
+                (String::from("delivery"), o.make_orientation_string()),
                 Some(Table::new_delivery_table()),
+                true,
             ),
 
             _ => panic!("Impossible!"),
         }
     }
+}
+
+fn create_entities(
+    world: &mut World,
+    hitbox: Hitbox,
+    side: Transform,
+    top: Transform,
+    (key, orientation): (String, String),
+    table: Option<Table>,
+    animate: bool,
+) -> (Entity, Entity) {
+    info!("{}_{}", key, orientation);
+    let empty_handle = {
+        let handles = world.read_resource::<Handles>();
+        handles.empty_handle.clone()
+    };
+
+    let map_handle = {
+        let handles = world.read_resource::<Handles>();
+        handles.map_handle.clone()
+    };
+
+    let top = world
+        .create_entity()
+        .with(SpriteRender {
+            sprite_sheet: empty_handle,
+            sprite_number: 0,
+            flip_horizontal: false,
+            flip_vertical: false,
+        })
+        .with(Layered)
+        .with(top)
+        .with(GlobalTransform::default());
+    let top = if let Some(c) = table {
+        top.with(c).build()
+    } else {
+        top.build()
+    };
+
+    let side = world
+        .create_entity()
+        .with(SpriteRender {
+            sprite_sheet: map_handle,
+            sprite_number: 7,
+            flip_horizontal: false,
+            flip_vertical: false,
+        })
+        .with(Solid)
+        .with(hitbox)
+        .with(Interact {
+            highlighted_by: None,
+            top,
+        })
+        .with(Layered)
+        .with(side)
+        .with(GlobalTransform::default());
+    let side = if animate {
+        side.with(AnimatedTable(key, orientation)).build()
+    } else {
+        side.build()
+    };
+
+    (side, top)
 }

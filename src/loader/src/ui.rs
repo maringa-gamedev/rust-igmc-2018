@@ -14,7 +14,7 @@ pub fn load_ui_texture(world: &mut World) -> SpriteSheetHandle {
     let texture = {
         let loader = world.read_resource::<Loader>();
         loader.load(
-            "texture/tl_back.png",
+            "texture/other/bg.png",
             PngFormat,
             TextureMetadata::srgb_scale(),
             (),
@@ -26,17 +26,6 @@ pub fn load_ui_texture(world: &mut World) -> SpriteSheetHandle {
         .insert(UI_TEXTURE_INDEX, texture);
 
     info!("Creating ui sprites.");
-    let defs = vec![
-        (0.0, 0.0, 0.0, 0.0),
-        (0.0, 0.0, 0.0, 0.0),
-        (0.0, 0.0, 0.0, 0.0),
-        (0.0, 0.0, 0.0, 0.0),
-        (0.0, 0.0, 0.0, 0.0),
-        (0.0, 0.0, 0.0, 0.0),
-        (0.0, 0.0, 0.0, 0.0),
-        (0.0, 0.0, 0.0, 0.0),
-        (0.0, 0.0, 0.0, 0.0),
-    ];
     let sprites = vec![Sprite {
         width: TILE_WIDTH,
         height: TILE_HEIGHT,

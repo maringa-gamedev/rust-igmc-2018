@@ -1,6 +1,6 @@
 (
   TextureDefinition (
-    path: "texture/items.png",
+    path: "texture/item/items.png",
     width: 64.0,
     height: 64.0,
     sprites: [

@@ -1,5 +1,6 @@
 #![feature(box_patterns)]
 #![feature(exclusive_range_pattern)]
+#![feature(type_ascription)]
 
 use amethyst::{
     animation::AnimationBundle,
@@ -97,19 +98,16 @@ fn main() -> amethyst::Result<()> {
                 .with_sprite_visibility_sorting(&["transform_system"]),
         )?;
 
-    let game_state = Game::default().with_map(&format!(
-        "{}/assets/map/{}.ron",
-        app_root,
-        matches.value_of("map").unwrap_or("0000")
-    ));
+    let game_state = Load::default();
 
     let controllers: HashMap<usize, Controller> = HashMap::new();
     let mut game = Application::build(assets_directory, game_state)?
         .with_resource(Arc::new(Mutex::new(controllers)))
         .with_resource(channel)
+        .with_resource(matches)
         .with_frame_limit(
             FrameRateLimitStrategy::SleepAndYield(Duration::from_millis(2)),
-            60,
+            30,
         )
         .build(game_data)?;
     game.run();

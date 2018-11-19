@@ -34,6 +34,7 @@ ncollide2d = "0.17"
 itertools = "0.7"
 either = "1.5"
 clap = "~2.32"
+image = "0.20"
 
 [[bin]]
 name = "nk_game"

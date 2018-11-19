@@ -12,15 +12,15 @@ MapDefinition (
     (5.0, 3.0, Flavor(Priority(6)), HorizontalBottom),
     (9.0, 1.0, Flavor(Priority(7)), VerticalLeft),
 
-    (5.0, 10.0, Preparation, HorizontalBottom),
-    (7.0, 10.0, Preparation, HorizontalBottom),
-    (9.0, 6.0, Preparation, VerticalLeft),
-    (9.0, 8.0, Preparation, VerticalLeft),
+    (5.0, 10.0, Preparation(Priority(0)), HorizontalBottom),
+    (7.0, 10.0, Preparation(Priority(1)), HorizontalBottom),
+    (9.0, 6.0, Preparation(Priority(2)), VerticalLeft),
+    (9.0, 8.0, Preparation(Priority(3)), VerticalLeft),
 
-    (3.0, 6.0, Topping, HorizontalBottom),
-    (4.0, 7.0, Topping, HorizontalTop),
-    (2.0, 6.0, Topping, VerticalLeft),
-    (6.0, 6.0, Topping, VerticalRight),
+    (3.0, 6.0, Topping(Priority(0)), HorizontalBottom),
+    (4.0, 7.0, Topping(Priority(1)), HorizontalTop),
+    (2.0, 6.0, Topping(Priority(2)), VerticalLeft),
+    (6.0, 6.0, Topping(Priority(3)), VerticalRight),
 
     (5.0, 0.0, Delivery, HorizontalTop),
 

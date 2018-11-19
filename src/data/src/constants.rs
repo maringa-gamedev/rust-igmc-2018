@@ -1,3 +1,6 @@
+pub const VIEW_WIDTH: f32 = 480.0;
+pub const VIEW_HEIGHT: f32 = 272.0;
+
 pub const SPRITE_WIDTH: f32 = 48.0;
 pub const SPRITE_HEIGHT: f32 = 48.0;
 pub const PLAYER_HITBOX_WIDTH: f32 = 16.0;

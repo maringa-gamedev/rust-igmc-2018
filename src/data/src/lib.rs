@@ -10,6 +10,7 @@ mod map;
 mod order;
 mod player;
 mod preparation;
+mod sprite_folder;
 mod team;
 mod texture;
 mod topping;
@@ -60,5 +61,6 @@ mod def {
 
 pub use self::{
     animation::*, common::*, constants::*, def::*, effect::*, flavor::*, gameplay::*, hissatsu::*,
-    house::*, map::*, order::*, player::*, preparation::*, team::*, texture::*, topping::*,
+    house::*, map::*, order::*, player::*, preparation::*, sprite_folder::*, team::*, texture::*,
+    topping::*,
 };

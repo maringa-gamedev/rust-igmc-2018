@@ -6,10 +6,7 @@ use amethyst::{
     ecs::prelude::*,
     input::{is_close_requested, is_key_down},
     prelude::*,
-    renderer::{
-        Camera, Projection, ScreenDimensions, SpriteRender, SpriteSheetHandle, Transparent,
-        VirtualKeyCode,
-    },
+    renderer::{Camera, Projection, ScreenDimensions, SpriteRender, Transparent, VirtualKeyCode},
     utils::application_root_dir,
 };
 use either::*;
@@ -20,7 +17,6 @@ use nk_data::*;
 use nk_ecs::*;
 use nk_loader::*;
 use nk_util::*;
-use std::collections::HashMap;
 
 #[derive(Debug)]
 pub struct Game {
@@ -55,89 +51,36 @@ impl<'a, 'b> SimpleState<'a, 'b> for Game {
     fn on_start(&mut self, data: StateData<GameData>) {
         let StateData { mut world, .. } = data;
 
-        world.register::<Interaction>();
-        world.register::<Effect>();
+        let flavor_loadout = vec![
+            FlavorIndex(0),
+            FlavorIndex(0),
+            FlavorIndex(1),
+            FlavorIndex(1),
+            FlavorIndex(2),
+            FlavorIndex(2),
+            FlavorIndex(7),
+            FlavorIndex(7),
+        ];
 
-        let camera_ui = world
-            .create_entity()
-            .with(Camera::from(Projection::Orthographic(Ortho {
-                left: 0.0,
-                right: V_W * 2.0,
-                top: V_H * 2.0,
-                bottom: 0.0,
-                near: 0.0,
-                far: 1024.0,
-            })))
-            .with(GlobalTransform(Matrix4::from_translation(
-                Vector3::new(0.0, 0.0, 1.0).into(),
-            )))
-            .build();
+        let preparation_loadout = vec![
+            PreparationIndex(0),
+            PreparationIndex(0),
+            PreparationIndex(0),
+            PreparationIndex(0),
+        ];
+        let topping_loadout = vec![
+            ToppingIndex(0),
+            ToppingIndex(0),
+            ToppingIndex(0),
+            ToppingIndex(0),
+        ];
 
-        self.camera = Some(camera_ui);
-
-        let ui_texture_handle = load_ui_texture(&mut world);
-        let (player_handle, mut animations) = load_players_texture(&mut world);
-        let (items_handle, items_anims) = load_items_texture(&mut world);
-        let (map_handle, map_anims) = load_map_texture(&mut world);
-
-        animations.extend(items_anims);
-        animations.extend(map_anims);
-        info!("Animations: {:#?}", animations);
-        world.add_resource(Animations { animations });
-
-        let width_count = ((V_W * 2.0) / 16.0) as usize + 2;
-        let height_count = ((V_H * 2.0) / 16.0) as usize + 2;
-        self.entities.append(
-            &mut (0..width_count)
-                .map(|i| {
-                    (0..height_count)
-                        .map(|j| {
-                            let mut transform = Transform::default();
-                            transform.translation = Vector3::new(
-                                8.0 + (i as isize - 1) as f32 * 16.0,
-                                8.0 + (j as isize - 1) as f32 * 16.0,
-                                -1020.0,
-                            );
-                            world
-                                .create_entity()
-                                .with(SpriteRender {
-                                    sprite_sheet: ui_texture_handle.clone(),
-                                    sprite_number: 0,
-                                    flip_horizontal: false,
-                                    flip_vertical: false,
-                                })
-                                .with(Background {
-                                    from: Vector2::new(
-                                        8.0 + (i as isize - 1) as f32 * 16.0,
-                                        8.0 + (j as isize - 1) as f32 * 16.0,
-                                    ),
-                                    to: Vector2::new(8.0 + i as f32 * 16.0, 8.0 + j as f32 * 16.0),
-                                    timer: 0.0,
-                                })
-                                .with(transform)
-                                .with(GlobalTransform::default())
-                                .build()
-                        })
-                        .collect()
-                })
-                .fold(
-                    Vec::with_capacity(width_count * height_count),
-                    |mut acc, v: Vec<Entity>| {
-                        acc.extend(v);
-                        acc
-                    },
-                ),
-        );
-
-        let game_defs = load_game_data(&mut world);
-
-        let map_loadout = vec![FlavorIndex(0), FlavorIndex(1), FlavorIndex(2)];
         let (mut map_entities, spawn_points) = create_map_from_file(
             &mut world,
-            map_handle,
             &self.map_file,
-            &map_loadout[..],
-            &game_defs,
+            &flavor_loadout[..],
+            &preparation_loadout[..],
+            &topping_loadout[..],
         );
         self.create_bounds(&mut world, V_W * 2.0, V_H * 2.0);
         self.create_kitchen_bounds(
@@ -145,38 +88,15 @@ impl<'a, 'b> SimpleState<'a, 'b> for Game {
             (MAP_OFFSET_X, MAP_OFFSET_Y, BASE * 10.0, BASE * 11.0),
         );
 
-        self.data.loadout = map_loadout;
-        world.add_resource(game_defs);
+        self.data.flavors = flavor_loadout;
+        self.data.preparations = preparation_loadout;
+        self.data.toppings = topping_loadout;
 
         let team_a = Team {
-            captain: self.create_player(
-                &mut world,
-                spawn_points[0],
-                0,
-                player_handle.clone(),
-                items_handle.clone(),
-            ),
-            server: self.create_player(
-                &mut world,
-                spawn_points[1],
-                1,
-                player_handle.clone(),
-                items_handle.clone(),
-            ),
-            scooper_one: Some(self.create_player(
-                &mut world,
-                spawn_points[2],
-                2,
-                player_handle.clone(),
-                items_handle.clone(),
-            )),
-            scooper_two: Some(self.create_player(
-                &mut world,
-                spawn_points[3],
-                3,
-                player_handle.clone(),
-                items_handle.clone(),
-            )),
+            captain: self.create_player(&mut world, spawn_points[0], 0),
+            server: self.create_player(&mut world, spawn_points[1], 1),
+            scooper_one: Some(self.create_player(&mut world, spawn_points[2], 2)),
+            scooper_two: Some(self.create_player(&mut world, spawn_points[3], 3)),
             loadout: vec![],
             power_meter: 0.0,
             score: 0,
@@ -214,7 +134,7 @@ impl<'a, 'b> SimpleState<'a, 'b> for Game {
         let StateData { world, .. } = data;
         world
             .delete_entities(self.entities.as_slice())
-            .expect("Failed to clean world of Games' entities!");
+            .expect("Failed to clean world of Game's entities!");
     }
 }
 
@@ -224,9 +144,12 @@ impl Game {
         world: &mut World,
         (x, y): (f32, f32),
         gamepad_index: usize,
-        handle: SpriteSheetHandle,
-        item_handle: SpriteSheetHandle,
     ) -> Entity {
+        let (player_handle, items_handle) = {
+            let handles = world.read_resource::<Handles>();
+            (handles.player_handle.clone(), handles.items_handle.clone())
+        };
+
         let mut transform = Transform::default();
         transform.translation = Vector3::new(x, y, 0.0);
 
@@ -238,7 +161,7 @@ impl Game {
                 current_anim: "idle".to_string(),
             })
             .with(SpriteRender {
-                sprite_sheet: handle,
+                sprite_sheet: player_handle,
                 sprite_number: 0,
                 flip_horizontal: false,
                 flip_vertical: false,
@@ -266,7 +189,7 @@ impl Game {
         let carry_me = world
             .create_entity()
             .with(SpriteRender {
-                sprite_sheet: item_handle,
+                sprite_sheet: items_handle,
                 sprite_number: 0,
                 flip_horizontal: false,
                 flip_vertical: false,

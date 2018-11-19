@@ -4,7 +4,7 @@ use nk_data::*;
 use ron::de::from_reader;
 use std::fs::File;
 
-pub fn load_game_data(world: &mut World) -> Definitions {
+pub fn load_game_data() -> Definitions {
     let app_root = application_root_dir();
 
     let flavors = {

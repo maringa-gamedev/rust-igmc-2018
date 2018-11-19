@@ -16,5 +16,7 @@ pub struct Team {
 #[derive(Debug, Default)]
 pub struct Match {
     pub teams: Vec<Team>,
-    pub loadout: Vec<FlavorIndex>,
+    pub flavors: Vec<FlavorIndex>,
+    pub preparations: Vec<PreparationIndex>,
+    pub toppings: Vec<ToppingIndex>,
 }

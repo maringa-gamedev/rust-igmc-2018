@@ -68,6 +68,13 @@ impl Table {
             false
         }
     }
+    pub fn empty(&self) -> bool {
+        if let Action::Empty(_) = self.action {
+            true
+        } else {
+            false
+        }
+    }
 
     pub fn has_order(&self) -> bool {
         match self.action {

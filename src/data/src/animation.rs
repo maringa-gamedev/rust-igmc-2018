@@ -1,14 +1,21 @@
+use amethyst::renderer::SpriteSheetHandle;
 use serde_derive::*;
 use std::collections::HashMap;
 
 #[derive(Debug, Serialize, Deserialize)]
+pub struct AnimationFrame(pub String, pub f32);
+#[derive(Debug, Serialize, Deserialize)]
+pub struct AnimationDef(pub Vec<AnimationFrame>, pub AnimationLoop);
+
+#[derive(Debug)]
 pub struct Animation {
     pub vec: Vec<(usize, f32, f32, f32)>, // index, duration, end_time, rev_end_time
     pub loop_type: AnimationLoop,
     pub timer: f32,
+    handle: SpriteSheetHandle,
     total_time: f32,
     bounce: bool,
-    count: usize,
+    first: bool,
 }
 
 #[derive(Clone, Copy, Debug, Serialize, Deserialize)]
@@ -19,7 +26,11 @@ pub enum AnimationLoop {
 }
 
 impl Animation {
-    pub fn new(vec: Vec<(usize, f32)>, loop_type: AnimationLoop) -> Self {
+    pub fn new(
+        handle: SpriteSheetHandle,
+        vec: Vec<(usize, f32)>,
+        loop_type: AnimationLoop,
+    ) -> Self {
         let total_time = vec.iter().fold(0.0, |acc, e| acc + e.1);
         let mut acc = 0.0;
         Animation {
@@ -32,14 +43,16 @@ impl Animation {
                 })
                 .collect(),
             loop_type,
+            handle,
             timer: 0.0,
             total_time,
             bounce: false,
-            count: 0,
+            first: true,
         }
     }
 
     pub fn with_same_frame_step(
+        handle: SpriteSheetHandle,
         vec: Vec<usize>,
         loop_type: AnimationLoop,
         frame_step: f32,
@@ -56,23 +69,25 @@ impl Animation {
                 })
                 .collect(),
             loop_type,
+            handle,
             timer: 0.0,
             total_time,
             bounce: false,
-            count: 0,
+            first: true,
         }
     }
 
     pub fn reset(&mut self) {
         self.timer = 0.0;
+        self.first = true;
     }
 
     pub fn update_timer(&mut self, delta: f32) {
         self.timer += delta;
-        if self.timer > self.total_time {
+        while self.timer > self.total_time {
             self.timer -= self.total_time;
             self.bounce = !self.bounce;
-            self.count += 1;
+            self.first = false;
         }
     }
 
@@ -92,13 +107,17 @@ impl Animation {
                 }
             }
             AnimationLoop::Once => {
-                if self.count > 0 {
-                    self.vec.iter().last().unwrap().0
-                } else {
+                if self.first {
                     self.vec.iter().find(|&&a| self.timer < a.2).unwrap().0
+                } else {
+                    self.vec.iter().last().unwrap().0
                 }
             }
         }
+    }
+
+    pub fn obtain_handle(&self) -> SpriteSheetHandle {
+        self.handle.clone()
     }
 }
 
@@ -112,4 +131,12 @@ impl Default for Animations {
             animations: HashMap::new(),
         }
     }
+}
+
+pub struct Handles {
+    pub player_handle: SpriteSheetHandle,
+    pub items_handle: SpriteSheetHandle,
+    pub map_handle: SpriteSheetHandle,
+    pub bg_handle: SpriteSheetHandle,
+    pub empty_handle: SpriteSheetHandle,
 }

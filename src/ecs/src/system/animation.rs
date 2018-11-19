@@ -73,23 +73,37 @@ impl<'s> System<'s> for AnimationSystem {
         }
 
         for (floor, sprite) in (&floors, &mut sprites).join() {
-            sprite.sprite_number = animations[&format!("{}_top", floor.0)].get_frame();
+            let my_anim = &animations[&format!("{}_top_h", floor.0)];
+            sprite.sprite_sheet = my_anim.obtain_handle();
+            sprite.sprite_number = my_anim.get_frame();
         }
 
         for (e, interact, a_table) in (&*entities, &interacts, &a_tables).join() {
-            if let Some(_) = interact.highlighted_by {
-                let s = sprites.get_mut(e).unwrap();
-                s.sprite_number = animations[&format!("{}_side_open", a_table.0)].get_frame();
+            let sprite = sprites.get_mut(e).unwrap();
+            let my_anim = &animations[&format!("{}_side_{}", a_table.0, a_table.1)];
+            sprite.sprite_sheet = my_anim.obtain_handle();
+            sprite.sprite_number = my_anim.get_frame();
 
-                let s = sprites.get_mut(interact.top).unwrap();
-                s.sprite_number = animations[&format!("{}_top_open", a_table.0)].get_frame();
-            } else {
-                let s = sprites.get_mut(e).unwrap();
-                s.sprite_number = animations[&format!("{}_side_close", a_table.0)].get_frame();
+            let sprite = sprites.get_mut(interact.top).unwrap();
+            let my_anim = &animations[&format!("{}_top_{}", a_table.0, a_table.1)];
+            sprite.sprite_sheet = my_anim.obtain_handle();
+            sprite.sprite_number = my_anim.get_frame();
 
-                let s = sprites.get_mut(interact.top).unwrap();
-                s.sprite_number = animations[&format!("{}_top_close", a_table.0)].get_frame();
-            }
+            /*
+             * if let Some(_) = interact.highlighted_by {
+             *     let s = sprites.get_mut(e).unwrap();
+             *     s.sprite_number = animations[&format!("{}_side_open", a_table.0)].get_frame();
+             *
+             *     let s = sprites.get_mut(interact.top).unwrap();
+             *     s.sprite_number = animations[&format!("{}_top_open", a_table.0)].get_frame();
+             * } else {
+             *     let s = sprites.get_mut(e).unwrap();
+             *     s.sprite_number = animations[&format!("{}_side_close", a_table.0)].get_frame();
+             *
+             *     let s = sprites.get_mut(interact.top).unwrap();
+             *     s.sprite_number = animations[&format!("{}_top_close", a_table.0)].get_frame();
+             * }
+             */
         }
     }
 }

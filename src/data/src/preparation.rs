@@ -3,7 +3,7 @@ use serde_derive::*;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PreparationDef {
-    pub index: ToppingIndex,
+    pub index: PreparationIndex,
     pub key: String,
     pub score_multiplier: f32,
     pub melt_multiplier: Option<f32>,
