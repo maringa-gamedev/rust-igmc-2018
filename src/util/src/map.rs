@@ -1,7 +1,7 @@
 use amethyst::{
     core::{
         cgmath::*,
-        transform::{GlobalTransform, Transform},
+        transform::{GlobalTransform, Parent, Transform},
     },
     ecs::prelude::*,
     renderer::{SpriteRender, SpriteSheetHandle},
@@ -17,6 +17,7 @@ use std::fs::File;
 
 pub fn create_map_from_file(
     world: &mut World,
+    (left_parent, right_parent): (Entity, Entity),
     path: &str,
     flavors: &[FlavorIndex],
     preparations: &[PreparationIndex],
@@ -46,73 +47,83 @@ pub fn create_map_from_file(
         handles.map_handle.clone()
     };
 
-    let mut tiles: Vec<Entity> = (0..10)
-        .map(|i| {
-            (0..11)
-                .map(|j| {
-                    let mut transform = Transform::default();
-                    transform.translation = Vector3::new(
-                        (i as f32 + 0.5) * BASE + MAP_OFFSET_X,
-                        (j as f32) * BASE + MAP_OFFSET_Y,
-                        -1019.0,
-                    );
-                    world
-                        .create_entity()
-                        .with(SpriteRender {
-                            sprite_sheet: map_handle.clone(),
-                            sprite_number: 0,
-                            flip_horizontal: false,
-                            flip_vertical: false,
+    let tiles = vec![left_parent, right_parent]
+        //let tiles = vec![left_parent]
+        .iter()
+        .map(|parent| {
+            let mut tiles: Vec<Entity> = (0..10)
+                .map(|i| {
+                    (0..11)
+                        .map(|j| {
+                            let mut transform = Transform::default();
+                            transform.translation =
+                                Vector3::new((i as f32 + 0.5) * BASE, (j as f32) * BASE, -1019.0);
+                            world
+                                .create_entity()
+                                .with(SpriteRender {
+                                    sprite_sheet: map_handle.clone(),
+                                    sprite_number: 0,
+                                    flip_horizontal: false,
+                                    flip_vertical: false,
+                                })
+                                .with(AnimatedFloor(String::from("floor")))
+                                //.with(Layered)
+                                .with(transform)
+                                .with(GlobalTransform::default())
+                                .with(Parent { entity: *parent })
+                                .build()
                         })
-                        .with(AnimatedFloor(String::from("floor")))
-                        //.with(Layered)
-                        .with(transform)
-                        .with(GlobalTransform::default())
-                        .build()
+                        .collect()
                 })
-                .collect()
+                .fold(Vec::with_capacity(10 * 11), |mut acc, v: Vec<Entity>| {
+                    acc.extend(v);
+                    acc
+                });
+
+            let all: Vec<(Entity, Entity)> = map_def
+                .tables
+                .iter()
+                .map(|(x, y, t, o)| {
+                    create_table(
+                        world,
+                        *parent,
+                        flavors,
+                        preparations,
+                        toppings,
+                        t,
+                        o,
+                        *x * BASE,
+                        *y * BASE,
+                    )
+                })
+                .collect();
+
+            let mut tops: Vec<Entity> = all.iter().map(|(top, _side)| *top).collect();
+
+            let mut sides: Vec<Entity> = all.iter().map(|(_top, side)| *side).collect();
+
+            tiles.append(&mut tops);
+            tiles.append(&mut sides);
+            tiles
         })
-        .fold(Vec::with_capacity(10 * 11), |mut acc, v: Vec<Entity>| {
+        .fold(Vec::new(), |mut acc, v| {
             acc.extend(v);
             acc
         });
-
-    let all: Vec<(Entity, Entity)> = map_def
-        .tables
-        .iter()
-        .map(|(x, y, t, o)| {
-            create_table(
-                world,
-                flavors,
-                preparations,
-                toppings,
-                t,
-                o,
-                *x * BASE + MAP_OFFSET_X,
-                *y * BASE + MAP_OFFSET_Y,
-            )
-        })
-        .collect();
-
-    let mut tops: Vec<Entity> = all.iter().map(|(top, _side)| *top).collect();
-
-    let mut sides: Vec<Entity> = all.iter().map(|(_top, side)| *side).collect();
-
-    tiles.append(&mut tops);
-    tiles.append(&mut sides);
 
     (
         tiles,
         map_def
             .spawns
             .iter()
-            .map(|(x, y)| (*x * BASE + MAP_OFFSET_X, *y * BASE + MAP_OFFSET_X))
+            .map(|(x, y)| (*x * BASE, *y * BASE))
             .collect(),
     )
 }
 
 fn create_table(
     world: &mut World,
+    parent: Entity,
     flavors: &[FlavorIndex],
     preparations: &[PreparationIndex],
     toppings: &[ToppingIndex],
@@ -154,6 +165,7 @@ fn create_table(
 
         create_entities(
             world,
+            parent,
             hitbox,
             side,
             top,
@@ -187,6 +199,7 @@ fn create_table(
                 };
                 create_entities(
                     world,
+                    parent,
                     hitbox,
                     side,
                     top,
@@ -212,6 +225,7 @@ fn create_table(
                 };
                 create_entities(
                     world,
+                    parent,
                     hitbox,
                     side,
                     top,
@@ -237,6 +251,7 @@ fn create_table(
                 };
                 create_entities(
                     world,
+                    parent,
                     hitbox,
                     side,
                     top,
@@ -247,6 +262,7 @@ fn create_table(
             }
             TableType::Delivery => create_entities(
                 world,
+                parent,
                 hitbox,
                 side,
                 top,
@@ -262,6 +278,7 @@ fn create_table(
 
 fn create_entities(
     world: &mut World,
+    parent: Entity,
     hitbox: Hitbox,
     side: Transform,
     top: Transform,
@@ -269,7 +286,6 @@ fn create_entities(
     table: Option<Table>,
     animate: bool,
 ) -> (Entity, Entity) {
-    info!("{}_{}", key, orientation);
     let empty_handle = {
         let handles = world.read_resource::<Handles>();
         handles.empty_handle.clone()
@@ -290,6 +306,7 @@ fn create_entities(
         })
         .with(Layered)
         .with(top)
+        .with(Parent { entity: parent })
         .with(GlobalTransform::default());
     let top = if let Some(c) = table {
         top.with(c).build()
@@ -313,6 +330,7 @@ fn create_entities(
         })
         .with(Layered)
         .with(side)
+        .with(Parent { entity: parent })
         .with(GlobalTransform::default());
     let side = if animate {
         side.with(AnimatedTable(key, orientation)).build()

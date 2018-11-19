@@ -46,7 +46,8 @@ impl<'s> System<'s> for ControlSystem {
                 Vector3::<f32>::default_max_relative(),
             ) {
                 let vec = Vector2::new(entry.left_axis.x, entry.left_axis.y).normalize();
-                let angle: Deg<f32> = Angle::atan2(vec.y, vec.x);
+                let x_val = if player.invert_x_axis { -vec.x } else { vec.x };
+                let angle: Deg<f32> = Angle::atan2(vec.y, x_val);
 
                 info!("Angle: {}", angle.0);
                 let new_angle = match angle.0 {

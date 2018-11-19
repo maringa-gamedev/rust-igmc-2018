@@ -1,10 +1,13 @@
 use super::game::*;
 use amethyst::{
-    core::{cgmath::*, transform::GlobalTransform},
+    core::{
+        cgmath::*,
+        transform::{GlobalTransform, Transform},
+    },
     ecs::prelude::*,
     input::{is_close_requested, is_key_down},
     prelude::*,
-    renderer::{Camera, Projection, VirtualKeyCode},
+    renderer::{Camera, Projection, SpriteRender, Transparent, VirtualKeyCode},
     utils::application_root_dir,
 };
 use clap::ArgMatches;
@@ -50,18 +53,19 @@ impl<'a, 'b> SimpleState<'a, 'b> for Load {
         let (player_handle, mut animations) = load_players_texture(&mut world);
         let (items_handle, items_anims) = load_items_texture(&mut world);
         let (map_handle, empty_handle, map_anims) = load_map_texture(&mut world);
-        let bg_handle = load_ui_texture(&mut world);
+        let (bg_handle, hud_handle, title_handle) = load_ui_texture(&mut world);
         world.add_resource(Handles {
             player_handle,
             items_handle,
             map_handle,
             bg_handle,
             empty_handle,
+            hud_handle,
         });
 
         animations.extend(items_anims);
         animations.extend(map_anims);
-        info!("Loaded Animations: {:#?}", animations);
+        info!("Loaded Animations: {:?}", animations);
         world.add_resource(Animations { animations });
 
         generate_bg(&mut world);
@@ -81,12 +85,28 @@ impl<'a, 'b> SimpleState<'a, 'b> for Load {
                 }
             }
         };
-        info!("Loaded palette: {:#?}", palette);
+        info!("Loaded palette: {:?}", palette);
         world.add_resource(Arc::new(Mutex::new(palette)));
 
         let defs = load_game_data();
-        info!("Loaded definitions: {:#?}", defs);
+        info!("Loaded definitions: {:?}", defs);
         world.add_resource(defs);
+
+        let mut title_transform = Transform::default();
+        title_transform.translation = Vector3::new(MAP_WIDTH / 2.0, MAP_HEIGHT / 2.0, 0.0);
+        let title_card = world
+            .create_entity()
+            .with(SpriteRender {
+                sprite_sheet: title_handle,
+                sprite_number: 0,
+                flip_horizontal: false,
+                flip_vertical: false,
+            })
+            .with(Transparent)
+            .with(title_transform)
+            .with(GlobalTransform::default())
+            .build();
+        self.entities.push(title_card);
     }
 
     fn handle_event(
@@ -101,7 +121,7 @@ impl<'a, 'b> SimpleState<'a, 'b> for Load {
                 return Trans::Quit;
             } else if is_key_down(&event, VirtualKeyCode::Return) {
                 let matches = world.read_resource::<ArgMatches>();
-                return Trans::Push(Box::new(Game::default().with_map(&format!(
+                return Trans::Switch(Box::new(Game::default().with_map(&format!(
                     "{}/assets/map/{}.ron",
                     application_root_dir(),
                     matches.value_of("map").unwrap_or("0000")

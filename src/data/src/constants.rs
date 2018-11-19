@@ -11,8 +11,8 @@ pub const TILE_HEIGHT: f32 = 16.0;
 
 pub const BASE: f32 = 16.0;
 
-//pub const MAP_WIDTH: f32 = 480.0;
-//pub const MAP_HEIGHT: f32 = 272.0;
+pub const MAP_WIDTH: f32 = 480.0;
+pub const MAP_HEIGHT: f32 = 272.0;
 pub const MAP_OFFSET_X: f32 = 3.5 * BASE;
 pub const MAP_OFFSET_Y: f32 = 3.0 * BASE;
 

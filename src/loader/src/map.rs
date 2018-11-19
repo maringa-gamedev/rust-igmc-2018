@@ -289,7 +289,7 @@ pub fn load_map_texture(
             acc.extend(v);
             acc
         });
-    info!("all_anims: {:#?}", all_anims);
+    //info!("all_anims: {:#?}", all_anims);
 
     anim_def.extend(all_anims);
 

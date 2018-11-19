@@ -75,17 +75,44 @@ impl<'a, 'b> SimpleState<'a, 'b> for Game {
             ToppingIndex(0),
         ];
 
+        let (left_parent, right_parent) = {
+            let mut left_transform = Transform::default();
+            left_transform.translation = Vector3::new(MAP_OFFSET_X, MAP_OFFSET_Y, 0.0);
+            let left = world
+                .create_entity()
+                .with(left_transform)
+                .with(GlobalTransform::default())
+                .build();
+
+            let mut right_transform = Transform::default();
+            right_transform.translation = Vector3::new(MAP_WIDTH - MAP_OFFSET_X, MAP_OFFSET_Y, 0.0);
+            right_transform.scale = Vector3::new(-1.0, 1.0, 1.0);
+            let right = world
+                .create_entity()
+                .with(right_transform)
+                .with(GlobalTransform::default())
+                .build();
+
+            (left, right)
+        };
+        self.entities.push(left_parent);
+        self.entities.push(right_parent);
+        info!("left parent  {:?}", left_parent);
+        info!("right parent {:?}", right_parent);
+
         let (mut map_entities, spawn_points) = create_map_from_file(
             &mut world,
+            (left_parent, right_parent),
             &self.map_file,
             &flavor_loadout[..],
             &preparation_loadout[..],
             &topping_loadout[..],
         );
-        self.create_bounds(&mut world, V_W * 2.0, V_H * 2.0);
+        //self.create_bounds(&mut world, V_W * 2.0, V_H * 2.0);
         self.create_kitchen_bounds(
             &mut world,
-            (MAP_OFFSET_X, MAP_OFFSET_Y, BASE * 10.0, BASE * 11.0),
+            (left_parent, right_parent),
+            (0.0, 0.0, BASE * 10.0, BASE * 11.0),
         );
 
         self.data.flavors = flavor_loadout;
@@ -93,10 +120,21 @@ impl<'a, 'b> SimpleState<'a, 'b> for Game {
         self.data.toppings = topping_loadout;
 
         let team_a = Team {
-            captain: self.create_player(&mut world, spawn_points[0], 0),
-            server: self.create_player(&mut world, spawn_points[1], 1),
-            scooper_one: Some(self.create_player(&mut world, spawn_points[2], 2)),
-            scooper_two: Some(self.create_player(&mut world, spawn_points[3], 3)),
+            captain: self.create_player(&mut world, left_parent, spawn_points[0], 0, false),
+            server: self.create_player(&mut world, left_parent, spawn_points[1], 1, false),
+            scooper_one: None,
+            scooper_two: None,
+            loadout: vec![],
+            power_meter: 0.0,
+            score: 0,
+            orders: vec![],
+        };
+
+        let team_b = Team {
+            captain: self.create_player(&mut world, right_parent, spawn_points[0], 2, true),
+            server: self.create_player(&mut world, right_parent, spawn_points[1], 3, true),
+            scooper_one: None,
+            scooper_two: None,
             loadout: vec![],
             power_meter: 0.0,
             score: 0,
@@ -104,8 +142,27 @@ impl<'a, 'b> SimpleState<'a, 'b> for Game {
         };
 
         self.data.teams.push(team_a);
+        self.data.teams.push(team_b);
 
         self.entities.append(&mut map_entities);
+
+        let mut hud_transform = Transform::default();
+        hud_transform.translation = Vector3::new(MAP_WIDTH / 2.0, MAP_HEIGHT / 2.0, 0.0);
+        let hud_handle = world.read_resource::<Handles>().hud_handle.clone();
+        self.entities.push(
+            world
+                .create_entity()
+                .with(SpriteRender {
+                    sprite_sheet: hud_handle,
+                    sprite_number: 0,
+                    flip_horizontal: false,
+                    flip_vertical: false,
+                })
+                .with(Transparent)
+                .with(hud_transform)
+                .with(GlobalTransform::default())
+                .build(),
+        );
     }
 
     fn handle_event(
@@ -142,8 +199,10 @@ impl Game {
     fn create_player(
         &mut self,
         world: &mut World,
+        parent: Entity,
         (x, y): (f32, f32),
         gamepad_index: usize,
+        invert_x_axis: bool,
     ) -> Entity {
         let (player_handle, items_handle) = {
             let handles = world.read_resource::<Handles>();
@@ -166,7 +225,7 @@ impl Game {
                 flip_horizontal: false,
                 flip_vertical: false,
             })
-            .with(Player::new(gamepad_index, 0.0))
+            .with(Player::new(gamepad_index, 0.0, invert_x_axis))
             .with(Input::new())
             .with(Velocity::new(40.0))
             .with(Hitbox {
@@ -179,6 +238,7 @@ impl Game {
             .with(Transparent)
             .with(Layered)
             .with(transform)
+            .with(Parent { entity: parent })
             .with(GlobalTransform::default())
             .build();
         self.entities.push(entity);
@@ -209,6 +269,7 @@ impl Game {
     fn create_kitchen_bounds(
         &mut self,
         world: &mut World,
+        (left_parent, right_parent): (Entity, Entity),
         (x, y, width, height): (f32, f32, f32, f32),
     ) {
         let xs = vec![x + width / 2.0, x + width / 2.0, x - BASE, x + width + BASE];
@@ -243,7 +304,26 @@ impl Game {
                         shape: Either::Left(Cuboid::new(NAVector2::new(w / 2.0, h / 2.0))),
                         offset: NAVector2::new(0.0, 0.0),
                     })
+                    .with(transform.clone())
+                    .with(Parent {
+                        entity: left_parent,
+                    })
+                    .with(GlobalTransform::default())
+                    .build(),
+            );
+
+            self.entities.push(
+                world
+                    .create_entity()
+                    .with(Solid)
+                    .with(Hitbox {
+                        shape: Either::Left(Cuboid::new(NAVector2::new(w / 2.0, h / 2.0))),
+                        offset: NAVector2::new(0.0, 0.0),
+                    })
                     .with(transform)
+                    .with(Parent {
+                        entity: right_parent,
+                    })
                     .with(GlobalTransform::default())
                     .build(),
             );

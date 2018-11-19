@@ -139,4 +139,5 @@ pub struct Handles {
     pub map_handle: SpriteSheetHandle,
     pub bg_handle: SpriteSheetHandle,
     pub empty_handle: SpriteSheetHandle,
+    pub hud_handle: SpriteSheetHandle,
 }
