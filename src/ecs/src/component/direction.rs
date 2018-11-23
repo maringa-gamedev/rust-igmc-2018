@@ -1,7 +1,5 @@
 use amethyst::ecs::prelude::*;
-use log::*;
 use nk_data::*;
-use serde_derive::*;
 
 pub struct Direction {
     pub current: Cardinal,

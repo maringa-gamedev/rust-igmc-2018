@@ -23,7 +23,6 @@ pub struct Game {
     map_file: String,
     camera: Option<Entity>,
     entities: Vec<Entity>,
-    data: Match,
 }
 
 impl Game {
@@ -39,7 +38,7 @@ impl Default for Game {
             map_file: format!("{}/assets/map/0000.ron", application_root_dir()),
             camera: None,
             entities: Vec::with_capacity(128),
-            data: Match::default(),
+            //data: Match::default(),
         }
     }
 }
@@ -115,13 +114,33 @@ impl<'a, 'b> SimpleState<'a, 'b> for Game {
             (0.0, 0.0, BASE * 10.0, BASE * 11.0),
         );
 
-        self.data.flavors = flavor_loadout;
-        self.data.preparations = preparation_loadout;
-        self.data.toppings = topping_loadout;
+        let mut data = Match::default();
+
+        data.flavors = flavor_loadout;
+        data.preparations = preparation_loadout;
+        data.toppings = topping_loadout;
 
         let team_a = Team {
-            captain: self.create_player(&mut world, left_parent, spawn_points[0], 0, false),
-            server: self.create_player(&mut world, left_parent, spawn_points[1], 1, false),
+            captain: self.create_player(
+                &mut world,
+                0,
+                left_parent,
+                spawn_points[0],
+                0,
+                Style::HalfLeft,
+                false,
+                "captain_left",
+            ),
+            server: self.create_player(
+                &mut world,
+                0,
+                left_parent,
+                spawn_points[1],
+                0,
+                Style::HalfRight,
+                false,
+                "server_left",
+            ),
             scooper_one: None,
             scooper_two: None,
             loadout: vec![],
@@ -131,8 +150,26 @@ impl<'a, 'b> SimpleState<'a, 'b> for Game {
         };
 
         let team_b = Team {
-            captain: self.create_player(&mut world, right_parent, spawn_points[0], 2, true),
-            server: self.create_player(&mut world, right_parent, spawn_points[1], 3, true),
+            captain: self.create_player(
+                &mut world,
+                1,
+                right_parent,
+                spawn_points[0],
+                1,
+                Style::HalfLeft,
+                true,
+                "captain_right",
+            ),
+            server: self.create_player(
+                &mut world,
+                1,
+                right_parent,
+                spawn_points[1],
+                1,
+                Style::HalfRight,
+                true,
+                "server_right",
+            ),
             scooper_one: None,
             scooper_two: None,
             loadout: vec![],
@@ -141,8 +178,10 @@ impl<'a, 'b> SimpleState<'a, 'b> for Game {
             orders: vec![],
         };
 
-        self.data.teams.push(team_a);
-        self.data.teams.push(team_b);
+        data.teams.push(team_a);
+        data.teams.push(team_b);
+
+        world.add_resource(data);
 
         self.entities.append(&mut map_entities);
 
@@ -199,10 +238,13 @@ impl Game {
     fn create_player(
         &mut self,
         world: &mut World,
+        team_index: usize,
         parent: Entity,
         (x, y): (f32, f32),
         gamepad_index: usize,
+        gamepad_style: Style,
         invert_x_axis: bool,
+        key: &str,
     ) -> Entity {
         let (player_handle, items_handle) = {
             let handles = world.read_resource::<Handles>();
@@ -225,7 +267,14 @@ impl Game {
                 flip_horizontal: false,
                 flip_vertical: false,
             })
-            .with(Player::new(gamepad_index, 0.0, invert_x_axis))
+            .with(Player::new_with_style(
+                gamepad_index,
+                gamepad_style,
+                team_index,
+                0.0,
+                invert_x_axis,
+                key.to_owned(),
+            ))
             .with(Input::new())
             .with(Velocity::new(40.0))
             .with(Hitbox {

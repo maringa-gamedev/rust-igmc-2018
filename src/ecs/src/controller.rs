@@ -82,28 +82,145 @@ impl<'s> System<'s> for ControllerSystem {
                             match b {
                                 ev::Button::South => {
                                     controller.actions[0] = true;
-                                    if let Some((input, _)) = (&mut inputs, &players)
-                                        .join()
-                                        .find(|(_, p)| p.gamepad_index == *id)
-                                    {
+                                    if let Some((input, _)) =
+                                        (&mut inputs, &players).join().find(|(_, p)| {
+                                            match p.gamepad_style {
+                                                Style::Full | Style::HalfRight => {
+                                                    p.gamepad_index == *id
+                                                }
+                                                Style::HalfLeft => false,
+                                            }
+                                        }) {
+                                        input.wants_south = true;
+                                    }
+                                }
+                                ev::Button::East => {
+                                    controller.actions[1] = true;
+                                    if let Some((input, _)) =
+                                        (&mut inputs, &players).join().find(|(_, p)| {
+                                            match p.gamepad_style {
+                                                Style::Full | Style::HalfRight => {
+                                                    p.gamepad_index == *id
+                                                }
+                                                Style::HalfLeft => false,
+                                            }
+                                        }) {
+                                        input.wants_east = true;
+                                    }
+                                }
+                                ev::Button::North => {
+                                    controller.actions[2] = true;
+                                    if let Some((input, _)) =
+                                        (&mut inputs, &players).join().find(|(_, p)| {
+                                            match p.gamepad_style {
+                                                Style::Full | Style::HalfRight => {
+                                                    p.gamepad_index == *id
+                                                }
+                                                Style::HalfLeft => false,
+                                            }
+                                        }) {
+                                        input.wants_north = true;
+                                    }
+                                }
+                                ev::Button::West => {
+                                    controller.actions[3] = true;
+                                    if let Some((input, _)) =
+                                        (&mut inputs, &players).join().find(|(_, p)| {
+                                            match p.gamepad_style {
+                                                Style::Full | Style::HalfRight => {
+                                                    p.gamepad_index == *id
+                                                }
+                                                Style::HalfLeft => false,
+                                            }
+                                        }) {
+                                        input.wants_west = true;
+                                    }
+                                }
+
+                                ev::Button::DPadUp => {
+                                    controller.d_pad.y = 1.0;
+                                    if let Some((input, _)) =
+                                        (&mut inputs, &players).join().find(|(_, p)| {
+                                            match p.gamepad_style {
+                                                Style::HalfLeft => p.gamepad_index == *id,
+                                                Style::Full | Style::HalfRight => false,
+                                            }
+                                        }) {
+                                        input.wants_north = true;
+                                    }
+                                }
+                                ev::Button::DPadDown => {
+                                    controller.d_pad.y = -1.0;
+                                    if let Some((input, _)) =
+                                        (&mut inputs, &players).join().find(|(_, p)| {
+                                            match p.gamepad_style {
+                                                Style::HalfLeft => p.gamepad_index == *id,
+                                                Style::Full | Style::HalfRight => false,
+                                            }
+                                        }) {
+                                        input.wants_south = true;
+                                    }
+                                }
+                                ev::Button::DPadLeft => {
+                                    controller.d_pad.x = -1.0;
+                                    if let Some((input, _)) =
+                                        (&mut inputs, &players).join().find(|(_, p)| {
+                                            match p.gamepad_style {
+                                                Style::HalfLeft => p.gamepad_index == *id,
+                                                Style::Full | Style::HalfRight => false,
+                                            }
+                                        }) {
+                                        input.wants_west = true;
+                                    }
+                                }
+                                ev::Button::DPadRight => {
+                                    controller.d_pad.x = 1.0;
+                                    if let Some((input, _)) =
+                                        (&mut inputs, &players).join().find(|(_, p)| {
+                                            match p.gamepad_style {
+                                                Style::HalfLeft => p.gamepad_index == *id,
+                                                Style::Full | Style::HalfRight => false,
+                                            }
+                                        }) {
+                                        input.wants_east = true;
+                                    }
+                                }
+
+                                ev::Button::LeftTrigger2 => {
+                                    controller.triggers[0] = true;
+                                    if let Some((input, _)) =
+                                        (&mut inputs, &players).join().find(|(_, p)| {
+                                            match p.gamepad_style {
+                                                Style::HalfLeft | Style::Full => {
+                                                    p.gamepad_index == *id
+                                                }
+                                                Style::HalfRight => false,
+                                            }
+                                        }) {
                                         input.wants_to_interact = true;
                                     }
                                 }
-                                ev::Button::East => controller.actions[1] = true,
-                                ev::Button::North => controller.actions[2] = true,
-                                ev::Button::West => controller.actions[3] = true,
+                                ev::Button::RightTrigger2 => {
+                                    controller.triggers[1] = true;
+                                    if let Some((input, _)) =
+                                        (&mut inputs, &players).join().find(|(_, p)| {
+                                            match p.gamepad_style {
+                                                Style::HalfRight | Style::Full => {
+                                                    p.gamepad_index == *id
+                                                }
+                                                Style::HalfLeft => false,
+                                            }
+                                        }) {
+                                        input.wants_to_interact = true;
+                                    }
+                                }
+
                                 ev::Button::Select => controller.select = true,
                                 ev::Button::Start => controller.start = true,
                                 ev::Button::LeftThumb => controller.thumbs[0] = true,
                                 ev::Button::RightThumb => controller.thumbs[1] = true,
                                 ev::Button::LeftTrigger => controller.shoulders[0] = true,
                                 ev::Button::RightTrigger => controller.shoulders[1] = true,
-                                ev::Button::LeftTrigger2 => controller.triggers[0] = true,
-                                ev::Button::RightTrigger2 => controller.triggers[1] = true,
-                                ev::Button::DPadUp => controller.d_pad.y = 1.0,
-                                ev::Button::DPadDown => controller.d_pad.y = -1.0,
-                                ev::Button::DPadLeft => controller.d_pad.x = -1.0,
-                                ev::Button::DPadRight => controller.d_pad.x = 1.0,
                                 _ => {}
                             }
                         }
@@ -112,44 +229,143 @@ impl<'s> System<'s> for ControllerSystem {
                         if let Some(controller) = controllers.get_mut(id) {
                             match b {
                                 ev::Button::South => {
-                                    controller.actions[0] = false;
+                                    controller.actions[0] = true;
                                     if let Some((input, _)) = (&mut inputs, &players)
                                         .join()
                                         .find(|(_, p)| p.gamepad_index == *id)
                                     {
+                                        input.wants_south = true;
+                                    }
+                                }
+                                ev::Button::East => {
+                                    controller.actions[1] = false;
+                                    if let Some((input, _)) = (&mut inputs, &players)
+                                        .join()
+                                        .find(|(_, p)| p.gamepad_index == *id)
+                                    {
+                                        input.wants_east = false;
+                                    }
+                                }
+                                ev::Button::North => {
+                                    controller.actions[2] = false;
+                                    if let Some((input, _)) = (&mut inputs, &players)
+                                        .join()
+                                        .find(|(_, p)| p.gamepad_index == *id)
+                                    {
+                                        input.wants_north = false;
+                                    }
+                                }
+                                ev::Button::West => {
+                                    controller.actions[3] = false;
+                                    if let Some((input, _)) = (&mut inputs, &players)
+                                        .join()
+                                        .find(|(_, p)| p.gamepad_index == *id)
+                                    {
+                                        input.wants_west = false;
+                                    }
+                                }
+
+                                ev::Button::DPadUp => {
+                                    controller.d_pad.y = 0.0;
+                                    if let Some((input, _)) =
+                                        (&mut inputs, &players).join().find(|(_, p)| {
+                                            match p.gamepad_style {
+                                                Style::HalfLeft => p.gamepad_index == *id,
+                                                Style::Full | Style::HalfRight => false,
+                                            }
+                                        }) {
+                                        input.wants_north = false;
+                                    }
+                                }
+                                ev::Button::DPadDown => {
+                                    controller.d_pad.y = 0.0;
+                                    if let Some((input, _)) =
+                                        (&mut inputs, &players).join().find(|(_, p)| {
+                                            match p.gamepad_style {
+                                                Style::HalfLeft => p.gamepad_index == *id,
+                                                Style::Full | Style::HalfRight => false,
+                                            }
+                                        }) {
+                                        input.wants_south = false;
+                                    }
+                                }
+                                ev::Button::DPadLeft => {
+                                    controller.d_pad.x = 0.0;
+                                    if let Some((input, _)) =
+                                        (&mut inputs, &players).join().find(|(_, p)| {
+                                            match p.gamepad_style {
+                                                Style::HalfLeft => p.gamepad_index == *id,
+                                                Style::Full | Style::HalfRight => false,
+                                            }
+                                        }) {
+                                        input.wants_west = false;
+                                    }
+                                }
+                                ev::Button::DPadRight => {
+                                    controller.d_pad.x = 0.0;
+                                    if let Some((input, _)) =
+                                        (&mut inputs, &players).join().find(|(_, p)| {
+                                            match p.gamepad_style {
+                                                Style::HalfLeft => p.gamepad_index == *id,
+                                                Style::Full | Style::HalfRight => false,
+                                            }
+                                        }) {
+                                        input.wants_east = false;
+                                    }
+                                }
+
+                                ev::Button::LeftTrigger2 => {
+                                    controller.triggers[0] = false;
+                                    if let Some((input, _)) =
+                                        (&mut inputs, &players).join().find(|(_, p)| {
+                                            match p.gamepad_style {
+                                                Style::HalfLeft | Style::Full => {
+                                                    p.gamepad_index == *id
+                                                }
+                                                Style::HalfRight => false,
+                                            }
+                                        }) {
                                         input.wants_to_interact = false;
                                     }
                                 }
-                                ev::Button::East => controller.actions[1] = false,
-                                ev::Button::North => controller.actions[2] = false,
-                                ev::Button::West => controller.actions[3] = false,
+                                ev::Button::RightTrigger2 => {
+                                    controller.triggers[1] = false;
+                                    if let Some((input, _)) =
+                                        (&mut inputs, &players).join().find(|(_, p)| {
+                                            match p.gamepad_style {
+                                                Style::HalfRight | Style::Full => {
+                                                    p.gamepad_index == *id
+                                                }
+                                                Style::HalfLeft => false,
+                                            }
+                                        }) {
+                                        input.wants_to_interact = false;
+                                    }
+                                }
+
                                 ev::Button::Select => controller.select = false,
                                 ev::Button::Start => controller.start = false,
                                 ev::Button::LeftThumb => controller.thumbs[0] = false,
                                 ev::Button::RightThumb => controller.thumbs[1] = false,
                                 ev::Button::LeftTrigger => controller.shoulders[0] = false,
                                 ev::Button::RightTrigger => controller.shoulders[1] = false,
-                                ev::Button::LeftTrigger2 => controller.triggers[0] = false,
-                                ev::Button::RightTrigger2 => controller.triggers[1] = false,
-                                ev::Button::DPadUp => controller.d_pad[1] = 0.0,
-                                ev::Button::DPadDown => controller.d_pad[1] = 0.0,
-                                ev::Button::DPadLeft => controller.d_pad[0] = 0.0,
-                                ev::Button::DPadRight => controller.d_pad[0] = 0.0,
                                 _ => {}
                             }
                         }
                     }
-                    ev::EventType::ButtonChanged(b, v, _) => {
-                        if let Some(controller) = controllers.get_mut(id) {
-                            match b {
-                                ev::Button::DPadUp => controller.d_pad.y = *v,
-                                ev::Button::DPadDown => controller.d_pad.y = *v,
-                                ev::Button::DPadLeft => controller.d_pad.x = *v,
-                                ev::Button::DPadRight => controller.d_pad.x = *v,
-                                _ => {}
-                            }
-                        }
-                    }
+                    /*
+                     *ev::EventType::ButtonChanged(b, v, _) => {
+                     *    if let Some(controller) = controllers.get_mut(id) {
+                     *        match b {
+                     *            ev::Button::DPadUp => controller.d_pad.y = *v,
+                     *            ev::Button::DPadDown => controller.d_pad.y = *v,
+                     *            ev::Button::DPadLeft => controller.d_pad.x = *v,
+                     *            ev::Button::DPadRight => controller.d_pad.x = *v,
+                     *            _ => {}
+                     *        }
+                     *    }
+                     *}
+                     */
                     ev::EventType::AxisChanged(a, v, _) => {
                         if let Some(controller) = controllers.get_mut(id) {
                             match a {

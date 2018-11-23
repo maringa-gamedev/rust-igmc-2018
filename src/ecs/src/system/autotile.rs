@@ -1,16 +1,10 @@
 use amethyst::{
-    core::{
-        cgmath::*,
-        timing::Time,
-        transform::{Parent, Transform},
-    },
+    core::transform::{Parent, Transform},
     ecs::prelude::*,
     renderer::SpriteRender,
 };
 use crate::component::*;
 use itertools::*;
-use log::*;
-use nk_data::*;
 
 const W: usize = 10;
 const H: usize = 11;

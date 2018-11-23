@@ -4,11 +4,9 @@ use amethyst::{
 };
 use crate::component::*;
 use nk_data::*;
-use log::*;
 use either::*;
 use nalgebra::{Isometry2, Vector2};
-use ncollide2d::shape::*;
-use ncollide2d::query::{self, *};
+use ncollide2d::query::{self};
 
 pub struct CollisionSystem;
 

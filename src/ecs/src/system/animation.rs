@@ -1,10 +1,5 @@
-use amethyst::{
-    core::{cgmath::*, timing::Time},
-    ecs::prelude::*,
-    renderer::SpriteRender,
-};
+use amethyst::{core::timing::Time, ecs::prelude::*, renderer::SpriteRender};
 use crate::component::*;
-use log::*;
 use nk_data::*;
 
 pub struct AnimationSystem;

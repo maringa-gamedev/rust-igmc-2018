@@ -19,6 +19,7 @@ impl<'a, 'b> SystemBundle<'a, 'b> for GameBundle {
         builder.add(CollisionSystem, "xto_collision", &["xto_movement"]);
         builder.add(LayerSystem, "xto_layer", &["xto_collision"]);
         builder.add(InteractSystem, "xto_interact", &["xto_collision"]);
+        builder.add(InteractionSystem, "xto_interaction", &["xto_interact"]);
         Ok(())
     }
 }

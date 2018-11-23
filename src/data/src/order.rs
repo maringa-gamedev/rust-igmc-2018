@@ -80,8 +80,20 @@ impl Order {
         }
     }
 
+    pub fn insert_topping(&mut self, t: ToppingIndex) {
+        if let None = self.topping {
+            self.topping = Some(t);
+        } else {
+            warn!("CANNOT INSERT MORE TOPPINGS, SOMETHING MUST BE WRONG!");
+        }
+    }
+
     pub fn update_delivery(&mut self, d: f32) {
         self.delivery_timer -= d;
+    }
+
+    pub fn has_topping(&self) -> bool {
+        self.topping.is_some()
     }
 
     pub fn has_melted(&self) -> bool {
@@ -90,6 +102,20 @@ impl Order {
 
     pub fn is_completed(&self) -> bool {
         self.completion >= 1.0
+    }
+
+    pub fn is_empty(&self) -> bool {
+        if let Some(_) = self.flavor_a {
+            false
+        } else if let Some(_) = self.flavor_b {
+            false
+        } else if let Some(_) = self.flavor_c {
+            false
+        } else if let Some(_) = self.flavor_d {
+            false
+        } else {
+            true
+        }
     }
 
     pub fn update_completion(&mut self, d: f32) {

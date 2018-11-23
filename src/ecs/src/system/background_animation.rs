@@ -1,11 +1,8 @@
 use amethyst::{
     core::{timing::Time, transform::Transform},
-    ecs::prelude::{Entities, Join, Read, ReadStorage, System, WriteStorage},
+    ecs::prelude::{Join, Read, System, WriteStorage},
 };
 use crate::component::*;
-use log::*;
-use nalgebra::{Isometry2, Vector2};
-use ncollide2d::query::{self, *};
 
 pub struct BackgroundAnimationSystem;
 

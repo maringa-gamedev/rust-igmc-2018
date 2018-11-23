@@ -19,4 +19,5 @@ pub struct Match {
     pub flavors: Vec<FlavorIndex>,
     pub preparations: Vec<PreparationIndex>,
     pub toppings: Vec<ToppingIndex>,
+    pub order_gen_timer: f32,
 }

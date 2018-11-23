@@ -140,4 +140,6 @@ pub struct Handles {
     pub bg_handle: SpriteSheetHandle,
     pub empty_handle: SpriteSheetHandle,
     pub hud_handle: SpriteSheetHandle,
+    pub buttons_handle: SpriteSheetHandle,
+    pub progress_handle: SpriteSheetHandle,
 }

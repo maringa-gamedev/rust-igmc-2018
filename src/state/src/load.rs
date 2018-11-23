@@ -32,7 +32,9 @@ impl<'a, 'b> SimpleState<'a, 'b> for Load {
     fn on_start(&mut self, data: StateData<GameData>) {
         let StateData { mut world, .. } = data;
 
-        world.register::<Interaction>();
+        world.register::<FlavorInteraction>();
+        world.register::<PreparationInteraction>();
+        world.register::<ToppingInteraction>();
         world.register::<Effect>();
 
         world
@@ -43,17 +45,20 @@ impl<'a, 'b> SimpleState<'a, 'b> for Load {
                 top: VIEW_HEIGHT,
                 bottom: 0.0,
                 near: 0.0,
-                far: 1024.0,
+                far: 1152.0,
             })))
             .with(GlobalTransform(Matrix4::from_translation(
-                Vector3::new(0.0, 0.0, 1.0).into(),
+                Vector3::new(0.0, 0.0, 128.0).into(),
             )))
             .build();
 
+        initialise_audio(&mut world);
         let (player_handle, mut animations) = load_players_texture(&mut world);
         let (items_handle, items_anims) = load_items_texture(&mut world);
         let (map_handle, empty_handle, map_anims) = load_map_texture(&mut world);
         let (bg_handle, hud_handle, title_handle) = load_ui_texture(&mut world);
+        let (buttons_handle, progress_handle, interaction_anims) =
+            load_interaction_texture(&mut world);
         world.add_resource(Handles {
             player_handle,
             items_handle,
@@ -61,10 +66,13 @@ impl<'a, 'b> SimpleState<'a, 'b> for Load {
             bg_handle,
             empty_handle,
             hud_handle,
+            buttons_handle,
+            progress_handle,
         });
 
         animations.extend(items_anims);
         animations.extend(map_anims);
+        animations.extend(interaction_anims);
         info!("Loaded Animations: {:?}", animations);
         world.add_resource(Animations { animations });
 

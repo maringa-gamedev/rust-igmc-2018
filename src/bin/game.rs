@@ -5,7 +5,7 @@
 use amethyst::{
     animation::AnimationBundle,
     assets::Processor,
-    audio::Source,
+    audio::{AudioBundle, Source},
     config::*,
     core::{frame_limiter::FrameRateLimitStrategy, transform::TransformBundle},
     input::InputBundle,
@@ -24,6 +24,8 @@ use log::*;
 use nk_ecs::*;
 use nk_state::*;
 use std::{collections::HashMap, sync::*, time::Duration};
+
+pub struct NoMusic;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -91,7 +93,8 @@ fn main() -> amethyst::Result<()> {
         .with_bundle(GameBundle)?
         .with_bundle(TransformBundle::new().with_dep(&["xto_movement"]))?
         .with_bundle(UiBundle::<String, String>::new())?
-        .with(Processor::<Source>::new(), "source_processor", &[])
+        .with_bundle(AudioBundle::new(|_: &mut NoMusic| None))?
+        //.with(Processor::<Source>::new(), "source_processor", &[])
         .with_bundle(
             RenderBundle::new(pipe, Some(display_config))
                 .with_sprite_sheet_processor()
@@ -105,6 +108,7 @@ fn main() -> amethyst::Result<()> {
         .with_resource(Arc::new(Mutex::new(controllers)))
         .with_resource(channel)
         .with_resource(matches)
+        .with_resource(NoMusic)
         .with_frame_limit(
             FrameRateLimitStrategy::SleepAndYield(Duration::from_millis(2)),
             30,
