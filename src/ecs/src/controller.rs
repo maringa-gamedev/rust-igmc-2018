@@ -228,24 +228,6 @@ impl<'s> System<'s> for ControllerSystem {
                     ev::EventType::ButtonReleased(b, _) => {
                         if let Some(controller) = controllers.get_mut(id) {
                             match b {
-                                ev::Button::South => {
-                                    controller.actions[0] = true;
-                                    if let Some((input, _)) = (&mut inputs, &players)
-                                        .join()
-                                        .find(|(_, p)| p.gamepad_index == *id)
-                                    {
-                                        input.wants_south = true;
-                                    }
-                                }
-                                ev::Button::East => {
-                                    controller.actions[1] = false;
-                                    if let Some((input, _)) = (&mut inputs, &players)
-                                        .join()
-                                        .find(|(_, p)| p.gamepad_index == *id)
-                                    {
-                                        input.wants_east = false;
-                                    }
-                                }
                                 ev::Button::North => {
                                     controller.actions[2] = false;
                                     if let Some((input, _)) = (&mut inputs, &players)
@@ -255,6 +237,15 @@ impl<'s> System<'s> for ControllerSystem {
                                         input.wants_north = false;
                                     }
                                 }
+                                ev::Button::South => {
+                                    controller.actions[0] = false;
+                                    if let Some((input, _)) = (&mut inputs, &players)
+                                        .join()
+                                        .find(|(_, p)| p.gamepad_index == *id)
+                                    {
+                                        input.wants_south = false;
+                                    }
+                                }
                                 ev::Button::West => {
                                     controller.actions[3] = false;
                                     if let Some((input, _)) = (&mut inputs, &players)
@@ -262,6 +253,15 @@ impl<'s> System<'s> for ControllerSystem {
                                         .find(|(_, p)| p.gamepad_index == *id)
                                     {
                                         input.wants_west = false;
+                                    }
+                                }
+                                ev::Button::East => {
+                                    controller.actions[1] = false;
+                                    if let Some((input, _)) = (&mut inputs, &players)
+                                        .join()
+                                        .find(|(_, p)| p.gamepad_index == *id)
+                                    {
+                                        input.wants_east = false;
                                     }
                                 }
 

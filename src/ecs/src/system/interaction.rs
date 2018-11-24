@@ -132,7 +132,7 @@ impl<'s> System<'s> for InteractionSystem {
                         ) {};
                     }
                 } else if let Some(ref mut pi) = preparation_interactions.get_mut(e) {
-                    // Player has interaction and it is flavor.
+                    // Player has interaction and it is preparation.
                     let key = if input.wants_north {
                         Some(InteractionKey::North)
                     } else if input.wants_south {
@@ -151,6 +151,9 @@ impl<'s> System<'s> for InteractionSystem {
                         input.wants_east = false;
                         pi.process_key(key);
                         if pi.is_complete() {
+                            let mut order = tables.get_mut(pi.table).unwrap().extract_order();
+                            order.completed = true;
+                            player.inventory = Some(Either::Right(order));
                             player.interaction = None;
                             for child in parent_hierarchy.children(e) {
                                 entities.delete(*child).unwrap();
@@ -182,6 +185,46 @@ impl<'s> System<'s> for InteractionSystem {
                         };
                     }
                 } else if let Some(ref mut ti) = topping_interactions.get_mut(e) {
+                    // Player has interaction and it is toppings.
+                    ti.remove_progress(time.delta_seconds());
+                    if let Some(key) = if input.wants_north {
+                        Some(InteractionKey::North)
+                    } else if input.wants_south {
+                        Some(InteractionKey::South)
+                    } else if input.wants_west {
+                        Some(InteractionKey::West)
+                    } else if input.wants_east {
+                        Some(InteractionKey::East)
+                    } else {
+                        None
+                    } {
+                        input.wants_north = false;
+                        input.wants_south = false;
+                        input.wants_west = false;
+                        input.wants_east = false;
+                        ti.process_key(key);
+                        if ti.is_complete() {
+                            // This should never panic assuming the logic in the interact system is
+                            // correct.
+                            // There we should never allow a player with something order than a
+                            // valid order (prepared, not already 'topped' and 3 or less
+                            // ingredients) to enter this interaction (generate the entity).
+                            player
+                                .inventory
+                                .as_mut()
+                                .unwrap()
+                                .as_mut()
+                                .right()
+                                .unwrap()
+                                .insert_topping(ti.topping.clone());
+                            player.interaction = None;
+                            for child in parent_hierarchy.children(e) {
+                                entities.delete(*child).unwrap();
+                            }
+                            entities.delete(e).unwrap();
+                            continue;
+                        }
+                    }
                     for child in parent_hierarchy.children(e) {
                         if !self.update_child(
                             child,

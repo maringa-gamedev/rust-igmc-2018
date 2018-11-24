@@ -139,14 +139,16 @@ impl Distribution<PreparationSequence> for Standard {
 
 #[derive(Debug)]
 pub struct PreparationInteraction {
+    pub table: Entity,
     pub sequence: Vec<PreparationSequence>,
     current: usize,
     pub progress: f32,
 }
 
 impl PreparationInteraction {
-    pub fn new(sequence_count: usize) -> Self {
+    pub fn new(table: Entity, sequence_count: usize) -> Self {
         PreparationInteraction {
+            table,
             sequence: (0..sequence_count).map(|_| rand::random()).collect(),
             current: 0,
             progress: 0.0,
@@ -226,17 +228,50 @@ impl Distribution<ToppingPair> for Standard {
 #[derive(Debug)]
 pub struct ToppingInteraction {
     pub pair: ToppingPair,
-    pub length: f32,
+    current: bool,
     pub progress: f32,
+    pub topping: ToppingIndex,
 }
 
 impl ToppingInteraction {
-    pub fn new(length: f32) -> Self {
+    pub fn new(topping: ToppingIndex) -> Self {
         ToppingInteraction {
             pair: rand::random(),
-            length,
+            current: false,
             progress: 0.0,
+            topping,
         }
+    }
+
+    pub fn process_key(&mut self, key: InteractionKey) {
+        let curr_key = match self.current {
+            true => &self.pair.0,
+            false => &self.pair.1,
+        };
+        if key == *curr_key {
+            self.current = !self.current;
+            self.progress += 0.1;
+        }
+    }
+
+    pub fn current_key(&self, side: bool, style: &Style) -> String {
+        match side {
+            true => self.pair.0.get_str(&style),
+            false => self.pair.1.get_str(&style),
+        }
+    }
+
+    pub fn remove_progress(&mut self, delta: f32) {
+        self.progress -= delta * 0.1;
+        self.progress = if self.progress < 0.0 {
+            0.0
+        } else {
+            self.progress
+        }
+    }
+
+    pub fn is_complete(&self) -> bool {
+        self.progress >= 1.0
     }
 }
 

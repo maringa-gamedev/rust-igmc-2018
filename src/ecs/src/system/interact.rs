@@ -208,13 +208,12 @@ impl<'s> System<'s> for InteractSystem {
                                                     &mut foregrounds,
                                                     &mut hold_keys,
                                                     &anims,
-                                                    flavor.clone(),
+                                                    flavor,
                                                     player_entity,
                                                     player.palette_key.clone(),
                                                     &player.gamepad_style,
                                                 );
                                             player.interaction = Some(interaction_entity);
-                                            //player.inventory = Some(Either::Left(flavor.clone()));
                                         }
                                     } else if let Some(preparation) = table.preparation() {
                                         // PREP TABLE
@@ -253,7 +252,7 @@ impl<'s> System<'s> for InteractSystem {
                                             info!("PLAYER HAS NOTHING IN INVENTORY!");
                                             if table.has_order() {
                                                 let order = table.extract_order();
-                                                if order.is_completed() {
+                                                if order.completed {
                                                     player.inventory = Some(Either::Right(order));
                                                 } else if !order.is_empty() {
                                                     info!("IF NOT EMPTY, START MINIGAME!");
@@ -277,6 +276,7 @@ impl<'s> System<'s> for InteractSystem {
                                                             player_entity,
                                                             player.palette_key.clone(),
                                                             &player.gamepad_style,
+                                                            interact.top,
                                                         );
                                                     player.interaction = Some(interaction_entity);
                                                     table.insert_order(order);
@@ -295,7 +295,7 @@ impl<'s> System<'s> for InteractSystem {
                                                 Either::Right(ref mut order) => {
                                                     // Insert topping if space in order is avalable (3 or
                                                     // less items) and order is completed (prepared).
-                                                    if order.is_completed() {
+                                                    if order.completed {
                                                         info!("ORDER IS COMPLETED, CANNOT GO BACK IN!");
                                                         if order.ingredient_count() > 3 {
                                                             info!(
@@ -304,7 +304,30 @@ impl<'s> System<'s> for InteractSystem {
                                                         } else if order.has_topping() {
                                                             info!("ORDER ALREADY HAS TOPPING");
                                                         } else {
-                                                            order.insert_topping(topping.clone());
+                                                            let interaction_entity = self
+                                                                .create_topping_interaction(
+                                                                    &entities,
+                                                                    &mut topping_interactions,
+                                                                    &mut parents,
+                                                                    &mut hiddens,
+                                                                    &mut transparents,
+                                                                    &mut transforms,
+                                                                    &mut global_transforms,
+                                                                    &mut sprites,
+                                                                    &mut start_pieces,
+                                                                    &mut middle_pieces,
+                                                                    &mut end_pieces,
+                                                                    &mut backgrounds,
+                                                                    &mut foregrounds,
+                                                                    &mut alternative_keys,
+                                                                    &anims,
+                                                                    topping,
+                                                                    player_entity,
+                                                                    player.palette_key.clone(),
+                                                                    &player.gamepad_style,
+                                                                );
+                                                            player.interaction =
+                                                                Some(interaction_entity);
                                                         }
                                                     } else {
                                                         info!("ORDER IS NOT COMPLETED, ?");
@@ -428,13 +451,14 @@ impl<'s> InteractSystem {
         player: Entity,
         key: String,
         style: &Style,
+        table: Entity,
     ) -> Entity {
         let mut entity_transform = Transform::default();
         entity_transform.translation.y = 24.0;
         entity_transform.scale.x = 0.5;
         entity_transform.scale.y = 0.5;
 
-        let interaction = PreparationInteraction::new(2);
+        let interaction = PreparationInteraction::new(table, 2);
         let first = interaction.current_key(0, style);
         let second = interaction.current_key(1, style);
         let third = interaction.current_key(2, style);
@@ -482,6 +506,84 @@ impl<'s> InteractSystem {
                     entity,
                     v,
                     i,
+                )
+            });
+
+        entity
+    }
+
+    fn create_topping_interaction(
+        &self,
+        entities: &Entities<'s>,
+        mut topping_interactions: &mut WriteStorage<'s, ToppingInteraction>,
+        mut parents: &mut WriteStorage<'s, Parent>,
+        mut hiddens: &mut WriteStorage<'s, Hidden>,
+        mut transparents: &mut WriteStorage<'s, Transparent>,
+        mut transforms: &mut WriteStorage<'s, Transform>,
+        mut global_transforms: &mut WriteStorage<'s, GlobalTransform>,
+        mut sprites: &mut WriteStorage<'s, SpriteRender>,
+        mut start_pieces: &mut WriteStorage<'s, StartBarPiece>,
+        mut middle_pieces: &mut WriteStorage<'s, MiddleBarPiece>,
+        mut end_pieces: &mut WriteStorage<'s, EndBarPiece>,
+        mut backgrounds: &mut WriteStorage<'s, BarBackground>,
+        mut foregrounds: &mut WriteStorage<'s, BarForeground>,
+        mut alternative_keys: &mut WriteStorage<'s, AlternativeKey>,
+        anims: &Read<'s, Animations>,
+        topping: ToppingIndex,
+        player: Entity,
+        key: String,
+        style: &Style,
+    ) -> Entity {
+        let mut entity_transform = Transform::default();
+        entity_transform.translation.y = 24.0;
+        entity_transform.scale.x = 0.5;
+        entity_transform.scale.y = 0.5;
+
+        let interaction = ToppingInteraction::new(topping);
+        let left = interaction.current_key(false, style);
+        let right = interaction.current_key(true, style);
+
+        let entity = entities
+            .build_entity()
+            .with(interaction, &mut topping_interactions)
+            .with(Parent { entity: player }, &mut parents)
+            .with(entity_transform, &mut transforms)
+            .with(GlobalTransform::default(), &mut global_transforms)
+            .build();
+
+        self.create_bar(
+            &entities,
+            &mut parents,
+            &mut hiddens,
+            &mut transparents,
+            &mut transforms,
+            &mut global_transforms,
+            &mut sprites,
+            &mut start_pieces,
+            &mut middle_pieces,
+            &mut end_pieces,
+            &mut backgrounds,
+            &mut foregrounds,
+            &anims,
+            entity,
+            key,
+        );
+
+        vec![(false, left), (true, right)]
+            .iter()
+            .for_each(|(i, v)| {
+                self.create_alternative_key(
+                    entities,
+                    &mut parents,
+                    &mut transparents,
+                    &mut transforms,
+                    &mut global_transforms,
+                    &mut sprites,
+                    &mut alternative_keys,
+                    anims,
+                    entity,
+                    v,
+                    *i,
                 )
             });
 
@@ -712,6 +814,44 @@ impl<'s> InteractSystem {
             .with(Parent { entity }, &mut parents)
             .with(Transparent, &mut transparents)
             .with(SequenceKey(index), &mut sequence_keys)
+            .with(prompt_transform, &mut transforms)
+            .with(GlobalTransform::default(), &mut global_transforms)
+            .build();
+    }
+
+    fn create_alternative_key(
+        &self,
+        entities: &Entities<'s>,
+        mut parents: &mut WriteStorage<'s, Parent>,
+        mut transparents: &mut WriteStorage<'s, Transparent>,
+        mut transforms: &mut WriteStorage<'s, Transform>,
+        mut global_transforms: &mut WriteStorage<'s, GlobalTransform>,
+        mut sprites: &mut WriteStorage<'s, SpriteRender>,
+        mut alternative_keys: &mut WriteStorage<'s, AlternativeKey>,
+        anims: &Read<'s, Animations>,
+        entity: Entity,
+        key: &String,
+        side: bool,
+    ) {
+        let mut prompt_transform = Transform::default();
+        prompt_transform.translation.x = if side { -10.0 } else { 10.0 };
+        prompt_transform.translation.y = 20.0;
+
+        let anim = &anims.animations[&format!("prompt_{}", key)];
+        let _button = entities
+            .build_entity()
+            .with(
+                SpriteRender {
+                    sprite_sheet: anim.obtain_handle(),
+                    sprite_number: anim.get_frame(),
+                    flip_horizontal: false,
+                    flip_vertical: false,
+                },
+                &mut sprites,
+            )
+            .with(Parent { entity }, &mut parents)
+            .with(Transparent, &mut transparents)
+            .with(AlternativeKey(side), &mut alternative_keys)
             .with(prompt_transform, &mut transforms)
             .with(GlobalTransform::default(), &mut global_transforms)
             .build();

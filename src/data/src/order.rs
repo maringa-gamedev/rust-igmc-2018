@@ -1,4 +1,5 @@
 use super::common::*;
+use crate::*;
 use log::*;
 
 pub enum OrderPossibility {
@@ -24,7 +25,7 @@ pub struct Order {
     pub flavor_d: Option<FlavorIndex>,
     pub topping: Option<ToppingIndex>,
     pub preparation: PreparationIndex,
-    pub completion: f32,
+    pub completed: bool,
     pub base_worth: f32,
     pub calc_worth: f32,
     pub delivery_timer: f32,
@@ -39,7 +40,7 @@ impl Order {
             flavor_d: None,
             topping: None,
             preparation: p,
-            completion: 0.0,
+            completed: false,
             base_worth: 0.0,
             calc_worth: 0.0,
             delivery_timer: 32.0,
@@ -100,10 +101,6 @@ impl Order {
         self.delivery_timer <= 0.0
     }
 
-    pub fn is_completed(&self) -> bool {
-        self.completion >= 1.0
-    }
-
     pub fn is_empty(&self) -> bool {
         if let Some(_) = self.flavor_a {
             false
@@ -118,8 +115,74 @@ impl Order {
         }
     }
 
-    pub fn update_completion(&mut self, d: f32) {
-        self.completion += d;
+    /// This will panic if indexes are not present inside the global definitions resource.
+    /// This will generate a panic when searching for a string key in animations for four
+    /// flavors and a topping, since we are not producing those assets and keeping generation up
+    /// to four ingredients total.
+    pub fn get_key_orig(&self, defs: &Definitions) -> String {
+        let preparation = defs
+            .preparations()
+            .find(|p| p.index == self.preparation)
+            .unwrap()
+            .key
+            .clone();
+
+        let topping = if let Some(topping) = &self.topping {
+            format!(
+                "_{}",
+                defs.toppings()
+                    .find(|t| t.index == *topping)
+                    .unwrap()
+                    .key
+                    .clone()
+            )
+        } else {
+            String::from("")
+        };
+
+        let mut flavors = Vec::with_capacity(4);
+        if let Some(flavor) = &self.flavor_a {
+            flavors.push(
+                defs.flavors()
+                    .find(|f| f.index == *flavor)
+                    .unwrap()
+                    .key
+                    .clone(),
+            );
+        }
+        if let Some(flavor) = &self.flavor_b {
+            flavors.push(
+                defs.flavors()
+                    .find(|f| f.index == *flavor)
+                    .unwrap()
+                    .key
+                    .clone(),
+            );
+        }
+        if let Some(flavor) = &self.flavor_c {
+            flavors.push(
+                defs.flavors()
+                    .find(|f| f.index == *flavor)
+                    .unwrap()
+                    .key
+                    .clone(),
+            );
+        }
+        if let Some(flavor) = &self.flavor_d {
+            flavors.push(
+                defs.flavors()
+                    .find(|f| f.index == *flavor)
+                    .unwrap()
+                    .key
+                    .clone(),
+            );
+        }
+
+        flavors.sort_unstable();
+
+        // Attention to the last paramater, topping is optional, so it already includes the `_`
+        // when present.
+        format!("{}_{}{}", preparation, flavors.join("_"), topping)
     }
 
     pub fn get_key(&self) -> &str {
