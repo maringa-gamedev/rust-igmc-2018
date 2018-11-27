@@ -9,4 +9,5 @@ pub struct FlavorDef {
     pub base_worth: f32,
     pub effect: Vec<EffectDefinition>,
     pub condition: Vec<EffectCondition>,
+    pub weights: [usize; 7],
 }

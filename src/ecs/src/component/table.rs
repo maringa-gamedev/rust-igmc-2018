@@ -84,10 +84,18 @@ impl Table {
     }
 
     pub fn extract_order(&mut self) -> Order {
-        if let Action::Empty(Some(o)) = &mut self.action {
-            o.clone()
-        } else if let Action::Preparation(_, Some(o)) = &self.action {
-            o.clone()
+        if let Action::Empty(o) = &mut self.action {
+            if let Some(o) = o.take() {
+                o
+            } else {
+                panic!("EXTRACT FROM EMPTY TABLE IS PROHIBITED!");
+            }
+        } else if let Action::Preparation(_, o) = &mut self.action {
+            if let Some(o) = o.take() {
+                o
+            } else {
+                panic!("EXTRACT FROM EMPTY TABLE IS PROHIBITED!");
+            }
         } else {
             panic!("CANNOT EXTRACT FROM TABLE WITHOUT ORDER SLOT!");
         }

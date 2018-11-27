@@ -8,6 +8,12 @@
     effect: [
       BlockSpecial(Random(0.5, 0.75)),
     ],
+    offsets: (
+      one: (0.0, 0.0),
+      two: (0.0, 0.0),
+      three: (0.0, 0.0),
+      four: (0.0, 0.0),
+    ),
   ),
   ToppingDef (
     index: 1,
@@ -16,6 +22,12 @@
     effect: [
       Speed(Team(Adversary, WholeTeam), Fixed(0.0), Fixed(2.5)),
     ],
+    offsets: (
+      one: (0.0, 0.0),
+      two: (0.0, 0.0),
+      three: (0.0, 0.0),
+      four: (0.0, 0.0),
+    ),
   ),
   ToppingDef (
     index: 2,
@@ -25,6 +37,12 @@
       PowerMeterFlatBonus(Partner, Fixed(0.10)),
       PowerMeterFlatBonus(Adversary, Fixed(-0.10)),
     ],
+    offsets: (
+      one: (0.0, 0.0),
+      two: (0.0, 0.0),
+      three: (0.0, 0.0),
+      four: (0.0, 0.0),
+    ),
   ),
   ToppingDef (
     index: 3,
@@ -33,6 +51,12 @@
     effect: [
       Speed(Team(Adversary, WholeTeam), Fixed(0.9), Fixed(2.5)),
     ],
+    offsets: (
+      one: (0.0, 0.0),
+      two: (0.0, 0.0),
+      three: (0.0, 0.0),
+      four: (0.0, 0.0),
+    ),
   ),
   ToppingDef (
     index: 4,
@@ -41,6 +65,12 @@
     effect: [
       PowerMeterFlatBonus(Adversary, Fixed(-0.5)),
     ],
+    offsets: (
+      one: (0.0, 0.0),
+      two: (0.0, 0.0),
+      three: (0.0, 0.0),
+      four: (0.0, 0.0),
+    ),
   ),
   ToppingDef (
     index: 5,
@@ -49,6 +79,12 @@
     effect: [
       PowerMeterFlatBonus(Partner, Fixed(0.5)),
     ],
+    offsets: (
+      one: (0.0, 0.0),
+      two: (0.0, 0.0),
+      three: (0.0, 0.0),
+      four: (0.0, 0.0),
+    ),
   ),
   ToppingDef (
     index: 6,
@@ -58,6 +94,12 @@
       GlobalMeltSpeed(Partner, Fixed(0.9)),
       GlobalMeltSpeed(Adversary, Fixed(0.9)),
     ],
+    offsets: (
+      one: (0.0, 0.0),
+      two: (0.0, 0.0),
+      three: (0.0, 0.0),
+      four: (0.0, 0.0),
+    ),
   ),
   ToppingDef (
     index: 7,
@@ -66,6 +108,12 @@
     effect: [
       Screen(CreamClouds, Adversary, Fixed(5.0)),
     ],
+    offsets: (
+      one: (0.0, 0.0),
+      two: (0.0, 0.0),
+      three: (0.0, 0.0),
+      four: (0.0, 0.0),
+    ),
   ),
   ToppingDef (
     index: 8,
@@ -74,12 +122,24 @@
     effect: [
       Screen(Dizzy, Adversary, Fixed(5.0)),
     ],
+    offsets: (
+      one: (0.0, 0.0),
+      two: (0.0, 0.0),
+      three: (0.0, 0.0),
+      four: (0.0, 0.0),
+    ),
   ),
   ToppingDef (
     index: 9,
     key: "cherries",
     worth: 15.0,
     effect: [],
+    offsets: (
+      one: (0.0, 0.0),
+      two: (0.0, 0.0),
+      three: (0.0, 0.0),
+      four: (0.0, 0.0),
+    ),
   ),
   ToppingDef (
     index: 10,
@@ -88,6 +148,12 @@
     effect: [
       Screen(Pulse(Red), Adversary, Fixed(5.0)),
     ],
+    offsets: (
+      one: (0.0, 0.0),
+      two: (0.0, 0.0),
+      three: (0.0, 0.0),
+      four: (0.0, 0.0),
+    ),
   ),
   ToppingDef (
     index: 11,
@@ -96,6 +162,12 @@
     effect: [
       Screen(Pulse(Green), Adversary, Fixed(5.0)),
     ],
+    offsets: (
+      one: (0.0, 0.0),
+      two: (0.0, 0.0),
+      three: (0.0, 0.0),
+      four: (0.0, 0.0),
+    ),
   ),
   ToppingDef (
     index: 12,
@@ -104,11 +176,23 @@
     effect: [
       Screen(Pulse(Yellow), Adversary, Fixed(5.0)),
     ],
+    offsets: (
+      one: (0.0, 0.0),
+      two: (0.0, 0.0),
+      three: (0.0, 0.0),
+      four: (0.0, 0.0),
+    ),
   ),
   ToppingDef (
     index: 13,
     key: "cookie_crumbles",
     worth: 0.0,
     effect: [],
+    offsets: (
+      one: (0.0, 0.0),
+      two: (0.0, 0.0),
+      three: (0.0, 0.0),
+      four: (0.0, 0.0),
+    ),
   ),
 ]

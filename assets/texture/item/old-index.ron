@@ -1,0 +1,34 @@
+(
+  TextureDefinition (
+    path: "texture/item/items.png",
+    width: 64.0,
+    height: 64.0,
+    sprites: [
+      ("scoop_empty",     0.0,   0.5, 0.25, 0.25),
+      ("empty_item",      0.0,  0.75, 0.25, 0.25),
+      ("cake_cone",       0.25, 0.25, 0.25, 0.25),
+      ("cone_neapolitan", 0.25,  0.0, 0.25, 0.25),
+    ],
+  ),
+  {
+    "scoop_empty": ([
+      ("scoop_empty", 0.25),
+    ], Once),
+
+    "empty_item": ([
+      ("empty_item", 0.25),
+    ], Once),
+
+    "cake_cone": ([
+      ("cake_cone", 0.25),
+    ], Once),
+
+    "cone_neapolitan": ([
+      ("cone_neapolitan", 0.25),
+    ], Once),
+
+    "order_neapolitan": ([
+      ("cone_neapolitan", 0.25),
+    ], Once),
+  },
+)

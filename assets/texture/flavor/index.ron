@@ -8,7 +8,7 @@ SpriteFolderDef (
     "coffee",
     "rocky_road",
   ],
-  path: "texture/freezer/",
+  path: "texture/flavor/",
   width: 32.0,
   height: 64.0,
   sprites: [

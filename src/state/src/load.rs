@@ -1,5 +1,6 @@
 use super::game::*;
 use amethyst::{
+    assets::Loader,
     core::{
         cgmath::*,
         transform::{GlobalTransform, Transform},
@@ -8,6 +9,7 @@ use amethyst::{
     input::{is_close_requested, is_key_down},
     prelude::*,
     renderer::{Camera, Projection, SpriteRender, Transparent, VirtualKeyCode},
+    ui::{Anchor, FontAsset, FontHandle, TtfFormat, UiFinder, UiText, UiTransform},
     utils::application_root_dir,
 };
 use clap::ArgMatches;
@@ -25,6 +27,7 @@ use std::{
 
 #[derive(Debug, Default)]
 pub struct Load {
+    camera: Option<Entity>,
     entities: Vec<Entity>,
 }
 
@@ -37,7 +40,7 @@ impl<'a, 'b> SimpleState<'a, 'b> for Load {
         world.register::<ToppingInteraction>();
         world.register::<Effect>();
 
-        world
+        let camera = world
             .create_entity()
             .with(Camera::from(Projection::Orthographic(Ortho {
                 left: 0.0,
@@ -51,14 +54,19 @@ impl<'a, 'b> SimpleState<'a, 'b> for Load {
                 Vector3::new(0.0, 0.0, 128.0).into(),
             )))
             .build();
+        self.camera = Some(camera);
 
         initialise_audio(&mut world);
         let (player_handle, mut animations) = load_players_texture(&mut world);
         let (items_handle, items_anims) = load_items_texture(&mut world);
+        let (flavors_anims) = load_flavors_texture(&mut world);
+        let (toppings_anims) = load_toppings_texture(&mut world);
         let (map_handle, empty_handle, map_anims) = load_map_texture(&mut world);
         let (bg_handle, hud_handle, title_handle) = load_ui_texture(&mut world);
         let (buttons_handle, progress_handle, interaction_anims) =
             load_interaction_texture(&mut world);
+        let (score_font, timer_font) = load_number_fonts(&mut world);
+
         world.add_resource(Handles {
             player_handle,
             items_handle,
@@ -68,9 +76,13 @@ impl<'a, 'b> SimpleState<'a, 'b> for Load {
             hud_handle,
             buttons_handle,
             progress_handle,
+            score_font,
+            timer_font,
         });
 
         animations.extend(items_anims);
+        animations.extend(flavors_anims);
+        animations.extend(toppings_anims);
         animations.extend(map_anims);
         animations.extend(interaction_anims);
         info!("Loaded Animations: {:?}", animations);
@@ -139,10 +151,16 @@ impl<'a, 'b> SimpleState<'a, 'b> for Load {
         Trans::None
     }
 
-    fn update(&mut self, data: &mut StateData<GameData>) -> SimpleTrans<'a, 'b> {
-        let StateData { world, .. } = data;
-
-        data.data.update(&world);
+    fn update(
+        &mut self,
+        StateData {
+            ref mut world,
+            data,
+        }: &mut StateData<GameData>,
+    ) -> SimpleTrans<'a, 'b> {
+        //if let Some(camera) = self.camera.take() {
+        //super::update_viewport(camera, world);
+        //}
 
         Trans::None
     }

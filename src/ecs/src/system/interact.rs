@@ -2,7 +2,9 @@ use amethyst::{
     assets::AssetStorage,
     audio::{output::Output, Source},
     core::transform::{GlobalTransform, Parent, Transform},
-    ecs::prelude::{Entities, Entity, Join, Read, ReadExpect, ReadStorage, System, WriteStorage},
+    ecs::prelude::{
+        Entities, Entity, Join, Read, ReadExpect, ReadStorage, System, Write, WriteStorage,
+    },
     renderer::{Hidden, SpriteRender, Transparent},
 };
 use crate::component::*;
@@ -54,6 +56,7 @@ pub struct InteractSystemData<'s> {
     alternative_keys: WriteStorage<'s, AlternativeKey>,
     anims: Read<'s, Animations>,
     palette: Read<'s, ArcMutPalette>,
+    match_data: Write<'s, Match>,
     storage: Read<'s, AssetStorage<Source>>,
     sounds: ReadExpect<'s, Sounds>,
     audio_output: Option<Read<'s, Output>>,
@@ -91,6 +94,7 @@ impl<'s> System<'s> for InteractSystem {
             mut alternative_keys,
             anims,
             palette,
+            mut match_data,
             storage,
             sounds,
             audio_output,
@@ -338,12 +342,40 @@ impl<'s> System<'s> for InteractSystem {
                                     } else if table.delivery() {
                                         // DELIVERY TABLE
                                         info!("TRYING TO DELIVER ORDER!");
-                                        if let Some(Either::Right(order)) = &player.inventory {
+                                        player.inventory = if let Some(Either::Right(order)) =
+                                            &mut player.inventory
+                                        {
                                             info!("DELIVERED {:#?}!", order);
-                                            player.inventory = None;
+                                            let mut my_team =
+                                                &mut match_data.teams[player.team_index];
+
+                                            let mut rem = None;
+                                            for (i, o) in my_team
+                                                .orders
+                                                .iter()
+                                                .enumerate()
+                                                .take_while(|(i, _)| *i < 4)
+                                            {
+                                                if o.matches(&order) {
+                                                    my_team.score += order.calculate_worth();
+                                                    rem = Some(i);
+                                                    break;
+                                                }
+                                            }
+                                            if let Some(i) = rem {
+                                                my_team.orders.remove(i);
+                                            }
+                                            None
+                                        } else if let Some(Either::Left(flavor)) =
+                                            &mut player.inventory
+                                        {
+                                            // TODO: rewrite this in a less hacky way
+                                            info!("CANNOT DELIVER SCOOP!");
+                                            Some(Either::Left(flavor.clone()))
                                         } else {
-                                            info!("CANNOT DELIVER EMPTY OR SCOOP!");
-                                        }
+                                            info!("CANNOT DELIVER EMPTY!");
+                                            None
+                                        };
                                     } else {
                                         // Empty Table, can place in/complete orders.
                                     }

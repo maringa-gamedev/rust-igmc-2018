@@ -10,12 +10,13 @@ mod inventory_item;
 mod layered;
 mod pixel_perfect;
 mod player;
+mod score;
 mod solid;
 mod table;
 mod velocity;
 
 pub use self::{
     animation::*, background::*, direction::*, effect::*, hitbox::*, input::*, interact::*,
-    interaction::*, inventory_item::*, layered::*, pixel_perfect::*, player::*, solid::*, table::*,
-    velocity::*,
+    interaction::*, inventory_item::*, layered::*, pixel_perfect::*, player::*, score::*, solid::*,
+    table::*, velocity::*,
 };

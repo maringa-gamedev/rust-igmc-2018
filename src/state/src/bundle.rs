@@ -20,6 +20,10 @@ impl<'a, 'b> SystemBundle<'a, 'b> for GameBundle {
         builder.add(LayerSystem, "xto_layer", &["xto_collision"]);
         builder.add(InteractSystem, "xto_interact", &["xto_collision"]);
         builder.add(InteractionSystem, "xto_interaction", &["xto_interact"]);
+        builder.add(TimerSystem, "xto_timer", &[]);
+        builder.add(ScoreSystem, "xto_score", &["xto_timer"]);
+        builder.add(GenerateSystem, "xto_generate", &[]);
+        builder.add(OrdersSystem, "xto_orders", &[]);
         Ok(())
     }
 }

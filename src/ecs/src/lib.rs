@@ -1,3 +1,5 @@
+#![feature(vec_remove_item)]
+
 mod component;
 mod controller;
 mod frange;

@@ -1,0 +1,34 @@
+#![enable(implicit_some)]
+#![enable(unwrap_newtypes)]
+SpriteFolderDef (
+  keys: [
+    "sprinkles",
+  ],
+  path: "texture/item/",
+  width: 16.0,
+  height: 160.0,
+  sprites: [
+    ("item",             0.0, 0.9, 1.0, 0.1),
+    ("single_cake_cone", 0.0, 0.8, 1.0, 0.1),
+    ("one_cake_cone",    0.0, 0.7, 1.0, 0.1),
+    ("two_cake_cone",    0.0, 0.6, 1.0, 0.1),
+    ("three_cake_cone",  0.0, 0.5, 1.0, 0.1),
+  ],
+  anims: {
+    "item": ([
+      ("item", 0.25),
+    ], Once),
+    "single_cake_cone": ([
+      ("single_cake_cone", 0.25),
+    ], Once),
+    "one_cake_cone": ([
+      ("one_cake_cone", 0.25),
+    ], Once),
+    "two_cake_cone": ([
+      ("two_cake_cone", 0.25),
+    ], Once),
+    "three_cake_cone": ([
+      ("three_cake_cone", 0.25),
+    ], Once),
+  },
+)

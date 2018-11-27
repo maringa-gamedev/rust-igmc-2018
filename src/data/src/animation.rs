@@ -1,4 +1,4 @@
-use amethyst::renderer::SpriteSheetHandle;
+use amethyst::{renderer::SpriteSheetHandle, ui::FontHandle};
 use serde_derive::*;
 use std::collections::HashMap;
 
@@ -142,4 +142,6 @@ pub struct Handles {
     pub hud_handle: SpriteSheetHandle,
     pub buttons_handle: SpriteSheetHandle,
     pub progress_handle: SpriteSheetHandle,
+    pub score_font: SpriteSheetHandle,
+    pub timer_font: SpriteSheetHandle,
 }

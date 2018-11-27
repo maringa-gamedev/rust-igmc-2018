@@ -1,6 +1,16 @@
 use super::{common::*, effect::*};
 use serde_derive::*;
 
+pub type Position = (f32, f32);
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PreparationFlavorOffsets {
+    pub one: [Position; 1],
+    pub two: [Position; 2],
+    pub three: [Position; 3],
+    pub four: [Position; 4],
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PreparationDef {
     pub index: PreparationIndex,
@@ -12,4 +22,5 @@ pub struct PreparationDef {
     pub effect: Vec<EffectDefinition>,
     pub score_multiplier_condition: Vec<EffectCondition>,
     pub takes_topping: bool,
+    pub offsets: PreparationFlavorOffsets,
 }

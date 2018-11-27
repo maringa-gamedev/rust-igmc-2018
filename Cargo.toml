@@ -45,4 +45,4 @@ name = "nk_tool"
 path = "src/bin/tool.rs"
 
 [workspace]
-members = ["src/ecs/", "src/data/", "src/loader/", "src/state/", "src/util"]
+members = ["src/ecs/", "src/data/", "src/loader/", "src/state/", "src/util/"]

@@ -1,4 +1,6 @@
+use super::*;
 use amethyst::{
+    assets::Loader,
     core::{
         cgmath::*,
         transform::{GlobalTransform, Parent, Transform},
@@ -6,7 +8,10 @@ use amethyst::{
     ecs::prelude::*,
     input::{is_close_requested, is_key_down},
     prelude::*,
-    renderer::{Camera, Projection, ScreenDimensions, SpriteRender, Transparent, VirtualKeyCode},
+    renderer::{
+        Camera, Hidden, Projection, ScreenDimensions, SpriteRender, Transparent, VirtualKeyCode,
+    },
+    ui::{Anchor, FontAsset, FontHandle, TtfFormat, UiFinder, UiText, UiTransform},
     utils::application_root_dir,
 };
 use either::*;
@@ -38,13 +43,9 @@ impl Default for Game {
             map_file: format!("{}/assets/map/0000.ron", application_root_dir()),
             camera: None,
             entities: Vec::with_capacity(128),
-            //data: Match::default(),
         }
     }
 }
-
-const V_W: f32 = 240.0;
-const V_H: f32 = 136.0;
 
 impl<'a, 'b> SimpleState<'a, 'b> for Game {
     fn on_start(&mut self, data: StateData<GameData>) {
@@ -115,6 +116,8 @@ impl<'a, 'b> SimpleState<'a, 'b> for Game {
         );
 
         let mut data = Match::default();
+        data.timer = 5.0 * 60.0;
+        data.order_gen_timer = 20.0;
 
         data.flavors = flavor_loadout;
         data.preparations = preparation_loadout;
@@ -143,10 +146,13 @@ impl<'a, 'b> SimpleState<'a, 'b> for Game {
             ),
             scooper_one: None,
             scooper_two: None,
-            loadout: vec![],
+            flavors: vec![],
+            toppings: vec![],
+            preparations: vec![],
             power_meter: 0.0,
             score: 0,
             orders: vec![],
+            parent: left_parent,
         };
 
         let team_b = Team {
@@ -172,10 +178,13 @@ impl<'a, 'b> SimpleState<'a, 'b> for Game {
             ),
             scooper_one: None,
             scooper_two: None,
-            loadout: vec![],
+            flavors: vec![],
+            toppings: vec![],
+            preparations: vec![],
             power_meter: 0.0,
             score: 0,
             orders: vec![],
+            parent: right_parent,
         };
 
         data.teams.push(team_a);
@@ -202,6 +211,9 @@ impl<'a, 'b> SimpleState<'a, 'b> for Game {
                 .with(GlobalTransform::default())
                 .build(),
         );
+
+        self.create_labels(&mut world);
+        self.create_orders_slots(&mut world);
     }
 
     fn handle_event(
@@ -217,11 +229,16 @@ impl<'a, 'b> SimpleState<'a, 'b> for Game {
         Trans::None
     }
 
-    fn update(&mut self, data: &mut StateData<GameData>) -> SimpleTrans<'a, 'b> {
-        let StateData { world, .. } = data;
-
-        data.data.update(&world);
-        //self.update_viewport(&mut world);
+    fn update(
+        &mut self,
+        StateData {
+            ref mut world,
+            data,
+        }: &mut StateData<GameData>,
+    ) -> SimpleTrans<'a, 'b> {
+        //if let Some(camera) = self.camera.take() {
+        //super::update_viewport(camera, world);
+        //}
 
         Trans::None
     }
@@ -276,7 +293,7 @@ impl Game {
                 key.to_owned(),
             ))
             .with(Input::new())
-            .with(Velocity::new(40.0))
+            .with(Velocity::new(80.0))
             .with(Hitbox {
                 shape: Either::Left(Cuboid::new(NAVector2::new(
                     PLAYER_HITBOX_WIDTH / 2.0,
@@ -293,24 +310,35 @@ impl Game {
         self.entities.push(entity);
 
         let mut item_transform = Transform::default();
-        item_transform.translation = Vector3::new(0.0, 16.0, -1.0);
+        item_transform.translation = Vector3::new(0.0, 28.0, 1.0);
 
-        let carry_me = world
+        let item_parent = world
             .create_entity()
-            .with(SpriteRender {
-                sprite_sheet: items_handle,
-                sprite_number: 0,
-                flip_horizontal: false,
-                flip_vertical: false,
-            })
-            .with(InventoryItem)
-            .with(Transparent)
-            .with(Layered)
             .with(Parent { entity })
             .with(item_transform)
             .with(GlobalTransform::default())
             .build();
-        self.entities.push(carry_me);
+
+        (0..6).for_each(|i| {
+            let carry_me = world
+                .create_entity()
+                .with(SpriteRender {
+                    sprite_sheet: items_handle.clone(),
+                    sprite_number: 0,
+                    flip_horizontal: false,
+                    flip_vertical: false,
+                })
+                .with(InventoryItem(i))
+                .with(Transparent)
+                .with(Hidden)
+                .with(Parent {
+                    entity: item_parent,
+                })
+                .with(Transform::default())
+                .with(GlobalTransform::default())
+                .build();
+            self.entities.push(carry_me);
+        });
 
         entity
     }
@@ -421,51 +449,255 @@ impl Game {
         }
     }
 
-    fn update_viewport(&mut self, world: &mut World) {
-        if let Some(camera) = self.camera.take() {
-            world
-                .delete_entity(camera)
-                .expect("Failed to delete camera entity.");
-        }
-
-        let (width, height) = {
-            let dim = world.read_resource::<ScreenDimensions>();
-            (dim.width(), dim.height())
+    fn create_labels(&mut self, world: &mut World) {
+        let (score_font, timer_font) = {
+            let handles = world.read_resource::<Handles>();
+            (handles.score_font.clone(), handles.timer_font.clone())
         };
 
-        let aspect_ratio = V_W / V_H;
-        let screen_ratio = width / height;
-        let (cam_x, cam_y, cam_w, cam_h) = if screen_ratio < aspect_ratio {
-            let has = width / aspect_ratio;
-            let y = (height - has) / 2.0;
-            (0.0, y, width, has)
-        } else if screen_ratio > aspect_ratio {
-            let was = height * aspect_ratio;
-            let x = (width - was) / 2.0;
-            (x, 0.0, was, height)
-        } else {
-            (0.0, 0.0, width, height)
-        };
-        info!("Screen: {} x {}", width, height);
-        info!("Aspect: {} x {}", cam_w, cam_h);
-        info!("Position: {} x {}", cam_x, cam_y);
+        // Timer
+        let mut transform = Transform::default();
+        transform.translation.x = 206.0;
+        transform.translation.y = 244.0;
+        transform.translation.z = 16.0;
 
-        let camera_ui = world
+        let timer_parent = world
             .create_entity()
-            .with(Camera::from(Projection::Orthographic(Ortho {
-                //left: cam_x,
-                left: 0.0,
-                right: cam_w,
-                top: cam_h,
-                //bottom: cam_y,
-                bottom: 0.0,
-                near: 0.0,
-                far: 256.0,
-            })))
-            .with(GlobalTransform(Matrix4::from_translation(
-                Vector3::new(0.0, 0.0, 1.0).into(),
-            )))
+            .with(transform)
+            .with(GlobalTransform::default())
             .build();
-        self.camera = Some(camera_ui);
+
+        // Timer Minutes
+        (0..2).for_each(|i| {
+            let mut transform = Transform::default();
+            transform.translation.x = 17.0 * i as f32;
+
+            world
+                .create_entity()
+                .with(TimerDigit(i))
+                .with(Parent {
+                    entity: timer_parent,
+                })
+                .with(SpriteRender {
+                    sprite_sheet: timer_font.clone(),
+                    sprite_number: 0,
+                    flip_horizontal: false,
+                    flip_vertical: false,
+                })
+                .with(Transparent)
+                .with(transform)
+                .with(GlobalTransform::default())
+                .build();
+        });
+
+        // Timer Colon
+        let mut transform = Transform::default();
+        transform.translation.x = 28.0;
+
+        world
+            .create_entity()
+            .with(TimerDigit(4))
+            .with(Parent {
+                entity: timer_parent,
+            })
+            .with(SpriteRender {
+                sprite_sheet: timer_font.clone(),
+                sprite_number: 10,
+                flip_horizontal: false,
+                flip_vertical: false,
+            })
+            .with(Transparent)
+            .with(transform)
+            .with(GlobalTransform::default())
+            .build();
+
+        // Timer Seconds
+        (2..4).for_each(|i| {
+            let mut transform = Transform::default();
+            transform.translation.x = 6.0 + (17.0 * i as f32);
+
+            world
+                .create_entity()
+                .with(TimerDigit(i))
+                .with(Parent {
+                    entity: timer_parent,
+                })
+                .with(SpriteRender {
+                    sprite_sheet: timer_font.clone(),
+                    sprite_number: 0,
+                    flip_horizontal: false,
+                    flip_vertical: false,
+                })
+                .with(Transparent)
+                .with(transform)
+                .with(GlobalTransform::default())
+                .build();
+        });
+
+        // Score Left
+        let mut transform = Transform::default();
+        transform.translation.x = 5.0;
+        transform.translation.y = 248.0;
+        transform.translation.z = 16.0;
+
+        let score_left_parent = world
+            .create_entity()
+            .with(transform)
+            .with(GlobalTransform::default())
+            .build();
+
+        (0..8).for_each(|i| {
+            let mut transform = Transform::default();
+            transform.translation.x = 15.0 * i as f32;
+
+            world
+                .create_entity()
+                .with(ScoreDigit(i, false))
+                .with(Parent {
+                    entity: score_left_parent,
+                })
+                .with(SpriteRender {
+                    sprite_sheet: score_font.clone(),
+                    sprite_number: 0,
+                    flip_horizontal: false,
+                    flip_vertical: false,
+                })
+                .with(Transparent)
+                .with(transform)
+                .with(GlobalTransform::default())
+                .build();
+        });
+
+        // Score Right
+        let mut transform = Transform::default();
+        transform.translation.x = 356.0;
+        transform.translation.y = 248.0;
+        transform.translation.z = 16.0;
+
+        let score_right_parent = world
+            .create_entity()
+            .with(transform)
+            .with(GlobalTransform::default())
+            .build();
+
+        (0..8).for_each(|i| {
+            let mut transform = Transform::default();
+            transform.translation.x = 15.0 * i as f32;
+
+            world
+                .create_entity()
+                .with(ScoreDigit(i, true))
+                .with(Parent {
+                    entity: score_right_parent,
+                })
+                .with(SpriteRender {
+                    sprite_sheet: score_font.clone(),
+                    sprite_number: 0,
+                    flip_horizontal: false,
+                    flip_vertical: false,
+                })
+                .with(Transparent)
+                .with(transform)
+                .with(GlobalTransform::default())
+                .build();
+        });
+    }
+
+    fn create_orders_slots(&mut self, world: &mut World) {
+        let (score_font, timer_font) = {
+            let handles = world.read_resource::<Handles>();
+            (handles.score_font.clone(), handles.timer_font.clone())
+        };
+
+        vec![(0, 50.0), (1, 98.0), (2, 146.0), (3, 194.0)]
+            .into_iter()
+            .for_each(|(o, y)| {
+                let mut transform = Transform::default();
+                transform.translation.x = 7.0 + 1.0;
+                transform.translation.y = 6.0 + y;
+                transform.translation.z = 16.0;
+
+                let parent = world
+                    .create_entity()
+                    .with(OrderSlot(0, o))
+                    .with(transform)
+                    .with(GlobalTransform::default())
+                    .build();
+
+                vec![
+                    (0, 0.0, 0.0),
+                    (1, 16.0, 0.0),
+                    (2, 0.0, 16.0),
+                    (3, 16.0, 16.0),
+                ]
+                .into_iter()
+                .for_each(|(i, x, y)| {
+                    let mut transform = Transform::default();
+                    transform.translation.x = x;
+                    transform.translation.y = y;
+
+                    world
+                        .create_entity()
+                        .with(OrderIngredient(i))
+                        .with(Parent { entity: parent })
+                        .with(SpriteRender {
+                            sprite_sheet: score_font.clone(),
+                            sprite_number: 0,
+                            flip_horizontal: false,
+                            flip_vertical: false,
+                        })
+                        //.with(Hidden)
+                        .with(Transparent)
+                        .with(transform)
+                        .with(GlobalTransform::default())
+                        .build();
+                });
+            });
+
+        vec![(0, 50.0), (1, 98.0), (2, 146.0), (3, 194.0)]
+            .into_iter()
+            .for_each(|(o, y)| {
+                let mut transform = Transform::default();
+                transform.translation.x = 7.0 + 465.0;
+                transform.translation.y = 6.0 + y;
+                transform.translation.z = 16.0;
+                transform.scale.x = -1.0;
+
+                let parent = world
+                    .create_entity()
+                    .with(OrderSlot(1, o))
+                    .with(transform)
+                    .with(GlobalTransform::default())
+                    .build();
+
+                vec![
+                    (0, 0.0, 0.0),
+                    (1, 16.0, 0.0),
+                    (2, 0.0, 16.0),
+                    (3, 16.0, 16.0),
+                ]
+                .into_iter()
+                .for_each(|(i, x, y)| {
+                    let mut transform = Transform::default();
+                    transform.translation.x = x;
+                    transform.translation.y = y;
+
+                    world
+                        .create_entity()
+                        .with(OrderIngredient(i))
+                        .with(Parent { entity: parent })
+                        .with(SpriteRender {
+                            sprite_sheet: score_font.clone(),
+                            sprite_number: 0,
+                            flip_horizontal: false,
+                            flip_vertical: false,
+                        })
+                        //.with(Hidden)
+                        .with(Transparent)
+                        .with(transform)
+                        .with(GlobalTransform::default())
+                        .build();
+                });
+            });
     }
 }

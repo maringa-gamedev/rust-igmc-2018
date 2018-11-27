@@ -6,8 +6,8 @@ use crate::component::*;
 
 pub struct BackgroundAnimationSystem;
 
-const INTERVAL: f32 = 0.125;
-const STEP: f32 = 0.125;
+const INTERVAL: f32 = 0.015625;
+const STEP: f32 = 0.015625;
 
 impl<'s> System<'s> for BackgroundAnimationSystem {
     type SystemData = (
@@ -19,7 +19,7 @@ impl<'s> System<'s> for BackgroundAnimationSystem {
     fn run(&mut self, (mut backgrounds, mut transforms, time): Self::SystemData) {
         for (b, t) in (&mut backgrounds, &mut transforms).join() {
             b.timer += time.delta_seconds();
-            if b.timer >= INTERVAL {
+            while b.timer >= INTERVAL {
                 t.translation.x = if t.translation.x + STEP > b.to.x {
                     b.from.x
                 } else {
@@ -30,7 +30,7 @@ impl<'s> System<'s> for BackgroundAnimationSystem {
                 } else {
                     t.translation.y + STEP
                 };
-                b.timer = 0.0;
+                b.timer -= INTERVAL;
             }
         }
     }

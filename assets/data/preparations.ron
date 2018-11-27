@@ -7,10 +7,30 @@
     score_multiplier: 1.0,
     melt_multiplier: 1.0,
     effect_area_multiplier: 1.0,
-    max_scoops: 4,
+    max_scoops: 3,
     effect: [],
     score_multiplier_condition: [],
     takes_topping: true,
+    offsets: (
+      one: (
+        (1.0, 1.0),
+      ),
+      two: (
+        (1.0, 1.0),
+        (4.0, 4.0),
+      ),
+      three: (
+        (3.0, -2.0),
+        (-2.0, 3.0),
+        (4.0, 4.0),
+      ),
+      four: (
+        (42.0, 42.0),
+        (42.0, 42.0),
+        (42.0, 42.0),
+        (42.0, 42.0),
+      ),
+    ),
   ),
   PreparationDef (
     index: 1,
@@ -18,10 +38,30 @@
     score_multiplier: 1.25,
     melt_multiplier: 1.0,
     effect_area_multiplier: 1.0,
-    max_scoops: 4,
+    max_scoops: 3,
     effect: [],
     score_multiplier_condition: [],
     takes_topping: true,
+    offsets: (
+      one: (
+        (1.0, 1.0),
+      ),
+      two: (
+        (1.0, 1.0),
+        (4.0, 4.0),
+      ),
+      three: (
+        (3.0, -2.0),
+        (-2.0, 3.0),
+        (4.0, 4.0),
+      ),
+      four: (
+        (42.0, 42.0),
+        (42.0, 42.0),
+        (42.0, 42.0),
+        (42.0, 42.0),
+      ),
+    ),
   ),
   PreparationDef (
     index: 2,
@@ -29,10 +69,30 @@
     score_multiplier: 1.4,
     melt_multiplier: 1.0,
     effect_area_multiplier: 1.0,
-    max_scoops: 4,
+    max_scoops: 3,
     effect: [],
     score_multiplier_condition: [],
     takes_topping: true,
+    offsets: (
+      one: (
+        (1.0, 1.0),
+      ),
+      two: (
+        (1.0, 1.0),
+        (4.0, 4.0),
+      ),
+      three: (
+        (3.0, -2.0),
+        (-2.0, 3.0),
+        (4.0, 4.0),
+      ),
+      four: (
+        (42.0, 42.0),
+        (42.0, 42.0),
+        (42.0, 42.0),
+        (42.0, 42.0),
+      ),
+    ),
   ),
   PreparationDef (
     index: 3,
@@ -40,10 +100,30 @@
     score_multiplier: 1.7,
     melt_multiplier: 1.0,
     effect_area_multiplier: 1.0,
-    max_scoops: 4,
+    max_scoops: 3,
     effect: [],
     score_multiplier_condition: [],
     takes_topping: true,
+    offsets: (
+      one: (
+        (1.0, 1.0),
+      ),
+      two: (
+        (1.0, 1.0),
+        (4.0, 4.0),
+      ),
+      three: (
+        (3.0, -2.0),
+        (-2.0, 3.0),
+        (4.0, 4.0),
+      ),
+      four: (
+        (42.0, 42.0),
+        (42.0, 42.0),
+        (42.0, 42.0),
+        (42.0, 42.0),
+      ),
+    ),
   ),
   PreparationDef (
     index: 4,
@@ -57,6 +137,26 @@
     ],
     score_multiplier_condition: [],
     takes_topping: true,
+    offsets: (
+      one: (
+        (1.0, 1.0),
+      ),
+      two: (
+        (1.0, 1.0),
+        (4.0, 4.0),
+      ),
+      three: (
+        (3.0, -2.0),
+        (-2.0, 3.0),
+        (4.0, 4.0),
+      ),
+      four: (
+        (42.0, 42.0),
+        (42.0, 42.0),
+        (42.0, 42.0),
+        (42.0, 42.0),
+      ),
+    ),
   ),
   PreparationDef (
     index: 5,
@@ -64,12 +164,32 @@
     score_multiplier: 1.0,
     melt_multiplier: 0.75,
     effect_area_multiplier: 1.25,
-    max_scoops: 4,
+    max_scoops: 3,
     effect: [
       Speed(Carrier, Fixed(0.70), Indeterminate),
     ],
     score_multiplier_condition: [],
     takes_topping: true,
+    offsets: (
+      one: (
+        (1.0, 1.0),
+      ),
+      two: (
+        (1.0, 1.0),
+        (4.0, 4.0),
+      ),
+      three: (
+        (3.0, -2.0),
+        (-2.0, 3.0),
+        (4.0, 4.0),
+      ),
+      four: (
+        (42.0, 42.0),
+        (42.0, 42.0),
+        (42.0, 42.0),
+        (42.0, 42.0),
+      ),
+    ),
   ),
   PreparationDef (
     index: 6,
@@ -77,10 +197,30 @@
     score_multiplier: 0.5,
     melt_multiplier: None,
     effect_area_multiplier: 1.0,
-    max_scoops: 4,
+    max_scoops: 3,
     effect: [],
     score_multiplier_condition: [],
     takes_topping: true,
+    offsets: (
+      one: (
+        (1.0, 1.0),
+      ),
+      two: (
+        (1.0, 1.0),
+        (4.0, 4.0),
+      ),
+      three: (
+        (3.0, -2.0),
+        (-2.0, 3.0),
+        (4.0, 4.0),
+      ),
+      four: (
+        (42.0, 42.0),
+        (42.0, 42.0),
+        (42.0, 42.0),
+        (42.0, 42.0),
+      ),
+    ),
   ),
   PreparationDef (
     index: 7,
@@ -92,6 +232,26 @@
     effect: [],
     score_multiplier_condition: [],
     takes_topping: false,
+    offsets: (
+      one: (
+        (0.0, 0.0),
+      ),
+      two: (
+        (42.0, 42.0),
+        (42.0, 42.0),
+      ),
+      three: (
+        (42.0, 42.0),
+        (42.0, 42.0),
+        (42.0, 42.0),
+      ),
+      four: (
+        (42.0, 42.0),
+        (42.0, 42.0),
+        (42.0, 42.0),
+        (42.0, 42.0),
+      ),
+    ),
   ),
   PreparationDef (
     index: 8,
@@ -103,6 +263,26 @@
     effect: [],
     score_multiplier_condition: [],
     takes_topping: false,
+    offsets: (
+      one: (
+        (1.0, 1.0),
+      ),
+      two: (
+        (1.0, 1.0),
+        (4.0, 4.0),
+      ),
+      three: (
+        (3.0, -2.0),
+        (-2.0, 3.0),
+        (4.0, 4.0),
+      ),
+      four: (
+        (42.0, 42.0),
+        (42.0, 42.0),
+        (42.0, 42.0),
+        (42.0, 42.0),
+      ),
+    ),
   ),
   PreparationDef (
     index: 9,
@@ -110,12 +290,32 @@
     score_multiplier: 1.5,
     melt_multiplier: 0.5,
     effect_area_multiplier: 1.0,
-    max_scoops: 4,
+    max_scoops: 3,
     effect: [],
     score_multiplier_condition: [
       CombinedWithClass([Classic]),
     ],
     takes_topping: true,
+    offsets: (
+      one: (
+        (1.0, 1.0),
+      ),
+      two: (
+        (1.0, 1.0),
+        (4.0, 4.0),
+      ),
+      three: (
+        (3.0, -2.0),
+        (-2.0, 3.0),
+        (4.0, 4.0),
+      ),
+      four: (
+        (42.0, 42.0),
+        (42.0, 42.0),
+        (42.0, 42.0),
+        (42.0, 42.0),
+      ),
+    ),
   ),
   PreparationDef (
     index: 10,
@@ -123,12 +323,32 @@
     score_multiplier: 1.5,
     melt_multiplier: 0.5,
     effect_area_multiplier: 1.0,
-    max_scoops: 4,
+    max_scoops: 3,
     effect: [],
     score_multiplier_condition: [
       CombinedWithClass([Sherbert]),
     ],
     takes_topping: true,
+    offsets: (
+      one: (
+        (1.0, 1.0),
+      ),
+      two: (
+        (1.0, 1.0),
+        (4.0, 4.0),
+      ),
+      three: (
+        (3.0, -2.0),
+        (-2.0, 3.0),
+        (4.0, 4.0),
+      ),
+      four: (
+        (42.0, 42.0),
+        (42.0, 42.0),
+        (42.0, 42.0),
+        (42.0, 42.0),
+      ),
+    ),
   ),
   PreparationDef (
     index: 11,
@@ -136,11 +356,31 @@
     score_multiplier: 1.5,
     melt_multiplier: 0.5,
     effect_area_multiplier: 1.0,
-    max_scoops: 4,
+    max_scoops: 3,
     effect: [],
     score_multiplier_condition: [
       CombinedWithClass([Special]),
     ],
     takes_topping: true,
+    offsets: (
+      one: (
+        (1.0, 1.0),
+      ),
+      two: (
+        (1.0, 1.0),
+        (4.0, 4.0),
+      ),
+      three: (
+        (3.0, -2.0),
+        (-2.0, 3.0),
+        (4.0, 4.0),
+      ),
+      four: (
+        (42.0, 42.0),
+        (42.0, 42.0),
+        (42.0, 42.0),
+        (42.0, 42.0),
+      ),
+    ),
   ),
 ]
