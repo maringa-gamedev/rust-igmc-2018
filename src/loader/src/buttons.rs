@@ -5,10 +5,12 @@ use amethyst::{
         MaterialTextureSet, PngFormat, Sprite, SpriteSheet, SpriteSheetHandle, SpriteSheetSet,
         Texture, TextureCoordinates, TextureMetadata,
     },
+    utils::application_root_dir,
 };
 use log::*;
 use nk_data::*;
-use std::collections::HashMap;
+use ron::de::from_reader;
+use std::{collections::HashMap, fs::File};
 
 pub fn load_interaction_texture(
     world: &mut World,
@@ -18,23 +20,24 @@ pub fn load_interaction_texture(
     HashMap<String, Animation>,
 ) {
     // Buttons
-    let index = 49;
-    let sprites = vec![
-        (String::from("prompt_north_left"), 0.0, 0.0, 0.2, 0.5),
-        (String::from("prompt_south_left"), 0.2, 0.0, 0.2, 0.5),
-        (String::from("prompt_west_left"), 0.4, 0.0, 0.2, 0.5),
-        (String::from("prompt_east_left"), 0.6, 0.0, 0.2, 0.5),
-        (String::from("prompt_success"), 0.8, 0.0, 0.2, 0.5),
-        (String::from("prompt_north_right"), 0.0, 0.5, 0.2, 0.5),
-        (String::from("prompt_south_right"), 0.2, 0.5, 0.2, 0.5),
-        (String::from("prompt_west_right"), 0.4, 0.5, 0.2, 0.5),
-        (String::from("prompt_east_right"), 0.6, 0.5, 0.2, 0.5),
-        (String::from("prompt_failure"), 0.8, 0.5, 0.2, 0.5),
-    ];
+    let tindex = 49;
+    let app_root = application_root_dir();
+    let path = format!("{}/assets/texture/ui/buttons.ron", app_root);
+    let f = File::open(&path).expect("Failed opening file");
+    let (tex_def, anim_def): (
+        TextureDefinition,
+        HashMap<String, (Vec<(String, f32)>, AnimationLoop)>,
+    ) = match from_reader(f) {
+        Ok(x) => x,
+        Err(e) => {
+            error!("Error parsing texture definition: {}", e);
+            panic!("Invalid texture definition <{}>!", path);
+        }
+    };
     let texture = {
         let loader = world.read_resource::<Loader>();
         loader.load(
-            "texture/ui/buttons.png",
+            tex_def.path,
             PngFormat,
             TextureMetadata::srgb_scale(),
             (),
@@ -43,18 +46,19 @@ pub fn load_interaction_texture(
     };
     world
         .write_resource::<MaterialTextureSet>()
-        .insert(index, texture);
-
-    let mut hash = HashMap::new();
-    let mut count = 0;
-    let sprites = sprites
+        .insert(tindex, texture);
+    let (sw, sh) = (tex_def.width, tex_def.height);
+    let mut sprites_hash = HashMap::new();
+    let mut index: usize = 0;
+    let sprites = tex_def
+        .sprites
         .iter()
         .map(|(name, x, y, w, h)| {
-            hash.insert(name.clone(), count);
-            count += 1;
+            sprites_hash.insert(name.clone(), index);
+            index += 1;
             Sprite {
-                width: 20.0,
-                height: 20.0,
+                width: sw * w,
+                height: sh * h,
                 offsets: [0.0, 0.0],
                 tex_coords: TextureCoordinates {
                     left: *x,
@@ -66,7 +70,7 @@ pub fn load_interaction_texture(
         })
         .collect();
     let sprites = SpriteSheet {
-        texture_id: index,
+        texture_id: tindex,
         sprites,
     };
     let buttons_handle = {
@@ -79,16 +83,19 @@ pub fn load_interaction_texture(
     };
     world
         .write_resource::<SpriteSheetSet>()
-        .insert(index, buttons_handle.clone());
-    let buttons_anim: HashMap<String, Animation> = hash
+        .insert(tindex, buttons_handle.clone());
+
+    let buttons_anim: HashMap<String, Animation> = anim_def
         .iter()
         .map(|(k, v)| {
             (
                 k.to_owned(),
                 Animation::new(
                     buttons_handle.clone(),
-                    vec![(*v, 0.25)],
-                    AnimationLoop::Once,
+                    v.0.iter()
+                        .map(|(name, duration)| (*sprites_hash.get(name).unwrap(), *duration))
+                        .collect(),
+                    v.1.clone(),
                 ),
             )
         })

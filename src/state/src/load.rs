@@ -1,4 +1,4 @@
-use super::game::*;
+use super::freeplay::*;
 use amethyst::{
     assets::Loader,
     core::{
@@ -59,13 +59,14 @@ impl<'a, 'b> SimpleState<'a, 'b> for Load {
         initialise_audio(&mut world);
         let (player_handle, mut animations) = load_players_texture(&mut world);
         let (items_handle, items_anims) = load_items_texture(&mut world);
-        let (flavors_anims) = load_flavors_texture(&mut world);
-        let (toppings_anims) = load_toppings_texture(&mut world);
+        let flavors_anims = load_flavors_texture(&mut world);
+        let toppings_anims = load_toppings_texture(&mut world);
         let (map_handle, empty_handle, map_anims) = load_map_texture(&mut world);
         let (bg_handle, hud_handle, title_handle) = load_ui_texture(&mut world);
         let (buttons_handle, progress_handle, interaction_anims) =
             load_interaction_texture(&mut world);
         let (score_font, timer_font) = load_number_fonts(&mut world);
+        let ui_anims = load_ui_sprites(&mut world);
 
         world.add_resource(Handles {
             player_handle,
@@ -85,6 +86,7 @@ impl<'a, 'b> SimpleState<'a, 'b> for Load {
         animations.extend(toppings_anims);
         animations.extend(map_anims);
         animations.extend(interaction_anims);
+        animations.extend(ui_anims);
         info!("Loaded Animations: {:?}", animations);
         world.add_resource(Animations { animations });
 
@@ -140,12 +142,7 @@ impl<'a, 'b> SimpleState<'a, 'b> for Load {
             if is_close_requested(&event) || is_key_down(&event, VirtualKeyCode::Q) {
                 return Trans::Quit;
             } else if is_key_down(&event, VirtualKeyCode::Return) {
-                let matches = world.read_resource::<ArgMatches>();
-                return Trans::Switch(Box::new(Game::default().with_map(&format!(
-                    "{}/assets/map/{}.ron",
-                    application_root_dir(),
-                    matches.value_of("map").unwrap_or("0000")
-                ))));
+                return Trans::Switch(Box::new(FreePlay::default()));
             }
         }
         Trans::None

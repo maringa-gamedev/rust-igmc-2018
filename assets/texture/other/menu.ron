@@ -1,0 +1,261 @@
+#![enable(implicit_some)]
+#![enable(unwrap_newtypes)]
+(
+  TextureDefinition (
+    path: "texture/other/menu.png",
+    width: 256.0,
+    height: 80.0,
+    sprites: [
+      ("gray_arrow_up_1",       0.0,  0.0, 0.0625, 0.2),
+      ("gray_arrow_up_2",       0.0,  0.2, 0.0625, 0.2),
+      ("gray_arrow_down_1",  0.0625,  0.0, 0.0625, 0.2),
+      ("gray_arrow_down_2",  0.0625,  0.2, 0.0625, 0.2),
+      ("gray_arrow_right_1",  0.125,  0.0, 0.0625, 0.2),
+      ("gray_arrow_right_2",  0.125,  0.2, 0.0625, 0.2),
+      ("gray_arrow_left_1",  0.1875,  0.0, 0.0625, 0.2),
+      ("gray_arrow_left_2",  0.1875,  0.2, 0.0625, 0.2),
+
+      ("white_arrow_up_1",      0.25,  0.0, 0.0625, 0.2),
+      ("white_arrow_up_2",      0.25,  0.2, 0.0625, 0.2),
+      ("white_arrow_down_1",  0.3125,  0.0, 0.0625, 0.2),
+      ("white_arrow_down_2",  0.3125,  0.2, 0.0625, 0.2),
+      ("white_arrow_right_1",  0.375,  0.0, 0.0625, 0.2),
+      ("white_arrow_right_2",  0.375,  0.2, 0.0625, 0.2),
+      ("white_arrow_left_1",  0.4375,  0.0, 0.0625, 0.2),
+      ("white_arrow_left_2",  0.4375,  0.2, 0.0625, 0.2),
+
+      ("map_preview_flavor",          0.5, 0.0, 0.03125, 0.1),
+      ("map_preview_preparation", 0.53125, 0.0, 0.03125, 0.1),
+      ("map_preview_topping",         0.5, 0.1, 0.03125, 0.1),
+      ("map_preview_delivery",    0.53125, 0.1, 0.03125, 0.1),
+      ("map_preview_empty",           0.5, 0.2, 0.03125, 0.1),
+      ("map_preview_floor",       0.53125, 0.2, 0.03125, 0.1),
+
+      ("button_confirm_normal", 0.5625, 0.2, 0.25, 0.4),
+      ("button_confirm_down",   0.5625, 0.6, 0.25, 0.4),
+      ("button_back_normal",    0.8125, 0.2, 0.25, 0.4),
+      ("button_back_down",      0.8125, 0.6, 0.25, 0.4),
+
+      ("ui_cross_icon",  0.4375, 0.4, 0.0625, 0.2),
+      ("ui_circle_icon",    0.5, 0.4, 0.0625, 0.2),
+      ("ui_unknown",     0.6875, 0.0, 0.0625, 0.2),
+
+      ("ui_box_orange",   0.4375, 0.8, 0.0625, 0.2),
+      ("ui_box_green",    0.4375, 0.6, 0.0625, 0.2),
+      ("ui_box_green_hl", 0.5625, 0.0, 0.0625, 0.2),
+      ("ui_box_gray",        0.5, 0.8, 0.0625, 0.2),
+      ("ui_box_gray_hl",   0.625, 0.0, 0.0625, 0.2),
+      ("ui_box_white",       0.5, 0.6, 0.0625, 0.2),
+
+      ("ui_full_corner_top_left",       0.0, 0.8, 0.0625, 0.2),
+      ("ui_full_corner_bottom_left",    0.0, 0.4, 0.0625, 0.2),
+      ("ui_full_corner_top_right",    0.125, 0.8, 0.0625, 0.2),
+      ("ui_full_corner_bottom_right", 0.125, 0.4, 0.0625, 0.2),
+
+      ("ui_full_side_top",    0.0625, 0.8, 0.0625, 0.2),
+      ("ui_full_side_left",      0.0, 0.6, 0.0625, 0.2),
+      ("ui_full_side_bottom", 0.0625, 0.4, 0.0625, 0.2),
+      ("ui_full_side_right",   0.125, 0.6, 0.0625, 0.2),
+
+      ("ui_half_side_top",    0.34375, 0.8, 0.0625, 0.2),
+      ("ui_half_side_left",    0.3125, 0.7, 0.0625, 0.2),
+      ("ui_half_side_bottom", 0.34375, 0.6, 0.0625, 0.2),
+      ("ui_half_side_right",    0.375, 0.7, 0.0625, 0.2),
+
+      ("ui_full_center", 0.0625, 0.6, 0.0625, 0.2),
+
+      ("ui_half_corner_top_left",     0.3125, 0.8, 0.0625, 0.2),
+      ("ui_half_corner_top_right",     0.375, 0.8, 0.0625, 0.2),
+      ("ui_half_corner_bottom_left",  0.3125, 0.6, 0.0625, 0.2),
+      ("ui_half_corner_bottom_right",  0.375, 0.6, 0.0625, 0.2),
+
+      ("ui_cut_corner_top_left",       0.25, 0.6, 0.0625, 0.2),
+      ("ui_cut_corner_top_right",    0.1875, 0.6, 0.0625, 0.2),
+      ("ui_cut_corner_bottom_left",    0.25, 0.8, 0.0625, 0.2),
+      ("ui_cut_corner_bottom_right", 0.1875, 0.8, 0.0625, 0.2),
+
+      ("ui_connect_bottom_right", 0.1875, 0.4, 0.0625, 0.2),
+      ("ui_connect_bottom_left",    0.25, 0.4, 0.0625, 0.2),
+      ("ui_connect_top_right",    0.3125, 0.4, 0.0625, 0.2),
+      ("ui_connect_top_left",      0.375, 0.4, 0.0625, 0.2),
+    ],
+  ),
+  {
+    "gray_arrow_up": ([
+      ("gray_arrow_up_1", 0.25),
+      ("gray_arrow_up_2", 0.25),
+    ], Circular),
+    "gray_arrow_down": ([
+      ("gray_arrow_down_1", 0.25),
+      ("gray_arrow_down_2", 0.25),
+    ], Circular),
+    "gray_arrow_right": ([
+      ("gray_arrow_right_1", 0.25),
+      ("gray_arrow_right_2", 0.25),
+    ], Circular),
+    "gray_arrow_left": ([
+      ("gray_arrow_left_1", 0.25),
+      ("gray_arrow_left_2", 0.25),
+    ], Circular),
+
+    "white_arrow_up": ([
+      ("white_arrow_up_1", 0.25),
+      ("white_arrow_up_2", 0.25),
+    ], Circular),
+    "white_arrow_down": ([
+      ("white_arrow_down_1", 0.25),
+      ("white_arrow_down_2", 0.25),
+    ], Circular),
+    "white_arrow_right": ([
+      ("white_arrow_right_1", 0.25),
+      ("white_arrow_right_2", 0.25),
+    ], Circular),
+    "white_arrow_left": ([
+      ("white_arrow_left_1", 0.25),
+      ("white_arrow_left_2", 0.25),
+    ], Circular),
+
+    "map_preview_flavor": ([
+      ("map_preview_flavor", 0.25),
+    ], Once),
+    "map_preview_preparation": ([
+      ("map_preview_preparation", 0.25),
+    ], Once),
+    "map_preview_topping": ([
+      ("map_preview_topping", 0.25),
+    ], Once),
+    "map_preview_delivery": ([
+      ("map_preview_delivery", 0.25),
+    ], Once),
+    "map_preview_empty": ([
+      ("map_preview_empty", 0.25),
+    ], Once),
+    "map_preview_floor": ([
+      ("map_preview_floor", 0.25),
+    ], Once),
+
+    "button_confirm_normal": ([
+      ("button_confirm_normal", 0.25),
+    ], Once),
+    "button_confirm_down": ([
+      ("button_confirm_down", 0.25),
+    ], Once),
+    "button_back_normal": ([
+      ("button_back_normal", 0.25),
+    ], Once),
+    "button_back_down": ([
+      ("button_back_down", 0.25),
+    ], Once),
+
+    "ui_cross_icon": ([
+      ("ui_cross_icon", 0.25),
+    ], Once),
+    "ui_circle_icon": ([
+      ("ui_circle_icon", 0.25),
+    ], Once),
+    "ui_unknown": ([
+      ("ui_unknown", 0.25),
+    ], Once),
+
+    "ui_box_orange": ([
+      ("ui_box_orange", 0.25),
+    ], Once),
+    "ui_box_green": ([
+      ("ui_box_green", 0.25),
+    ], Once),
+    "ui_box_green_hl": ([
+      ("ui_box_green_hl", 0.25),
+    ], Once),
+    "ui_box_gray": ([
+      ("ui_box_gray", 0.25),
+    ], Once),
+    "ui_box_gray_hl": ([
+      ("ui_box_gray_hl", 0.25),
+    ], Once),
+    "ui_box_white": ([
+      ("ui_box_white", 0.25),
+    ], Once),
+
+    "ui_full_corner_top_left": ([
+      ("ui_full_corner_top_left", 0.25),
+    ], Once),
+    "ui_full_corner_top_right": ([
+      ("ui_full_corner_top_right", 0.25),
+    ], Once),
+    "ui_full_corner_bottom_left": ([
+      ("ui_full_corner_bottom_left", 0.25),
+    ], Once),
+    "ui_full_corner_bottom_right": ([
+      ("ui_full_corner_bottom_right", 0.25),
+    ], Once),
+
+    "ui_full_side_top": ([
+      ("ui_full_side_top", 0.25),
+    ], Once),
+    "ui_full_side_left": ([
+      ("ui_full_side_left", 0.25),
+    ], Once),
+    "ui_full_side_bottom": ([
+      ("ui_full_side_bottom", 0.25),
+    ], Once),
+    "ui_full_side_right": ([
+      ("ui_full_side_right", 0.25),
+    ], Once),
+
+    "ui_half_side_top": ([
+      ("ui_half_side_top", 0.25),
+    ], Once),
+    "ui_half_side_left": ([
+      ("ui_half_side_left", 0.25),
+    ], Once),
+    "ui_half_side_bottom": ([
+      ("ui_half_side_bottom", 0.25),
+    ], Once),
+    "ui_half_side_right": ([
+      ("ui_half_side_right", 0.25),
+    ], Once),
+
+    "ui_full_center": ([
+      ("ui_full_center", 0.25),
+    ], Once),
+
+    "ui_half_corner_top_left": ([
+      ("ui_half_corner_top_left", 0.25),
+    ], Once),
+    "ui_half_corner_top_right": ([
+      ("ui_half_corner_top_right", 0.25),
+    ], Once),
+    "ui_half_corner_bottom_left": ([
+      ("ui_half_corner_bottom_left", 0.25),
+    ], Once),
+    "ui_half_corner_bottom_right": ([
+      ("ui_half_corner_bottom_right", 0.25),
+    ], Once),
+
+    "ui_cut_corner_top_left": ([
+      ("ui_cut_corner_top_left", 0.25),
+    ], Once),
+    "ui_cut_corner_top_right": ([
+      ("ui_cut_corner_top_right", 0.25),
+    ], Once),
+    "ui_cut_corner_bottom_left": ([
+      ("ui_cut_corner_bottom_left", 0.25),
+    ], Once),
+    "ui_cut_corner_bottom_right": ([
+      ("ui_cut_corner_bottom_right", 0.25),
+    ], Once),
+
+    "ui_connect_top_left": ([
+      ("ui_connect_top_left", 0.25),
+    ], Once),
+    "ui_connect_top_right": ([
+      ("ui_connect_top_right", 0.25),
+    ], Once),
+    "ui_connect_bottom_left": ([
+      ("ui_connect_bottom_left", 0.25),
+    ], Once),
+    "ui_connect_bottom_right": ([
+      ("ui_connect_bottom_right", 0.25),
+    ], Once),
+  },
+)

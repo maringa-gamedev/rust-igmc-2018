@@ -1,7 +1,7 @@
 use amethyst::core::cgmath::*;
 use serde_derive::*;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum TableOrientation {
     VerticalLeft,
     VerticalRight,
@@ -71,10 +71,10 @@ impl TableOrientation {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Priority(pub usize);
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum TableType {
     Flavor(Priority),
     Preparation(Priority),
@@ -89,7 +89,7 @@ impl Default for TableType {
     }
 }
 
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct MapDefinition {
     pub tables: Vec<(f32, f32, TableType, TableOrientation)>,
     pub spawns: Vec<(f32, f32)>,

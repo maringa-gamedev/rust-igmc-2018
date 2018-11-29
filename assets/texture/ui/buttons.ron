@@ -1,0 +1,99 @@
+#![enable(implicit_some)]
+#![enable(unwrap_newtypes)]
+(
+  TextureDefinition (
+    path: "texture/ui/button_prompts.png",
+    width: 256.0,
+    height: 32.0,
+    sprites: [
+      ("button_circle_empty_down", 0.0, 0.0, 0.0625, 0.5),
+      ("button_circle_empty_up",   0.0, 0.5, 0.0625, 0.5),
+
+      ("button_square_empty_down", 0.0625, 0.0, 0.0625, 0.5),
+      ("button_square_empty_up",   0.0625, 0.5, 0.0625, 0.5),
+
+      ("prompt_north_left_down", 0.125, 0.0, 0.0625, 0.5),
+      ("prompt_north_left_up",   0.125, 0.5, 0.0625, 0.5),
+
+      ("prompt_south_left_down", 0.1875, 0.0, 0.0625, 0.5),
+      ("prompt_south_left_up",   0.1875, 0.5, 0.0625, 0.5),
+
+      ("prompt_west_left_down", 0.25, 0.0, 0.0625, 0.5),
+      ("prompt_west_left_up",   0.25, 0.5, 0.0625, 0.5),
+
+      ("prompt_east_left_down", 0.3125, 0.0, 0.0625, 0.5),
+      ("prompt_east_left_up",   0.3125, 0.5, 0.0625, 0.5),
+
+      ("prompt_north_right_down", 0.375, 0.0, 0.0625, 0.5),
+      ("prompt_north_right_up",   0.375, 0.5, 0.0625, 0.5),
+
+      ("prompt_south_right_down", 0.4375, 0.0, 0.0625, 0.5),
+      ("prompt_south_right_up",   0.4375, 0.5, 0.0625, 0.5),
+
+      ("prompt_west_right_down", 0.4375, 0.0, 0.0625, 0.5),
+      ("prompt_west_right_up",   0.4375, 0.5, 0.0625, 0.5),
+
+      ("prompt_east_right_down", 0.5, 0.0, 0.0625, 0.5),
+      ("prompt_east_right_up",   0.5, 0.5, 0.0625, 0.5),
+
+      ("prompt_failure_down", 0.5625, 0.0, 0.0625, 0.5),
+      ("prompt_failure_up",   0.5625, 0.5, 0.0625, 0.5),
+
+      ("prompt_success_down", 0.625, 0.0, 0.0625, 0.5),
+      ("prompt_success_up",   0.625, 0.5, 0.0625, 0.5),
+    ],
+  ),
+  {
+    "button_circle_empty": ([
+      ("button_circle_empty_up", 0.25),
+      ("button_circle_empty_down", 0.25),
+    ], Circular),
+    "button_square_empty": ([
+      ("button_square_empty_up", 0.25),
+      ("button_square_empty_down", 0.25),
+    ], Circular),
+
+    "prompt_north_left": ([
+      ("prompt_north_left_up", 0.25),
+      ("prompt_north_left_down", 0.25),
+    ], Circular),
+    "prompt_south_left": ([
+      ("prompt_south_left_up", 0.25),
+      ("prompt_south_left_down", 0.25),
+    ], Circular),
+    "prompt_west_left": ([
+      ("prompt_west_left_up", 0.25),
+      ("prompt_west_left_down", 0.25),
+    ], Circular),
+    "prompt_east_left": ([
+      ("prompt_east_left_up", 0.25),
+      ("prompt_east_left_down", 0.25),
+    ], Circular),
+
+    "prompt_north_right": ([
+      ("prompt_north_right_up", 0.25),
+      ("prompt_north_right_down", 0.25),
+    ], Circular),
+    "prompt_south_right": ([
+      ("prompt_south_right_up", 0.25),
+      ("prompt_south_right_down", 0.25),
+    ], Circular),
+    "prompt_west_right": ([
+      ("prompt_west_right_up", 0.25),
+      ("prompt_west_right_down", 0.25),
+    ], Circular),
+    "prompt_east_right": ([
+      ("prompt_east_right_up", 0.25),
+      ("prompt_east_right_down", 0.25),
+    ], Circular),
+
+    "prompt_failure": ([
+      ("prompt_failure_up", 0.25),
+      ("prompt_failure_down", 0.25),
+    ], Circular),
+    "prompt_success": ([
+      ("prompt_success_up", 0.25),
+      ("prompt_success_down", 0.25),
+    ], Circular),
+  },
+)

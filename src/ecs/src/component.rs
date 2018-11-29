@@ -13,10 +13,11 @@ mod player;
 mod score;
 mod solid;
 mod table;
+mod ui;
 mod velocity;
 
 pub use self::{
     animation::*, background::*, direction::*, effect::*, hitbox::*, input::*, interact::*,
     interaction::*, inventory_item::*, layered::*, pixel_perfect::*, player::*, score::*, solid::*,
-    table::*, velocity::*,
+    table::*, ui::*, velocity::*,
 };

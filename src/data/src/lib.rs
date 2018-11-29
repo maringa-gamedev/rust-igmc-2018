@@ -15,6 +15,7 @@ mod sprite_folder;
 mod team;
 mod texture;
 mod topping;
+mod ui;
 
 mod def {
     #[derive(Debug, Default)]
@@ -63,5 +64,5 @@ mod def {
 pub use self::{
     animation::*, common::*, constants::*, def::*, effect::*, flavor::*, gameplay::*, hissatsu::*,
     house::*, map::*, order::*, player::*, preparation::*, sound::*, sprite_folder::*, team::*,
-    texture::*, topping::*,
+    texture::*, topping::*, ui::*,
 };

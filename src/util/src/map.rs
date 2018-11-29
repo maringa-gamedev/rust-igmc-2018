@@ -5,6 +5,7 @@ use amethyst::{
     },
     ecs::prelude::*,
     renderer::{SpriteRender, SpriteSheetHandle},
+    utils::application_root_dir,
 };
 use either::*;
 use log::*;
@@ -15,23 +16,166 @@ use nk_ecs::*;
 use ron::de::from_reader;
 use std::fs::File;
 
+pub fn load_freeplay_defs() -> Vec<MapDefinition> {
+    let app_root = application_root_dir();
+    let path = format!("{}/assets/map/freeplay.ron", app_root);
+    let f = File::open(&path).expect("Failed opening file");
+    let files: Vec<String> = match from_reader(f) {
+        Ok(x) => x,
+        Err(e) => {
+            error!("Error parsing freeplay collection file: {}", e);
+            return Vec::new();
+        }
+    };
+
+    files
+        .into_iter()
+        .filter_map(|f| {
+            let f = File::open(format!("{}/assets/map/{}.ron", app_root, f))
+                .expect("Failed opening file");
+            let map_def: MapDefinition = match from_reader(f) {
+                Ok(x) => x,
+                Err(e) => {
+                    error!("Error parsing map file: {}", e);
+                    return None;
+                }
+            };
+
+            Some(map_def)
+        })
+        .collect()
+}
+
+pub fn create_map_preview(world: &mut World, map: &MapDefinition) -> Entity {
+    let (
+        map_preview_handle,
+        map_preview_floor,
+        map_preview_flavor,
+        map_preview_preparation,
+        map_preview_topping,
+        map_preview_delivery,
+        map_preview_empty,
+    ) = {
+        let anims = world.read_resource::<Animations>();
+        let anims = &anims.animations;
+        (
+            anims["map_preview_floor"].obtain_handle(),
+            anims["map_preview_floor"].get_frame(),
+            anims["map_preview_flavor"].get_frame(),
+            anims["map_preview_preparation"].get_frame(),
+            anims["map_preview_topping"].get_frame(),
+            anims["map_preview_delivery"].get_frame(),
+            anims["map_preview_empty"].get_frame(),
+        )
+    };
+
+    let mut transform = Transform::default();
+    transform.translation = Vector3::new(0.0, 0.0, 1.0);
+
+    let parent = world
+        .create_entity()
+        .with(AnimatedFloor(String::from("floor")))
+        .with(transform)
+        .with(GlobalTransform::default())
+        .build();
+
+    (0..10).for_each(|i| {
+        (0..11).for_each(|j| {
+            let mut transform = Transform::default();
+            transform.translation = Vector3::new(i as f32 * 8.0, j as f32 * 8.0, -1.0);
+            world
+                .create_entity()
+                .with(SpriteRender {
+                    sprite_sheet: map_preview_handle.clone(),
+                    sprite_number: map_preview_floor,
+                    flip_horizontal: false,
+                    flip_vertical: false,
+                })
+                .with(transform)
+                .with(GlobalTransform::default())
+                .with(Parent { entity: parent })
+                .build();
+        });
+    });
+
+    map.tables.iter().for_each(|(x, y, t, o)| {
+        let mut transform = Transform::default();
+        transform.translation = Vector3::new(x * 8.0, y * 8.0, 0.0);
+        let frame = match t {
+            TableType::Flavor(_) => map_preview_flavor,
+            TableType::Preparation(_) => map_preview_preparation,
+            TableType::Topping(_) => map_preview_topping,
+            TableType::Delivery => map_preview_delivery,
+            TableType::Empty => map_preview_empty,
+        };
+
+        world
+            .create_entity()
+            .with(SpriteRender {
+                sprite_sheet: map_preview_handle.clone(),
+                sprite_number: frame,
+                flip_horizontal: false,
+                flip_vertical: false,
+            })
+            .with(transform)
+            .with(GlobalTransform::default())
+            .with(Parent { entity: parent })
+            .build();
+
+        match t {
+            TableType::Empty => {}
+            _ => match o {
+                TableOrientation::VerticalRight | TableOrientation::VerticalLeft => {
+                    let mut transform = Transform::default();
+                    transform.translation = Vector3::new(x * 8.0, (y + 1.0) * 8.0, 0.0);
+
+                    world
+                        .create_entity()
+                        .with(SpriteRender {
+                            sprite_sheet: map_preview_handle.clone(),
+                            sprite_number: frame,
+                            flip_horizontal: false,
+                            flip_vertical: false,
+                        })
+                        .with(transform)
+                        .with(GlobalTransform::default())
+                        .with(Parent { entity: parent })
+                        .build();
+                }
+                TableOrientation::HorizontalTop | TableOrientation::HorizontalBottom => {
+                    let mut transform = Transform::default();
+                    transform.translation = Vector3::new((x + 1.0) * 8.0, y * 8.0, 0.0);
+
+                    world
+                        .create_entity()
+                        .with(SpriteRender {
+                            sprite_sheet: map_preview_handle.clone(),
+                            sprite_number: frame,
+                            flip_horizontal: false,
+                            flip_vertical: false,
+                        })
+                        .with(transform)
+                        .with(GlobalTransform::default())
+                        .with(Parent { entity: parent })
+                        .build();
+                }
+
+                _ => {}
+            },
+        }
+    });
+
+    parent
+}
+
 pub fn create_map_from_file(
     world: &mut World,
     (left_parent, right_parent): (Entity, Entity),
-    path: &str,
+    map_def: &MapDefinition,
     flavors: &[FlavorIndex],
     preparations: &[PreparationIndex],
     toppings: &[ToppingIndex],
 ) -> (Vec<Entity>, Vec<(f32, f32)>) {
-    let f = File::open(&path).expect("Failed opening file");
-    let map_def: MapDefinition = match from_reader(f) {
-        Ok(x) => x,
-        Err(e) => {
-            error!("Error parsing map file: {}", e);
-            panic!("Invalid map file <{}>!", path);
-        }
-    };
-
     if flavors.len() > map_def.count_flavor_tables() {
         warn!("More flavors than the map has tables!");
     }

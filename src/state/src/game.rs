@@ -25,55 +25,45 @@ use nk_util::*;
 
 #[derive(Debug)]
 pub struct Game {
-    map_file: String,
+    map: MapDefinition,
+    flavor_loadout: Vec<FlavorIndex>,
+    preparation_loadout: Vec<PreparationIndex>,
+    topping_loadout: Vec<ToppingIndex>,
     camera: Option<Entity>,
     entities: Vec<Entity>,
 }
 
 impl Game {
-    pub fn with_map(mut self, map_file: &str) -> Self {
-        self.map_file = map_file.to_owned();
-        self
-    }
-}
-
-impl Default for Game {
-    fn default() -> Self {
+    pub fn with_map(map: MapDefinition) -> Self {
         Game {
-            map_file: format!("{}/assets/map/0000.ron", application_root_dir()),
+            map,
+            flavor_loadout: Vec::new(),
+            preparation_loadout: Vec::new(),
+            topping_loadout: Vec::new(),
             camera: None,
             entities: Vec::with_capacity(128),
         }
+    }
+
+    pub fn with_flavors(mut self, flavors: Vec<FlavorIndex>) -> Self {
+        self.flavor_loadout = flavors;
+        self
+    }
+
+    pub fn with_preparations(mut self, preparations: Vec<PreparationIndex>) -> Self {
+        self.preparation_loadout = preparations;
+        self
+    }
+
+    pub fn with_toppings(mut self, toppings: Vec<ToppingIndex>) -> Self {
+        self.topping_loadout = toppings;
+        self
     }
 }
 
 impl<'a, 'b> SimpleState<'a, 'b> for Game {
     fn on_start(&mut self, data: StateData<GameData>) {
         let StateData { mut world, .. } = data;
-
-        let flavor_loadout = vec![
-            FlavorIndex(0),
-            FlavorIndex(0),
-            FlavorIndex(1),
-            FlavorIndex(1),
-            FlavorIndex(2),
-            FlavorIndex(2),
-            FlavorIndex(7),
-            FlavorIndex(7),
-        ];
-
-        let preparation_loadout = vec![
-            PreparationIndex(0),
-            PreparationIndex(0),
-            PreparationIndex(0),
-            PreparationIndex(0),
-        ];
-        let topping_loadout = vec![
-            ToppingIndex(0),
-            ToppingIndex(0),
-            ToppingIndex(0),
-            ToppingIndex(0),
-        ];
 
         let (left_parent, right_parent) = {
             let mut left_transform = Transform::default();
@@ -103,10 +93,10 @@ impl<'a, 'b> SimpleState<'a, 'b> for Game {
         let (mut map_entities, spawn_points) = create_map_from_file(
             &mut world,
             (left_parent, right_parent),
-            &self.map_file,
-            &flavor_loadout[..],
-            &preparation_loadout[..],
-            &topping_loadout[..],
+            &self.map,
+            &self.flavor_loadout[..],
+            &self.preparation_loadout[..],
+            &self.topping_loadout[..],
         );
         //self.create_bounds(&mut world, V_W * 2.0, V_H * 2.0);
         self.create_kitchen_bounds(
@@ -117,11 +107,7 @@ impl<'a, 'b> SimpleState<'a, 'b> for Game {
 
         let mut data = Match::default();
         data.timer = 5.0 * 60.0;
-        data.order_gen_timer = 20.0;
-
-        data.flavors = flavor_loadout;
-        data.preparations = preparation_loadout;
-        data.toppings = topping_loadout;
+        data.order_gen_timer = 15.0;
 
         let team_a = Team {
             captain: self.create_player(
@@ -146,9 +132,9 @@ impl<'a, 'b> SimpleState<'a, 'b> for Game {
             ),
             scooper_one: None,
             scooper_two: None,
-            flavors: vec![],
-            toppings: vec![],
-            preparations: vec![],
+            flavors: self.flavor_loadout.clone(),
+            toppings: self.topping_loadout.clone(),
+            preparations: self.preparation_loadout.clone(),
             power_meter: 0.0,
             score: 0,
             orders: vec![],
@@ -178,9 +164,9 @@ impl<'a, 'b> SimpleState<'a, 'b> for Game {
             ),
             scooper_one: None,
             scooper_two: None,
-            flavors: vec![],
-            toppings: vec![],
-            preparations: vec![],
+            flavors: self.flavor_loadout.clone(),
+            toppings: self.topping_loadout.clone(),
+            preparations: self.preparation_loadout.clone(),
             power_meter: 0.0,
             score: 0,
             orders: vec![],

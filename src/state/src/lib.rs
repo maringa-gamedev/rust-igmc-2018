@@ -1,4 +1,6 @@
 #![feature(type_ascription)]
+#![feature(exclusive_range_pattern)]
+#![feature(vec_remove_item)]
 
 use amethyst::{
     core::{cgmath::*, transform::GlobalTransform},
@@ -8,6 +10,7 @@ use amethyst::{
 use log::*;
 
 mod bundle;
+mod freeplay;
 mod game;
 mod load;
 
@@ -74,4 +77,4 @@ pub fn update_viewport(camera: Entity, world: &mut World) -> Entity {
     camera
 }
 
-pub use self::{bundle::*, game::*, load::*};
+pub use self::{bundle::*, freeplay::*, game::*, load::*};

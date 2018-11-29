@@ -44,6 +44,8 @@ fn main() -> amethyst::Result<()> {
         )
         .get_matches();
 
+    std::env::set_var("RUST_LOG", "gfx_device_gl=warn");
+
     let channel = Arc::new(Mutex::new(EventChannel::<ev::Event>::new()));
     {
         let channel = channel.clone();

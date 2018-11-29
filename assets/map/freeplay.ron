@@ -1,0 +1,7 @@
+#![enable(implicit_some)]
+#![enable(unwrap_newtypes)]
+[
+  "0001",
+  "0002",
+  "0003",
+]
