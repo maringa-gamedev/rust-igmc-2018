@@ -48,8 +48,66 @@ impl<'s> System<'s> for GenerateSystem {
                 if flavors.len() < 1 {
                     panic!("NO FLAVORS IN MATCH+TEAM!");
                 };
+                let preparation = &defs
+                    .preparations()
+                    .find(|x| x.index == preparations[0])
+                    .unwrap();
 
-                let new_order = match rng.gen_range(0, 7) {
+                let rand = match preparation.max_scoops {
+                    1 => match preparation.takes_topping {
+                        true => match rng.gen_range(0, 2) {
+                            0 => 0,
+                            1 => 4,
+                            _ => std::unreachable!(),
+                        },
+                        false => 0,
+                    },
+                    2 => match preparation.takes_topping {
+                        true => match rng.gen_range(0, 4) {
+                            0 => 0,
+                            1 => 1,
+                            2 => 4,
+                            3 => 5,
+                            _ => std::unreachable!(),
+                        },
+                        false => match rng.gen_range(0, 2) {
+                            0 => 0,
+                            1 => 1,
+                            _ => std::unreachable!(),
+                        },
+                    },
+                    3 => match preparation.takes_topping {
+                        true => match rng.gen_range(0, 6) {
+                            0 => 0,
+                            1 => 1,
+                            2 => 2,
+                            3 => 4,
+                            4 => 5,
+                            5 => 6,
+                            _ => std::unreachable!(),
+                        },
+                        false => match rng.gen_range(0, 3) {
+                            0 => 0,
+                            1 => 1,
+                            2 => 2,
+                            _ => std::unreachable!(),
+                        },
+                    },
+                    4 => match preparation.takes_topping {
+                        true => rng.gen_range(0, 7),
+                        false => rng.gen_range(0, 4),
+                    },
+                    _ => std::unreachable!(),
+                };
+
+                // 0 => 1f 0t
+                // 1 => 2f 0t
+                // 2 => 3f 0t
+                // 3 => 4f 0t
+                // 4 => 1f 1t
+                // 5 => 2f 1t
+                // 6 => 3f 1t
+                let new_order = match rand {
                     0 => {
                         let mut selection = flavors
                             .into_iter()

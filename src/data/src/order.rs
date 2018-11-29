@@ -177,8 +177,6 @@ pub struct Order {
     pub topping: Option<ToppingIndex>,
     pub preparation: PreparationIndex,
     pub completed: bool,
-    pub base_worth: f32,
-    pub calc_worth: f32,
     pub delivery_timer: f32,
     delivery_initial: f32,
 }
@@ -193,14 +191,12 @@ impl Order {
             topping: None,
             preparation: p,
             completed: false,
-            base_worth: 100.0,
-            calc_worth: 0.0,
             delivery_timer: 32.0,
             delivery_initial: 32.0,
         }
     }
 
-    pub fn calculate_worth(&self) -> isize {
+    pub fn calculate_worth(&self, defs: &Definitions) -> isize {
         let percent_delivery_timer = self.delivery_timer / self.delivery_initial;
         let percent_bonus = if percent_delivery_timer >= 0.8 {
             0.15
@@ -209,7 +205,29 @@ impl Order {
         } else {
             0.0
         };
-        let total = self.base_worth * (1.0 + percent_bonus);
+        let mut value = 0.0;
+        if let Some(f) = &self.flavor_a {
+            value += defs.flavors().find(|x| x.index == *f).unwrap().base_worth;
+        }
+        if let Some(f) = &self.flavor_b {
+            value += defs.flavors().find(|x| x.index == *f).unwrap().base_worth;
+        }
+        if let Some(f) = &self.flavor_c {
+            value += defs.flavors().find(|x| x.index == *f).unwrap().base_worth;
+        }
+        if let Some(f) = &self.flavor_d {
+            value += defs.flavors().find(|x| x.index == *f).unwrap().base_worth;
+        }
+        if let Some(t) = &self.topping {
+            value += defs.toppings().find(|x| x.index == *t).unwrap().worth;
+        }
+        let value = value
+            * (defs
+                .preparations()
+                .find(|x| x.index == self.preparation)
+                .unwrap()
+                .score_multiplier);
+        let total = value * (1.0 + percent_bonus);
         let total = total.round() as isize;
         total
     }
@@ -283,6 +301,10 @@ impl Order {
 
     pub fn has_melted(&self) -> bool {
         self.delivery_timer <= 0.0
+    }
+
+    pub fn melt_percent(&self) -> f32 {
+        self.delivery_timer / self.delivery_initial
     }
 
     pub fn is_empty(&self) -> bool {

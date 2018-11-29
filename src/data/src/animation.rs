@@ -116,6 +116,26 @@ impl Animation {
         }
     }
 
+    pub fn get_frame_at(&self, timer: f32, rev: bool) -> usize {
+        match rev {
+            true => {
+                self.vec
+                    .iter()
+                    .rev()
+                    .find(|&&a| timer < a.3)
+                    .unwrap_or(self.vec.iter().rev().last().unwrap())
+                    .0
+            }
+            false => {
+                self.vec
+                    .iter()
+                    .find(|&&a| timer < a.2)
+                    .unwrap_or(self.vec.iter().last().unwrap())
+                    .0
+            }
+        }
+    }
+
     pub fn obtain_handle(&self) -> SpriteSheetHandle {
         self.handle.clone()
     }

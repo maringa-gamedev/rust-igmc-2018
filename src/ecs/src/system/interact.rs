@@ -55,6 +55,7 @@ pub struct InteractSystemData<'s> {
     sequence_keys: WriteStorage<'s, SequenceKey>,
     alternative_keys: WriteStorage<'s, AlternativeKey>,
     anims: Read<'s, Animations>,
+    defs: Read<'s, Definitions>,
     palette: Read<'s, ArcMutPalette>,
     match_data: Write<'s, Match>,
     storage: Read<'s, AssetStorage<Source>>,
@@ -93,6 +94,7 @@ impl<'s> System<'s> for InteractSystem {
             mut sequence_keys,
             mut alternative_keys,
             anims,
+            defs,
             palette,
             mut match_data,
             storage,
@@ -357,7 +359,7 @@ impl<'s> System<'s> for InteractSystem {
                                                 .take_while(|(i, _)| *i < 4)
                                             {
                                                 if o.matches(&order) {
-                                                    my_team.score += order.calculate_worth();
+                                                    my_team.score += order.calculate_worth(&defs);
                                                     rem = Some(i);
                                                     break;
                                                 }
@@ -640,139 +642,25 @@ impl<'s> InteractSystem {
         entity: Entity,
         key: String,
     ) {
-        let mut start_transform = Transform::default();
-        start_transform.translation.x = -16.0;
+        let mut prompt_transform = Transform::default();
+        prompt_transform.translation.z = 12.0;
 
-        let mut middle_transform = Transform::default();
-        middle_transform.scale.x = 4.0;
-
-        let mut end_transform = Transform::default();
-        end_transform.translation.x = 16.0;
-
-        let anim = &anims.animations["base_bar_start"];
-        let _start_bg = entities
+        let anim = &anims.animations["white_progress"];
+        let _bar = entities
             .build_entity()
             .with(
                 SpriteRender {
                     sprite_sheet: anim.obtain_handle(),
-                    sprite_number: anim.get_frame(),
+                    sprite_number: anim.get_frame_at(0.0, false),
                     flip_horizontal: false,
                     flip_vertical: false,
                 },
                 &mut sprites,
             )
             .with(Parent { entity }, &mut parents)
-            .with(Transparent, &mut transparents)
-            .with(BarBackground, &mut backgrounds)
-            .with(StartBarPiece, &mut start_pieces)
-            .with(start_transform.clone(), &mut transforms)
-            .with(GlobalTransform::default(), &mut global_transforms)
-            .build();
-
-        let anim = &anims.animations["base_bar_middle"];
-        let _middle_bg = entities
-            .build_entity()
-            .with(
-                SpriteRender {
-                    sprite_sheet: anim.obtain_handle(),
-                    sprite_number: anim.get_frame(),
-                    flip_horizontal: false,
-                    flip_vertical: false,
-                },
-                &mut sprites,
-            )
-            .with(Parent { entity }, &mut parents)
-            .with(Transparent, &mut transparents)
-            .with(BarBackground, &mut backgrounds)
-            .with(MiddleBarPiece, &mut middle_pieces)
-            .with(middle_transform.clone(), &mut transforms)
-            .with(GlobalTransform::default(), &mut global_transforms)
-            .build();
-
-        let anim = &anims.animations["base_bar_end"];
-        let _end_bg = entities
-            .build_entity()
-            .with(
-                SpriteRender {
-                    sprite_sheet: anim.obtain_handle(),
-                    sprite_number: anim.get_frame(),
-                    flip_horizontal: false,
-                    flip_vertical: false,
-                },
-                &mut sprites,
-            )
-            .with(Parent { entity }, &mut parents)
-            .with(Transparent, &mut transparents)
-            .with(BarBackground, &mut backgrounds)
-            .with(EndBarPiece, &mut end_pieces)
-            .with(end_transform.clone(), &mut transforms)
-            .with(GlobalTransform::default(), &mut global_transforms)
-            .build();
-
-        start_transform.translation.z = 1.0;
-        middle_transform.translation.z = 1.0;
-        end_transform.translation.z = 1.0;
-
-        let anim = &anims.animations[&format!("{}_bar_start", key)];
-        let _start_fg = entities
-            .build_entity()
-            .with(
-                SpriteRender {
-                    sprite_sheet: anim.obtain_handle(),
-                    sprite_number: anim.get_frame(),
-                    flip_horizontal: false,
-                    flip_vertical: false,
-                },
-                &mut sprites,
-            )
-            .with(Parent { entity }, &mut parents)
-            .with(Hidden, &mut hiddens)
             .with(Transparent, &mut transparents)
             .with(BarForeground, &mut foregrounds)
-            .with(StartBarPiece, &mut start_pieces)
-            .with(start_transform, &mut transforms)
-            .with(GlobalTransform::default(), &mut global_transforms)
-            .build();
-
-        let anim = &anims.animations[&format!("{}_bar_middle", key)];
-        let _middle_fg = entities
-            .build_entity()
-            .with(
-                SpriteRender {
-                    sprite_sheet: anim.obtain_handle(),
-                    sprite_number: anim.get_frame(),
-                    flip_horizontal: false,
-                    flip_vertical: false,
-                },
-                &mut sprites,
-            )
-            .with(Parent { entity }, &mut parents)
-            .with(Hidden, &mut hiddens)
-            .with(Transparent, &mut transparents)
-            .with(BarForeground, &mut foregrounds)
-            .with(MiddleBarPiece, &mut middle_pieces)
-            .with(middle_transform, &mut transforms)
-            .with(GlobalTransform::default(), &mut global_transforms)
-            .build();
-
-        let anim = &anims.animations[&format!("{}_bar_end", key)];
-        let _end_fg = entities
-            .build_entity()
-            .with(
-                SpriteRender {
-                    sprite_sheet: anim.obtain_handle(),
-                    sprite_number: anim.get_frame(),
-                    flip_horizontal: false,
-                    flip_vertical: false,
-                },
-                &mut sprites,
-            )
-            .with(Parent { entity }, &mut parents)
-            .with(Hidden, &mut hiddens)
-            .with(Transparent, &mut transparents)
-            .with(BarForeground, &mut foregrounds)
-            .with(EndBarPiece, &mut end_pieces)
-            .with(end_transform, &mut transforms)
+            .with(prompt_transform, &mut transforms)
             .with(GlobalTransform::default(), &mut global_transforms)
             .build();
     }
@@ -791,7 +679,8 @@ impl<'s> InteractSystem {
         key: String,
     ) {
         let mut prompt_transform = Transform::default();
-        prompt_transform.translation.y = 20.0;
+        prompt_transform.translation.y = 12.0;
+        prompt_transform.translation.z = 12.0;
 
         let anim = &anims.animations[&format!("prompt_{}", key)];
         let _button = entities
@@ -829,7 +718,8 @@ impl<'s> InteractSystem {
     ) {
         let mut prompt_transform = Transform::default();
         prompt_transform.translation.x = ((index as isize - 2) as f32 + 0.5) * 20.0;
-        prompt_transform.translation.y = 20.0;
+        prompt_transform.translation.y = 12.0;
+        prompt_transform.translation.z = 12.0;
 
         let anim = &anims.animations[&format!("prompt_{}", key)];
         let _button = entities
@@ -867,7 +757,8 @@ impl<'s> InteractSystem {
     ) {
         let mut prompt_transform = Transform::default();
         prompt_transform.translation.x = if side { -10.0 } else { 10.0 };
-        prompt_transform.translation.y = 20.0;
+        prompt_transform.translation.y = 12.0;
+        prompt_transform.translation.z = 12.0;
 
         let anim = &anims.animations[&format!("prompt_{}", key)];
         let _button = entities

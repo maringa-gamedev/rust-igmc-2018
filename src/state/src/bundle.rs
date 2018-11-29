@@ -24,6 +24,7 @@ impl<'a, 'b> SystemBundle<'a, 'b> for GameBundle {
         builder.add(ScoreSystem, "xto_score", &["xto_timer"]);
         builder.add(GenerateSystem, "xto_generate", &[]);
         builder.add(OrdersSystem, "xto_orders", &[]);
+        builder.add(MeltSystem, "xto_melt", &[]);
         Ok(())
     }
 }

@@ -12,35 +12,35 @@
       ("button_square_empty_down", 0.0625, 0.0, 0.0625, 0.5),
       ("button_square_empty_up",   0.0625, 0.5, 0.0625, 0.5),
 
-      ("prompt_north_left_down", 0.125, 0.0, 0.0625, 0.5),
-      ("prompt_north_left_up",   0.125, 0.5, 0.0625, 0.5),
+      ("prompt_north_right_down", 0.125, 0.0, 0.0625, 0.5),
+      ("prompt_north_right_up",   0.125, 0.5, 0.0625, 0.5),
 
-      ("prompt_south_left_down", 0.1875, 0.0, 0.0625, 0.5),
-      ("prompt_south_left_up",   0.1875, 0.5, 0.0625, 0.5),
+      ("prompt_south_right_down", 0.1875, 0.0, 0.0625, 0.5),
+      ("prompt_south_right_up",   0.1875, 0.5, 0.0625, 0.5),
 
-      ("prompt_west_left_down", 0.25, 0.0, 0.0625, 0.5),
-      ("prompt_west_left_up",   0.25, 0.5, 0.0625, 0.5),
+      ("prompt_west_right_down", 0.25, 0.0, 0.0625, 0.5),
+      ("prompt_west_right_up",   0.25, 0.5, 0.0625, 0.5),
 
-      ("prompt_east_left_down", 0.3125, 0.0, 0.0625, 0.5),
-      ("prompt_east_left_up",   0.3125, 0.5, 0.0625, 0.5),
+      ("prompt_east_right_down", 0.3125, 0.0, 0.0625, 0.5),
+      ("prompt_east_right_up",   0.3125, 0.5, 0.0625, 0.5),
 
-      ("prompt_north_right_down", 0.375, 0.0, 0.0625, 0.5),
-      ("prompt_north_right_up",   0.375, 0.5, 0.0625, 0.5),
+      ("prompt_north_left_down", 0.375, 0.0, 0.0625, 0.5),
+      ("prompt_north_left_up",   0.375, 0.5, 0.0625, 0.5),
 
-      ("prompt_south_right_down", 0.4375, 0.0, 0.0625, 0.5),
-      ("prompt_south_right_up",   0.4375, 0.5, 0.0625, 0.5),
+      ("prompt_south_left_down", 0.4375, 0.0, 0.0625, 0.5),
+      ("prompt_south_left_up",   0.4375, 0.5, 0.0625, 0.5),
 
-      ("prompt_west_right_down", 0.4375, 0.0, 0.0625, 0.5),
-      ("prompt_west_right_up",   0.4375, 0.5, 0.0625, 0.5),
+      ("prompt_west_left_down", 0.5, 0.0, 0.0625, 0.5),
+      ("prompt_west_left_up",   0.5, 0.5, 0.0625, 0.5),
 
-      ("prompt_east_right_down", 0.5, 0.0, 0.0625, 0.5),
-      ("prompt_east_right_up",   0.5, 0.5, 0.0625, 0.5),
+      ("prompt_east_left_down", 0.5625, 0.0, 0.0625, 0.5),
+      ("prompt_east_left_up",   0.5625, 0.5, 0.0625, 0.5),
 
-      ("prompt_failure_down", 0.5625, 0.0, 0.0625, 0.5),
-      ("prompt_failure_up",   0.5625, 0.5, 0.0625, 0.5),
+      ("prompt_failure_down", 0.625, 0.0, 0.0625, 0.5),
+      ("prompt_failure_up",   0.625, 0.5, 0.0625, 0.5),
 
-      ("prompt_success_down", 0.625, 0.0, 0.0625, 0.5),
-      ("prompt_success_up",   0.625, 0.5, 0.0625, 0.5),
+      ("prompt_success_down", 0.6875, 0.0, 0.0625, 0.5),
+      ("prompt_success_up",   0.6875, 0.5, 0.0625, 0.5),
     ],
   ),
   {

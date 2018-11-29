@@ -305,7 +305,7 @@ impl Game {
             .with(GlobalTransform::default())
             .build();
 
-        (0..6).for_each(|i| {
+        (0..7).for_each(|i| {
             let carry_me = world
                 .create_entity()
                 .with(SpriteRender {

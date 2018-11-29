@@ -122,12 +122,9 @@ impl<'s> System<'s> for InteractionSystem {
                     for child in parent_hierarchy.children(e) {
                         if !self.update_child(
                             child,
+                            &anims,
                             &mut foregrounds,
-                            &mut transforms,
-                            &mut hiddens,
-                            &mut start_pieces,
-                            &mut middle_pieces,
-                            &mut end_pieces,
+                            &mut sprites,
                             fi.progress,
                         ) {};
                     }
@@ -165,12 +162,9 @@ impl<'s> System<'s> for InteractionSystem {
                     for child in parent_hierarchy.children(e) {
                         if !self.update_child(
                             child,
+                            &anims,
                             &mut foregrounds,
-                            &mut transforms,
-                            &mut hiddens,
-                            &mut start_pieces,
-                            &mut middle_pieces,
-                            &mut end_pieces,
+                            &mut sprites,
                             pi.progress,
                         ) {
                             if let Some(SequenceKey(index)) = sequence_keys.get(*child) {
@@ -228,12 +222,9 @@ impl<'s> System<'s> for InteractionSystem {
                     for child in parent_hierarchy.children(e) {
                         if !self.update_child(
                             child,
+                            &anims,
                             &mut foregrounds,
-                            &mut transforms,
-                            &mut hiddens,
-                            &mut start_pieces,
-                            &mut middle_pieces,
-                            &mut end_pieces,
+                            &mut sprites,
                             ti.progress,
                         ) {}
                     }
@@ -249,63 +240,15 @@ impl<'s> InteractionSystem {
     fn update_child(
         &self,
         child: &'s Entity,
+        anims: &Read<'s, Animations>,
         foregrounds: &mut WriteStorage<'s, BarForeground>,
-        transforms: &mut WriteStorage<'s, Transform>,
-        hiddens: &mut WriteStorage<'s, Hidden>,
-        start_pieces: &mut WriteStorage<'s, StartBarPiece>,
-        middle_pieces: &mut WriteStorage<'s, MiddleBarPiece>,
-        end_pieces: &mut WriteStorage<'s, EndBarPiece>,
+        sprites: &mut WriteStorage<'s, SpriteRender>,
         progress: f32,
     ) -> bool {
         if let Some(_) = foregrounds.get(*child) {
-            let transform = transforms.get_mut(*child).unwrap();
-            let progress = (progress * 40.0).round() as usize;
-
-            if let Some(_) = start_pieces.get(*child) {
-                match progress {
-                    0...3 => {
-                        if let None = hiddens.get(*child) {
-                            hiddens.insert(*child, Hidden).unwrap();
-                        }
-                    }
-                    _ => {
-                        if let Some(_) = hiddens.get(*child) {
-                            hiddens.remove(*child);
-                        }
-                    }
-                };
-            } else if let Some(_) = middle_pieces.get(*child) {
-                match progress {
-                    4...40 => {
-                        if let Some(_) = hiddens.get(*child) {
-                            hiddens.remove(*child);
-                        }
-                        let progress = (progress - 4).min(32) as f32;
-                        transform.translation.x = progress / 2.0 - 16.0;
-                        transform.scale.x = progress / 8.0;
-                    }
-                    _ => {
-                        if let None = hiddens.get(*child) {
-                            hiddens.insert(*child, Hidden).unwrap();
-                        }
-                    }
-                };
-            } else if let Some(_) = end_pieces.get(*child) {
-                match progress {
-                    0...35 => {
-                        if let None = hiddens.get(*child) {
-                            hiddens.insert(*child, Hidden).unwrap();
-                        }
-                    }
-                    _ => {
-                        if let Some(_) = hiddens.get(*child) {
-                            hiddens.remove(*child);
-                        }
-                    }
-                };
-            } else {
-                return false;
-            }
+            let sprite = sprites.get_mut(*child).unwrap();
+            let anim = &anims.animations["white_progress"];
+            sprite.sprite_number = anim.get_frame_at(progress, false);
             true
         } else {
             false
